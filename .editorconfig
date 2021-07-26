@@ -1,10 +1,8 @@
-# Rules in this file were initially inferred by Visual Studio IntelliCode from the C:\Users\rurai\source\repos\gameEngine\gameEngine\ codebase based on best match to current usage at 2021-07-25
+# Rules in this file were initially inferred by Visual Studio IntelliCode from the D:\OpenGL\gameEngine\gameEngine\ codebase based on best match to current usage at 2021-07-26
 # You can modify the rules from these initially generated values to suit your own policies
 # You can learn more about editorconfig here: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
 root = true
 
 [*.*]
 
-end_of_line = lf
-charset = utf-8-bom
-
+charset=utf-8-bom

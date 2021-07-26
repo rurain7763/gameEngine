@@ -5,8 +5,8 @@
 #define MAX_LOADSTRING 100
 
 HINSTANCE hInst;
-WCHAR szTitle[10];
-WCHAR szWindowClass[10];
+WCHAR szTitle[20];
+WCHAR szWindowClass[20];
 
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 static iRect wndRt;
