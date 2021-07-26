@@ -1,4 +1,4 @@
-﻿#include "gameEngine.h"
+#include "gameEngine.h"
 #include "iStd.h"
 #include "Game.h"
 
@@ -8,10 +8,11 @@ HINSTANCE hInst;
 WCHAR szTitle[20];
 WCHAR szWindowClass[20];
 
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 static iRect wndRt;
 static bool wrapping;
 static bool run;
+
+LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,

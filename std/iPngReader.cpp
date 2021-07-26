@@ -1,4 +1,4 @@
-﻿#include"iPngReader.h"
+#include"iPngReader.h"
 #include"iStd.h"
 
 iPngReader::iPngReader(const char* path)
@@ -29,6 +29,8 @@ iPngReader::iPngReader(const char* path)
 		}
 		else if (!strcmp(chunk->type, "PLTE"))
 		{
+			//essential for color type 3 - color types 2 and 6 (true color , true color with alpha)
+			//must not appear for color types 0 and 4 (gray scale, gray scale with alpha)
 		}
 		else if (!strcmp(chunk->type, "IDAT"))
 		{
@@ -80,6 +82,36 @@ iChunk* iPngReader::readChunk(uint8* data)
 
 	r->crc32 = bigEndian((uint8*)&data[step], 4);
 	step += sizeof(uint32);
+
+	return r;
+}
+
+uint8* iPngReader::lz77Decode(iLZ77Tuple* tuple, int num)
+{
+	int bufferSize = 0;
+	for (int i = 0; i < num; i++)
+		bufferSize += tuple[i].length + 1;
+	
+	uint8* r = new uint8[bufferSize];
+	memset(r, 0, sizeof(uint8) * bufferSize);
+
+	int left = 0;
+	int right = 0;
+
+	for (int i = 0; i < num; i++)
+	{
+		iLZ77Tuple* t = &tuple[i];
+		
+		left = right - t->dist;
+		for (int j = 0; j < t->length; j++)
+		{
+			r[right] = r[left];
+			right++, left++;
+		}
+
+		r[right] = t->literal;
+		right++;
+	}
 
 	return r;
 }

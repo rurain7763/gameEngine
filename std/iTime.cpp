@@ -22,7 +22,11 @@ iTime* iTime::share()
 
 void iTime::update()
 {
-	deltaTime = (GetTickCount64() - now) / 1000.f;
+	float dt = (GetTickCount64() - now) / 1000.f;
+
+	if (dt - deltaTime > 1.f) dt = deltaTime;
+
+	deltaTime = dt;
 
 	playTime += deltaTime;
 

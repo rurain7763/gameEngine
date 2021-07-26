@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 typedef unsigned char uint8;
 typedef unsigned int  uint32;
@@ -12,6 +12,13 @@ struct iChunk
 	uint32 crc32;
 };
 
+struct iLZ77Tuple
+{
+	uint8 dist;
+	uint8 length;
+	uint8 literal;
+};
+
 class iPngReader
 {
 public:
@@ -20,6 +27,8 @@ public:
 
 	int bigEndian(uint8* data, int num);
 	iChunk* readChunk(uint8* data);
+
+	uint8* lz77Decode(iLZ77Tuple* tuple, int num);
 
 public:
 };

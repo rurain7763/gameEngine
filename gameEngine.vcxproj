@@ -156,6 +156,7 @@
     <ClInclude Include="std\iStd.h" />
     <ClInclude Include="std\iTime.h" />
     <ClInclude Include="std\iTransform.h" />
+    <ClInclude Include="std\iTree.h" />
     <ClInclude Include="std\iVector.h" />
     <ClInclude Include="std\iWindows.h" />
   </ItemGroup>
@@ -172,6 +173,7 @@
     <ClCompile Include="std\iStd.cpp" />
     <ClCompile Include="std\iTime.cpp" />
     <ClCompile Include="std\iTransform.cpp" />
+    <ClCompile Include="std\iTree.cpp" />
     <ClCompile Include="std\iVector.cpp" />
     <ClCompile Include="std\iWindows.cpp" />
   </ItemGroup>
