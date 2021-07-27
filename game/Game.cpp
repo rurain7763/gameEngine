@@ -53,7 +53,7 @@ void loadGame()
 void drawGame()
 {
 	static float degree = 0.f;
-	degree += time->deltaTime * 100.f;
+	degree += time->deltaTime * 50.f;
 
 	glUseProgram(program);
 
@@ -72,7 +72,7 @@ void drawGame()
 		{{.5f,-.5f,.5f,1.f},{.2f,1.f,.5f,1.f}},
 		{{-.5f,-.5f,.5f,1.f},{1.f,.9f,6.f,1.f}}
 	};
-
+	
 	GLubyte indices[] = { 0,1,2 ,1,3,4, 5,6,3, 7,3,6, 2,4,7, 0,7,6, 0,5,1, 1,5,3,
 						  5,0,6, 7,4,3, 2,1,4, 0,2,7};
 
@@ -87,8 +87,8 @@ void drawGame()
 	
 	iTransform transMat;
 	//transMat.scale(isin(degree), 1, 1);
-	//transMat.rotate(0, isin(degree), 0);
-	//transMat.translate( isin(degree), 0, 5.f );
+	//transMat.rotate(0, degree, 0);
+	transMat.translate( isin(degree), 0, 5.f );
 
 	iMatrix tvpMat = projMat * viewMat * transMat.getMatrix();
 
@@ -114,7 +114,7 @@ void drawGame()
 
 	if (inputMgt->keyOnce & KEY_P)
 	{
-		//showCursor(false);
+		showCursor(false);
 		wrapCursor(true);
 		cameraMode = true;
 	}
@@ -131,6 +131,7 @@ void drawGame()
 		camera->onKey(inputMgt->keyDown, time->deltaTime);
 		camera->onMouse(inputMgt->mousePos, time->deltaTime);
 	}
+
 	time->update();
 	inputMgt->update();
 }

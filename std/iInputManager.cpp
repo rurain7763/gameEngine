@@ -1,4 +1,4 @@
-﻿#include"iInputManager.h"
+#include"iInputManager.h"
 #include"iStd.h"
 
 iInputManager* iInputManager::S = NULL;

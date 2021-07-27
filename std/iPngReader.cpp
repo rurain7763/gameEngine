@@ -34,6 +34,19 @@ iPngReader::iPngReader(const char* path)
 		}
 		else if (!strcmp(chunk->type, "IDAT"))
 		{
+			uint8 compression = chunk->data[0];
+			uint8 flag = chunk->data[1];
+
+			int size = chunk->len - 1 - 1 - 2;
+			uint8* compressed = new uint8[size];
+			memcpy(compressed, &chunk->data[2], sizeof(uint8) * size);
+
+			//data
+			{
+				uint32 buffer = 0;
+			}
+
+			uint16 adler32 = (uint16)chunk->data[2 + size];
 		}
 		else // ...
 		{
@@ -109,9 +122,31 @@ uint8* iPngReader::lz77Decode(iLZ77Tuple* tuple, int num)
 			right++, left++;
 		}
 
-		r[right] = t->literal;
+		r[right] = t->lit;
 		right++;
 	}
 
 	return r;
+}
+
+uint32 iPngReader::readBit(iZlibBlock* zb, int readBit)
+{
+	return 12;
+}
+
+void printBit(uint32 v)
+{
+	uint32 b = 0x80000000;
+
+	for (int i = 0; i < 32; i++)
+	{
+		int r = v & b;
+		if(r) printf("1");
+		else printf("0");
+		b >>= 1;
+
+		if (i % 4 == 3) printf(" ");
+	}
+
+	printf("\n");
 }

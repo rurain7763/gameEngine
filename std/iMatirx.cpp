@@ -1,4 +1,4 @@
-﻿#include"iMatirx.h"
+#include"iMatirx.h"
 #include"iStd.h"
 
 iMatrix::iMatrix()
@@ -72,13 +72,13 @@ void iMatrix::frustrum(float fov, float w, float h, float n, float f)
 void iMatrix::ortho(float l, float r, float b, float t, float n, float f)
 {
 	data[0][0] = 2 / (r - l);
-	data[0][3] = -((r + l) / (r - l));
+	data[0][3] = -(r + l) / (r - l);
 
 	data[1][1] = 2 / (t - b);
-	data[1][3] = -((t + b) / (t - b));
+	data[1][3] = -(t + b) / (t - b);
 
-	data[2][2] = -2 / (f - n);
-	data[2][3] = -((f + n) / (f - n));
+	data[2][2] = 2 / (f - n);
+	data[2][3] = -(f + n) / (f - n);
 
 	data[3][3] = 1.f;
 }

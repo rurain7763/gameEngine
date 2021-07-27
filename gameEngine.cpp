@@ -53,10 +53,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        monitorX, monitorY, monitorW, monitorH,
+        monitorX, monitorY, DEV_WIDTH, DEV_HEIGHT,
         nullptr, nullptr, hInstance, nullptr);
 
-    setWndRectInfo(monitorX, monitorY, monitorW, monitorH);
+    setWndRectInfo(monitorX, monitorY, DEV_WIDTH, DEV_HEIGHT);
     SetCursorPos(monitorX + monitorW / 2, monitorY + monitorH / 2);
 
     HDC hdc = GetDC(hWnd);
@@ -185,6 +185,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         if (key == 'D') inputMgt->setKeyDown(KEY_D);
         if (key == 'P') inputMgt->setKeyDown(KEY_P);
         if (key == VK_ESCAPE) inputMgt->setKeyDown(KEY_ESCAPE);
+        if (key == VK_PRIOR) inputMgt->setKeyDown(KEY_PAGEUP);
+        if (key == VK_NEXT) inputMgt->setKeyDown(KEY_PAGEDOWN);
 
         return 0;
     }
@@ -198,13 +200,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         if (key == 'D') inputMgt->setKeyUp(KEY_D);
         if (key == 'P') inputMgt->setKeyUp(KEY_P);
         if (key == VK_ESCAPE) inputMgt->setKeyUp(KEY_ESCAPE);
+        if (key == VK_PRIOR) inputMgt->setKeyUp(KEY_PAGEUP);
+        if (key == VK_NEXT) inputMgt->setKeyUp(KEY_PAGEDOWN);
 
         return 0;
     }
     case WM_MOUSEMOVE:
     {
-        iRect viewPort = getViewPort();
-
         float x = GET_X_LPARAM(lParam);
         float y = GET_Y_LPARAM(lParam);
 
@@ -213,6 +215,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         x = GET_X_LPARAM(lParam);
         y = GET_Y_LPARAM(lParam);
 
+        iRect viewPort = getViewPort();
         iVector2f wRange = { viewPort.position.x, viewPort.position.x + viewPort.size.width };
         iVector2f hRange = { viewPort.position.y, viewPort.position.y + viewPort.size.height };
 

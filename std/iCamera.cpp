@@ -2,7 +2,6 @@
 #include"iStd.h"
 
 iCamera::iCamera(iSize& ds, iVector3f pos)
-	:devSize(devSize)
 {
 	position = pos;
 	lookAt = { 0, 0, 1 };
@@ -83,14 +82,14 @@ bool iCamera::onKey(int key, float dt)
 void iCamera::onMouse(iVector2f mousePos, float dt)
 {
 	iVector2f delta = mousePos - prevMp;
-
-	if (delta.magnitudeSqrt() < 800.f * 800.f)
+	
+	if (delta.magnitudeSqrt() < MOUSE_DELTA_MAX_DISTANSE)
 	{
-		hAngle += delta.x * sensitive / 20.f;
+		hAngle += delta.x * sensitive;
 		if (hAngle < 0.f) hAngle = 360.f;
 		else if (hAngle > 360.f) hAngle = 0.f;
 		
-		vAngle += delta.y * sensitive / 20.f;
+		vAngle += delta.y * sensitive;
 		vAngle = max(min(vAngle, 90.f), -90.f);
 	}
 

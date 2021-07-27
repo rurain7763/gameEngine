@@ -1,13 +1,15 @@
-﻿#pragma once
+#pragma once
 
 #include"iVector.h"
 
-#define KEY_W			1
-#define KEY_S			2
-#define KEY_A			4
-#define KEY_D			8
-#define KEY_ESCAPE		16
-#define KEY_P			32
+#define KEY_W				1 
+#define KEY_S				2 
+#define KEY_A				4 
+#define KEY_D				8 
+#define KEY_ESCAPE			16 
+#define KEY_P				32 
+#define KEY_PAGEUP			64 
+#define KEY_PAGEDOWN		128 
 
 typedef unsigned int iKey;
 class iInputManager

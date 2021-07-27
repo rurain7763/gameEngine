@@ -66,19 +66,21 @@ void wrappingCursor(float& x, float& y)
 
     ClipCursor(&clip);
 
-    if (x < 0.f + MOUSE_WRAPPING_MARGIN)
-        SetCursorPos(wndRtInfo.position.x + (wndRtInfo.size.width - MOUSE_WRAPPING_MARGIN),
+    float margin = min(wndRtInfo.size.width, wndRtInfo.size.height) * .04f;
+
+    if (x < 0.f + margin)
+        SetCursorPos(wndRtInfo.position.x + (wndRtInfo.size.width - margin),
             wndRtInfo.position.y + y);
-    else if (x > wndRtInfo.size.width - MOUSE_WRAPPING_MARGIN)
-        SetCursorPos(wndRtInfo.position.x + MOUSE_WRAPPING_MARGIN,
+    else if (x > wndRtInfo.size.width - margin)
+        SetCursorPos(wndRtInfo.position.x + margin,
             wndRtInfo.position.y + y);
 
-    if (y < 0.f + MOUSE_WRAPPING_MARGIN)
+    if (y < 0.f + margin)
         SetCursorPos(wndRtInfo.position.x + x,
-            wndRtInfo.position.y + (wndRtInfo.size.height - MOUSE_WRAPPING_MARGIN));
-    else if (y > wndRtInfo.size.height - MOUSE_WRAPPING_MARGIN)
+            wndRtInfo.position.y + (wndRtInfo.size.height - margin));
+    else if (y > wndRtInfo.size.height - margin)
         SetCursorPos(wndRtInfo.position.x + x,
-            wndRtInfo.position.y + MOUSE_WRAPPING_MARGIN);
+            wndRtInfo.position.y + margin);
 }
 
 void wrapCursor(bool wrap)

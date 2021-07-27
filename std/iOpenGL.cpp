@@ -1,4 +1,4 @@
-﻿#include"iOpenGL.h"
+#include"iOpenGL.h"
 #include"iStd.h"
 
 HGLRC hGlrc;

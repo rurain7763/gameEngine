@@ -6,8 +6,6 @@
 #include"iSize.h"
 #include"iRect.h"
 
-#define MOUSE_WRAPPING_MARGIN		60.f
-
 iRect getWndRectInfo();
 
 void setWndPosInfo(float x, float y);

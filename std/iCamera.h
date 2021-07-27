@@ -3,7 +3,8 @@
 #include"iMatirx.h"
 
 #define DEFAULT_CAMERA_SPEED			10.f
-#define DEFAULT_CAMERA_SENSITIVE		2.f
+#define DEFAULT_CAMERA_SENSITIVE		0.05f
+#define MOUSE_DELTA_MAX_DISTANSE		800.f * 800.f
 
 struct iSize;
 
@@ -18,7 +19,6 @@ public:
 	iMatrix getMatrix();
 
 private:
-	iSize& devSize;
 	iVector2f prevMp;
 	float hAngle;
 	float vAngle;
