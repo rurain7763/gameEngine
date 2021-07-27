@@ -11,6 +11,8 @@
 #include <math.h>
 
 #include "iVector.h"
+#include "iSize.h"
+#include "iRect.h"
 #include "iMatirx.h"
 #include "iQuaternion.h"
 #include "iTransform.h"
@@ -21,17 +23,6 @@
 
 #include "iOpenGL.h"
 #include "iWindows.h"
-
-struct iSize
-{
-	float width, height;
-};
-
-struct iRect
-{
-	iVector2f position;
-	iSize size;
-};
 
 #define ToRadian(degree) degree * M_PI / 180
 #define ToDegree(radian) radian * 180 / M_PI

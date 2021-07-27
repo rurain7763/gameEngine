@@ -8,10 +8,6 @@ HINSTANCE hInst;
 WCHAR szTitle[20];
 WCHAR szWindowClass[20];
 
-static iRect wndRt;
-static bool wrapping;
-static bool run;
-
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -45,17 +41,22 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     hInst = hInstance;
 
-    int monitorW = GetSystemMetrics(SM_CXSCREEN);
-    int monitorH = GetSystemMetrics(SM_CYSCREEN);
+    float monitorW = GetSystemMetrics(SM_CXSCREEN);
+    float monitorH = GetSystemMetrics(SM_CYSCREEN);
     float monitorX = monitorW / 2 - DEV_WIDTH / 2;
     float monitorY = monitorH / 2 - DEV_HEIGHT / 2;
+    
+    if (monitorX < 0.f || monitorY < 0.f)
+    {
+        monitorX = 0.f;
+        monitorY = 0.f;
+    }
 
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        monitorX, monitorY, DEV_WIDTH, DEV_HEIGHT,
+        monitorX, monitorY, monitorW, monitorH,
         nullptr, nullptr, hInstance, nullptr);
 
-    wndRt.position = { monitorX, monitorY };
-    wndRt.size = { DEV_WIDTH,DEV_HEIGHT };
+    setWndRectInfo(monitorX, monitorY, monitorW, monitorH);
     SetCursorPos(monitorX + monitorW / 2, monitorY + monitorH / 2);
 
     HDC hdc = GetDC(hWnd);
@@ -75,10 +76,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
 
-    run = true;
-    wrapping = false;
     loadGame();
-    while (run)
+    while (isContinueApp())
     {
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
@@ -110,7 +109,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         float curW = rt.right - rt.left;
         float curH = rt.bottom - rt.top;
-        wndRt.size = { curW, curH };
+        setWndSizeInfo(curW, curH);        
 
         float ratio = DEV_WIDTH / DEV_HEIGHT;
 
@@ -209,30 +208,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         float x = GET_X_LPARAM(lParam);
         float y = GET_Y_LPARAM(lParam);
 
-        if (wrapping)
-        {
-            RECT clip;
-            clip.left = wndRt.position.x;
-            clip.top = wndRt.position.y;
-            clip.right = wndRt.position.x + wndRt.size.width;
-            clip.bottom = wndRt.position.y + wndRt.size.height;
+        wrappingCursor(x, y);
 
-            ClipCursor(&clip);
-
-            if (x < 0.f + MOUSE_MARGIN)
-                SetCursorPos(wndRt.position.x + (wndRt.size.width - MOUSE_MARGIN),
-                    wndRt.position.y + y);
-            else if (x > wndRt.size.width - MOUSE_MARGIN)
-                SetCursorPos(wndRt.position.x + MOUSE_MARGIN,
-                    wndRt.position.y + y);
-
-            if (y < 0.f + MOUSE_MARGIN)
-                SetCursorPos(wndRt.position.x + x,
-                    wndRt.position.y + (wndRt.size.height - MOUSE_MARGIN));
-            else if (y > wndRt.size.height - MOUSE_MARGIN)
-                SetCursorPos(wndRt.position.x + x,
-                    wndRt.position.y + MOUSE_MARGIN);
-        }
+        x = GET_X_LPARAM(lParam);
+        y = GET_Y_LPARAM(lParam);
 
         iVector2f wRange = { viewPort.position.x, viewPort.position.x + viewPort.size.width };
         iVector2f hRange = { viewPort.position.y, viewPort.position.y + viewPort.size.height };
@@ -249,13 +228,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         float x = LOWORD(lParam);
         float y = HIWORD(lParam);
 
-        wndRt.position = { x,y };
+        setWndPosInfo(x, y);
 
         return 0;
     }
     case WM_CLOSE:
     {
-        run = false;
+        shutDownApp();
         return 0;
     }
     case WM_DESTROY:
@@ -266,30 +245,3 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-void showCursor(bool show)
-{
-    if (show)
-    {
-        while (1)
-        {
-            int n = ShowCursor(true);
-            if (n > -1) break;
-        }
-    }
-    else
-    {
-        while (1)
-        {
-            int n = ShowCursor(false);
-            if (n < 0) break;
-        }
-    }
-}
-
-void wrapCursor(bool wrap)
-{
-    wrapping = wrap;
-    if (!wrap) ClipCursor(nullptr);
-    else SetCursorPos(wndRt.position.x + wndRt.size.width / 2,
-        wndRt.position.y + wndRt.size.height / 2);
-}

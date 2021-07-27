@@ -1,6 +1,5 @@
-﻿#include"Game.h"
+#include"Game.h"
 #include"iStd.h"
-#include"gameEngine.h"
 
 iInputManager* inputMgt;
 iTime* time;
@@ -88,8 +87,8 @@ void drawGame()
 	
 	iTransform transMat;
 	//transMat.scale(isin(degree), 1, 1);
-	transMat.rotate(0, isin(degree), 0);
-	transMat.translate( isin(degree), 0, 5.f );
+	//transMat.rotate(0, isin(degree), 0);
+	//transMat.translate( isin(degree), 0, 5.f );
 
 	iMatrix tvpMat = projMat * viewMat * transMat.getMatrix();
 
@@ -115,7 +114,7 @@ void drawGame()
 
 	if (inputMgt->keyOnce & KEY_P)
 	{
-		showCursor(false);
+		//showCursor(false);
 		wrapCursor(true);
 		cameraMode = true;
 	}
