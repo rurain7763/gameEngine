@@ -33,3 +33,20 @@ float itan(float degree)
 {
 	return tan(ToRadian(degree));
 }
+
+void printBit(unsigned int v)
+{
+	unsigned int b = 0x80000000;
+
+	for (int i = 0; i < 32; i++)
+	{
+		int r = v & b;
+		if (r) printf("1");
+		else printf("0");
+		b >>= 1;
+
+		if (i % 4 == 3) printf(" ");
+	}
+
+	printf("\n");
+}

@@ -31,3 +31,4 @@ char* readFile(const char* path);
 float isin(float degree);
 float icos(float degree);
 float itan(float degree);
+void printBit(unsigned int v);

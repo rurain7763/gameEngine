@@ -43,7 +43,20 @@ iPngReader::iPngReader(const char* path)
 
 			//data
 			{
-				uint32 buffer = 0;
+				iZlibBlock zb;
+				zb.data = compressed;
+				zb.remain = 0;
+				zb.buffer = 0;
+
+				uint8 fin = zb.readBit(1);
+				uint8 method = zb.readBit(2);
+				uint32 hLit = zb.readBit(5) + 257;
+				uint32 hDist = zb.readBit(5) + 1;
+				uint32 hClen = zb.readBit(4) + 4;
+
+				uint8 codeLen = zb.readBit(3);
+
+				int x = 10;
 			}
 
 			uint16 adler32 = (uint16)chunk->data[2 + size];
@@ -129,24 +142,34 @@ uint8* iPngReader::lz77Decode(iLZ77Tuple* tuple, int num)
 	return r;
 }
 
-uint32 iPngReader::readBit(iZlibBlock* zb, int readBit)
+uint32 iZlibBlock::readBit(int readBit)
 {
-	return 12;
-}
+	buffer = 0;
 
-void printBit(uint32 v)
-{
-	uint32 b = 0x80000000;
+	int curCount = (8 - remain) % 8;
+	int curByte = 0;
+	int shift = 0;
+	uint8 start = data[curByte];
+	start >>= curCount;
 
-	for (int i = 0; i < 32; i++)
+	for (int i = 0; i < readBit; i++)
 	{
-		int r = v & b;
-		if(r) printf("1");
-		else printf("0");
-		b >>= 1;
+		if (curCount == 8)
+		{
+			curCount = 0;
+			curByte++;
+			start = data[curByte];
+			shift = 0;
+		}
 
-		if (i % 4 == 3) printf(" ");
+		buffer <<= 1;
+		buffer |= (start & (1 << shift)) >> shift;
+		curCount++;
+		shift++;
 	}
 
-	printf("\n");
+	data = &data[curByte];
+	remain = 8 - curCount;
+
+	return buffer;
 }

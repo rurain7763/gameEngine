@@ -22,6 +22,8 @@ struct iLZ77Tuple
 
 struct iZlibBlock
 {
+	uint32 readBit(int readBit);
+
 	uint8* data;
 	uint32 remain;
 
@@ -38,9 +40,7 @@ public:
 	iChunk* readChunk(uint8* data);
 
 	uint8* lz77Decode(iLZ77Tuple* tuple, int num);
-	uint32 readBit(iZlibBlock* zBlock, int readBit);
 
 public:
 };
 
-void printBit(uint32 v);
