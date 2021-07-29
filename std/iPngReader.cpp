@@ -43,23 +43,11 @@ iPngReader::iPngReader(const char* path)
 
 			//data
 			{
-				iZlibBlock zb;
-				zb.data = compressed;
-				zb.remain = 0;
-				zb.buffer = 0;
-
-				uint8 fin = zb.readBit(1);
-				uint8 method = zb.readBit(2);
-				uint32 hLit = zb.readBit(5) + 257;
-				uint32 hDist = zb.readBit(5) + 1;
-				uint32 hClen = zb.readBit(4) + 4;
-
-				uint8 codeLen = zb.readBit(3);
-
-				int x = 10;
+				
 			}
+			delete[] compressed;
 
-			uint16 adler32 = (uint16)chunk->data[2 + size];
+			uint16 adler32 = bigEndian((uint8*)&chunk->data[2 + size],2);
 		}
 		else // ...
 		{
@@ -70,16 +58,16 @@ iPngReader::iPngReader(const char* path)
 		delete chunk;
 	}
 
-	delete data;
+	delete[] data;
 }
 
 iPngReader::~iPngReader()
 {
 }
 
-int iPngReader::bigEndian(uint8* data, int num)
+uint32 iPngReader::bigEndian(uint8* data, int num)
 {
-	int result = 0;
+	uint32 result = 0;
 
 	for (int i = 0; i < num; i++)
 	{
@@ -128,7 +116,7 @@ uint8* iPngReader::lz77Decode(iLZ77Tuple* tuple, int num)
 	{
 		iLZ77Tuple* t = &tuple[i];
 		
-		left = right - t->dist;
+		left = right - t->distance;
 		for (int j = 0; j < t->length; j++)
 		{
 			r[right] = r[left];
@@ -142,34 +130,44 @@ uint8* iPngReader::lz77Decode(iLZ77Tuple* tuple, int num)
 	return r;
 }
 
+iChunk::~iChunk()
+{
+	delete[] data;
+}
+
+iZlibBlock::iZlibBlock(uint8* s)
+{
+	stream = s;
+	remain = 8;
+	buffer = 0;
+}
+
 uint32 iZlibBlock::readBit(int readBit)
 {
 	buffer = 0;
 
-	int curCount = (8 - remain) % 8;
-	int curByte = 0;
-	int shift = 0;
-	uint8 start = data[curByte];
-	start >>= curCount;
+	uint32 idx = 0;
+	uint8 mask = 0x80;
+	uint32 shift = (8 - remain) % 8;
 
 	for (int i = 0; i < readBit; i++)
 	{
-		if (curCount == 8)
+		if (remain == 0)
 		{
-			curCount = 0;
-			curByte++;
-			start = data[curByte];
+			idx++;
 			shift = 0;
+			remain = 8;
 		}
 
+		uint8 bit = stream[idx] & (mask >> shift);
 		buffer <<= 1;
-		buffer |= (start & (1 << shift)) >> shift;
-		curCount++;
+		buffer |= bit >> (8 - shift - 1);
+		remain--;
 		shift++;
 	}
 
-	data = &data[curByte];
-	remain = 8 - curCount;
+	stream = &stream[idx];
 
 	return buffer;
 }
+

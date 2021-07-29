@@ -3,9 +3,9 @@
 #include"iMatirx.h"
 #include"iQuaternion.h"
 
-#define ELUER			0
-#define QUARTERNION		1
-#define ROTATION_METHOD	QUARTERNION
+#define ELUER						  0
+#define QUARTERNION					  1
+#define ROTATION_METHOD		QUARTERNION
 
 class iTransform
 {

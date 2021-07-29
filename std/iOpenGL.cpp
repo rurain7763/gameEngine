@@ -124,13 +124,13 @@ GLuint createShader(const char* path, bool flag)
 		char* error = new char[errLen+1];
 		glGetShaderInfoLog(id, errLen, NULL, error);
 		printf("Error compiling shader type: '%s'\n", error);
-		delete error;
+		delete[] error;
 
-		delete str;
+		delete[] str;
 		return -1;
 	}
 
-	delete str;
+	delete[] str;
 	return id;
 }
 
@@ -158,7 +158,7 @@ GLuint createProgram(GLuint vert, GLuint frag)
 		char* error = new char[errLen + 1];
 		glGetProgramInfoLog(id, errLen, NULL, error);
 		printf("Error linking shader program: '%s'\n", error);
-		delete error;
+		delete[] error;
 
 		return -1;
 	}

@@ -1,4 +1,4 @@
-﻿#include"iVector.h"
+#include"iVector.h"
 #include"iStd.h"
 
 //========================================
@@ -59,6 +59,7 @@ iVector3f& iVector3f::operator+=(const iVector3f& v)
 
 	return *this;
 }
+
 iVector3f& iVector3f::operator-=(const iVector3f& v)
 {
 	x -= v.x;

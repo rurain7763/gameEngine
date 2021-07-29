@@ -53,8 +53,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        monitorX, monitorY, DEV_WIDTH, DEV_HEIGHT,
-        nullptr, nullptr, hInstance, nullptr);
+                              monitorX, monitorY, DEV_WIDTH, DEV_HEIGHT,
+                              nullptr, nullptr, hInstance, nullptr);
 
     setWndRectInfo(monitorX, monitorY, DEV_WIDTH, DEV_HEIGHT);
     SetCursorPos(monitorX + monitorW / 2, monitorY + monitorH / 2);
@@ -71,6 +71,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
+
+#ifndef _DEBUG
+    SetWindowPos(hWnd, HWND_TOPMOST,
+                 0, 0, 0, 0,
+                 SWP_SHOWWINDOW | SWP_NOSIZE | SWP_NOMOVE);
+#endif
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_GAMEENGINE));
 

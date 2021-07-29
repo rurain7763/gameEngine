@@ -47,7 +47,7 @@ void loadGame()
 	camera = new iCamera(*devSize, { 0.f, 0.f, -5.f });
 	cameraMode = false;
 
-	iPngReader png("assets/test/sample2.png");
+	iPngReader png("assets/test/sample.png");
 }
 
 void drawGame()

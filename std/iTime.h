@@ -1,7 +1,5 @@
 #pragma once
 
-void updateDt();
-
 class iTime
 {
 private:

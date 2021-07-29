@@ -6,6 +6,7 @@ typedef unsigned int	uint32;
 
 struct iChunk
 {
+	~iChunk();
 	char type[5];
 
 	uint32 len;
@@ -15,16 +16,17 @@ struct iChunk
 
 struct iLZ77Tuple
 {
-	uint8 dist;
+	uint8 distance;
 	uint8 length;
 	uint8 lit;
 };
 
 struct iZlibBlock
 {
+	iZlibBlock(uint8* stream);
 	uint32 readBit(int readBit);
 
-	uint8* data;
+	uint8* stream;
 	uint32 remain;
 
 	uint32 buffer;
@@ -36,7 +38,7 @@ public:
 	iPngReader(const char* path);
 	virtual ~iPngReader();
 
-	int bigEndian(uint8* data, int num);
+	uint32 bigEndian(uint8* data, int num);
 	iChunk* readChunk(uint8* data);
 
 	uint8* lz77Decode(iLZ77Tuple* tuple, int num);
