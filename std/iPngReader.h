@@ -27,9 +27,16 @@ struct iZlibBlock
 	uint32 readBit(int readBit);
 
 	uint8* stream;
-	uint32 remain;
 
 	uint32 buffer;
+	uint32 remain;
+};
+
+struct iHuffCode
+{
+	uint32 code = -1;
+	uint8 bitCount = -1;
+	char c = -1;
 };
 
 class iPngReader
@@ -41,7 +48,11 @@ public:
 	uint32 bigEndian(uint8* data, int num);
 	iChunk* readChunk(uint8* data);
 
-	uint8* lz77Decode(iLZ77Tuple* tuple, int num);
+	uint8* decodeLz77(iLZ77Tuple* tuple, int num);
+	iHuffCode* makeHuffCode(uint8* length, int num);
+	uint8* decodeHuffman(iHuffCode* code, int codeNum,
+						 iZlibBlock* stream, int bitNum,
+						 int maxBit);
 
 public:
 };

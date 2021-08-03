@@ -43,8 +43,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     float monitorW = GetSystemMetrics(SM_CXSCREEN);
     float monitorH = GetSystemMetrics(SM_CYSCREEN);
-    float monitorX = monitorW / 2 - DEV_WIDTH / 2;
-    float monitorY = monitorH / 2 - DEV_HEIGHT / 2;
+    float monitorX = monitorW / 2 - monitorW / 4;
+    float monitorY = monitorH / 2 - monitorH / 4;
     
     if (monitorX < 0.f || monitorY < 0.f)
     {
@@ -52,12 +52,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         monitorY = 0.f;
     }
 
+    float halfW = monitorW / 2.f;
+    float halfH = monitorH / 2.f;
+
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-                              monitorX, monitorY, DEV_WIDTH, DEV_HEIGHT,
+                              monitorX, monitorY, halfW, halfH,
                               nullptr, nullptr, hInstance, nullptr);
 
-    setWndRectInfo(monitorX, monitorY, DEV_WIDTH, DEV_HEIGHT);
-    SetCursorPos(monitorX + monitorW / 2, monitorY + monitorH / 2);
+    setWndRectInfo(monitorX, monitorY, halfW, halfH);
+    SetCursorPos(monitorX + halfW / 2, monitorY + halfH / 2);
 
     HDC hdc = GetDC(hWnd);
 
