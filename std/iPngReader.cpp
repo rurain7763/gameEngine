@@ -43,18 +43,66 @@ iPngReader::iPngReader(const char* path)
 
 			//data
 			{
-				uint8 length[] = { 4, 2, 1, 4, 3 };
-
 				iZlibBlock zBlock(compressed);
 
 				uint8 fin = zBlock.readBit(1);
-
 				// 0 : compressed x / 1 : fixed huffman 
 				// 2 : dynamic huffman / 3 : error
 				uint8 compressed = zBlock.readBit(2);
-				uint32 lit = zBlock.readBit(5);
-				uint32 dist = zBlock.readBit(5);
-				uint32 len = zBlock.readBit(4);
+
+				uint32 lit = zBlock.readBit(5) + 257;
+				uint32 dist = zBlock.readBit(5) + 1;
+				uint32 len = zBlock.readBit(4) + 4;
+
+				uint8 order[] = { 16, 17, 18, 0, 8, 7, 9, 6, 
+								  10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
+				uint8 firstHuffTreeLen[19];
+				memset(firstHuffTreeLen, 0, sizeof(uint8) * 19);
+
+				for (int i = 0; i < len; i++)				
+					firstHuffTreeLen[order[i]] = zBlock.readBit(3);
+				
+				iHuffCode* firstCode = makeHuffCode(firstHuffTreeLen, len);
+
+				int twoHuffTreeLenSize = lit + dist;
+				uint8* twoHuffTreeLen = new uint8[twoHuffTreeLenSize];
+
+				int curReadLen = 0;
+				while (curReadLen < twoHuffTreeLenSize)
+				{
+					int v = decodeHuffman(firstCode, len, &zBlock);
+
+					int repeatValue = 0;
+					int repeat = 0;
+
+					if (v < 16)
+					{
+						twoHuffTreeLen[curReadLen] = v;
+						curReadLen++;
+						continue;
+					}
+					else if (v == 16)
+					{
+						repeat = zBlock.readBit(2) + 3;
+						repeatValue = twoHuffTreeLen[curReadLen - 1];
+					}
+					else if (v == 17)
+					{
+						repeat = zBlock.readBit(3) + 3;
+					}
+					else if (v == 18)
+					{
+						repeat = zBlock.readBit(7) + 11;
+					}
+
+					for (int i = 0; i < repeat; i++)
+					{
+						twoHuffTreeLen[curReadLen] = repeatValue;
+						curReadLen++;
+					}
+				}
+
+				int x = 10;
 			}
 
 			delete[] compressed;
@@ -144,113 +192,101 @@ uint8* iPngReader::decodeLz77(iLZ77Tuple* tuple, int num)
 
 iHuffCode* iPngReader::makeHuffCode(uint8* length, int num)
 {
-	int maxBit = -1;
-
 	iHuffCode* r = new iHuffCode[num];
 	for (int i = 0; i < num; i++)
 	{
-		if (r[length[i] - 1].c == -1)
-		{
-			r[length[i] - 1].code = -1;
-			r[length[i] - 1].bitCount = length[i];
-			r[length[i] - 1].c = 'a' + i;
-		}
-		else
-		{
-			r[length[i]].code = -1;
-			r[length[i]].bitCount = length[i];
-			r[length[i]].c = 'a' + i;
-		}
-
-		maxBit = max(maxBit, length[i]);
+		iHuffCode* hc = &r[i];
+		hc->c = 'a' + i;
+		hc->code = -1;
+		hc->bitCount = length[i];
 	}
 
-	uint32* lastCode = new uint32[maxBit];
-	memset(lastCode, -1, sizeof(uint32) * maxBit);
-	r[0].code = 0;
-	lastCode[0] = 0;
+	for (int i = num - 1; i > -1; i--)
+	{
+		for (int j = 0; j < i; j++)
+		{
+			if (r[j].bitCount > r[j + 1].bitCount)
+			{
+				iHuffCode copy = r[j];
+				r[j] = r[j + 1];
+				r[j + 1] = copy;
+			}
+			else if (r[j].bitCount == r[j + 1].bitCount)
+			{
+				if (r[j].c > r[j + 1].c)
+				{
+					iHuffCode copy = r[j];
+					r[j] = r[j + 1];
+					r[j + 1] = copy;
+				}
+			}
+		}
+	}
 
-	for (int i = 1; i < num; i++)
+#if 1
+	iHuffCode test[19];
+	memcpy(test, r, sizeof(iHuffCode) * 19);
+#endif
+
+	uint32 prevCode = -1;
+	int prevBitNum = -1;
+
+	for (int i = 0; i < num; i++)
 	{
 		iHuffCode* c = &r[i];
-		int idx = c->bitCount - 1;
 
-		if (lastCode[idx] == -1)	
-			c->code = lastCode[idx - 1] + 1 << 1;		
-		else
-			c->code = lastCode[idx] + 1;
+		if (prevBitNum != c->bitCount)		
+			c->code = (prevCode + 1) << 1;		
+		else		
+			c->code = prevCode + 1;
 		
-		lastCode[idx] = c->code;
+		prevCode = c->code;
+		prevBitNum = c->bitCount;
 	}
-
-	delete[] lastCode;
 
 	return r;
 }
 
-uint8* iPngReader::decodeHuffman(iHuffCode* code, int codeNum, 
-								 iZlibBlock* stream, int bitNum, 
-								 int maxBit)
+uint32 iPngReader::decodeHuffman(iHuffCode* code, int codeNum, 
+								 iZlibBlock* stream)
 {
-	uint32 v = 0;
-	int count = maxBit;
-	int loop = 0;
+	int maxBit = code[codeNum - 1].bitCount;
 
-	uint8* buffer = new uint8[1024];
-	int size = 1024;
-	int bufferIdx = 0;
+	uint32 v = stream->readBit(maxBit);
+	int i,j;
 
-	while (loop < bitNum)
+	for (i = 0; i < codeNum; i++)
 	{
-		v |= stream->readBit(count) << maxBit - count;
-
-		for (int i = 0; i < codeNum; i++)
-		{
-			bool find = true;
-			count = code[i].bitCount;
+		bool find = true;
+		int count = code[i].bitCount;
 			
-			int shift = count - 1;
-			int leftMask = 1;
-			int rightMask = 1 << shift;
+		int shift = count - 1;
+		int leftMask = 1;
+		int rightMask = 1 << shift;
 
-			for (int j = 0; j < count; j++)
+		for (j = 0; j < count; j++)
+		{
+			int left = (v & leftMask << j) >> j;
+			int right = (code[i].code & rightMask >> j) >> (shift - j);
+
+			if (left != right)
 			{
-				int left = (v & leftMask << j) >> j;
-				int right = (code[i].code & rightMask >> j) >> (shift - j);
-
-				if (left != right)
-				{
-					find = false;
-					break;
-				}
-			}
-
-			if (find)
-			{
-				if (bufferIdx >= size)
-				{
-					uint8* copy = new uint8[size += 100];
-					memcpy(copy, buffer, sizeof(uint8) * bufferIdx);
-					delete[] buffer;
-					buffer = copy;
-				}
-
-				buffer[bufferIdx] = code[i].c;
-				bufferIdx++;
-
-				loop += count;
-				v >>= count;
+				find = false;
 				break;
 			}
 		}
+
+		if (count != 0 && find)
+		{
+			uint32 reUse = v >> code[j].bitCount;
+			stream->buffer <<= code[j].bitCount;
+			stream->buffer |= reUse;
+			stream->remain += code[j].bitCount;
+			return code[j].code;
+		}
 	}
 
-	uint8* r = new uint8[bufferIdx + 1];
-	memcpy(r, buffer, sizeof(uint8) * bufferIdx);
-	r[bufferIdx] = 0;
-	delete[] buffer;
-
-	return r;
+	return 0;
 }
 
 iChunk::~iChunk()

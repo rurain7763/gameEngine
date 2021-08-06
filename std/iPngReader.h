@@ -50,9 +50,8 @@ public:
 
 	uint8* decodeLz77(iLZ77Tuple* tuple, int num);
 	iHuffCode* makeHuffCode(uint8* length, int num);
-	uint8* decodeHuffman(iHuffCode* code, int codeNum,
-						 iZlibBlock* stream, int bitNum,
-						 int maxBit);
+	uint32 decodeHuffman(iHuffCode* code, int codeNum,
+						 iZlibBlock* stream);
 
 public:
 };
