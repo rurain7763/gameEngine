@@ -34,6 +34,13 @@ float itan(float degree)
 	return tan(ToRadian(degree));
 }
 
+void swap(int& left, int& right)
+{
+	int copy = left;
+	left = right;
+	right = copy;
+}
+
 void printBit(unsigned int v)
 {
 	unsigned int b = 0x80000000;

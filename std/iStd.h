@@ -20,6 +20,7 @@
 #include "iInputManager.h"
 #include "iTime.h"
 #include "iPngReader.h"
+#include "iTree.h"
 
 #include "iOpenGL.h"
 #include "iWindows.h"
@@ -31,4 +32,5 @@ char* readFile(const char* path);
 float isin(float degree);
 float icos(float degree);
 float itan(float degree);
+void swap(int& left, int& right);
 void printBit(unsigned int v);

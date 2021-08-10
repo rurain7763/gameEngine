@@ -1,26 +1,27 @@
 #pragma once
 
-#define BLANK_SYMBOL	0
+#define MIN_HEAP			  0	
+#define MAX_HEAP			  1
+#define DEFAULT_HEAP_SIZE	 20
+#define NONE_DATA			 -1
 
-struct iHuffmanNode
-{
-	int idx;
-	short symbol;
-	short weight;
-	iHuffmanNode* left;
-	iHuffmanNode* right;
-};
+typedef bool Flag;
 
-class iHuffmanTree
+class iHeap
 {
 public:
-	iHuffmanTree();
-	virtual ~iHuffmanTree();
+	iHeap(Flag flag);
+	virtual ~iHeap();
 
-	char searchSymbol(char* code);
-	char* searchCode();
+	void insert(unsigned int data);
+	int pop();
+
+private:
+	Flag flag;
+	int size;
+	int* data;
 
 public:
-	iHuffmanNode* seed;
+	int dataNum;
+	int height;
 };
-

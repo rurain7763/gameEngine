@@ -49,7 +49,7 @@ public:
 	iChunk* readChunk(uint8* data);
 
 	uint8* decodeLz77(iLZ77Tuple* tuple, int num);
-	iHuffCode* makeHuffCode(uint8* length, int num);
+	int makeHuffCode(iHuffCode*& code, int num);
 	uint32 decodeHuffman(iHuffCode* code, int codeNum,
 						 iZlibBlock* stream);
 
