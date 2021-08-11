@@ -1,25 +1,28 @@
 #pragma once
 
-#define MIN_HEAP			  0	
-#define MAX_HEAP			  1
 #define DEFAULT_HEAP_SIZE	 20
-#define NONE_DATA			 -1
 
 typedef bool Flag;
+typedef bool (*iHeapCompareMethod)(void* left, void* right);
+
+struct iHeapData
+{
+	void* data;
+};
 
 class iHeap
 {
 public:
-	iHeap(Flag flag);
+	iHeap(iHeapCompareMethod compare);
 	virtual ~iHeap();
 
-	void insert(unsigned int data);
-	int pop();
+	void insert(void* data);
+	void* pop();
 
 private:
-	Flag flag;
+	iHeapCompareMethod compare;
 	int size;
-	int* data;
+	iHeapData* data;
 
 public:
 	int dataNum;

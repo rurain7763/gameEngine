@@ -1,12 +1,11 @@
 #include"iTree.h"
 #include"iStd.h"
 
-iHeap::iHeap(Flag f)
+iHeap::iHeap(iHeapCompareMethod c)
 {
-	flag = f;
-	data = new int[DEFAULT_HEAP_SIZE];
+	compare = c;
 	size = DEFAULT_HEAP_SIZE;
-	memset(data, NONE_DATA, sizeof(int) * DEFAULT_HEAP_SIZE);
+	data = new iHeapData[DEFAULT_HEAP_SIZE];
 	dataNum = 0;
 	height = 0;
 }
@@ -16,86 +15,34 @@ iHeap::~iHeap()
 	delete[] data;
 }
 
-void iHeap::insert(unsigned int d)
+void iHeap::insert(void* d)
 {
 	if (dataNum >= size)
 	{
-		int* copy = new int[size += DEFAULT_HEAP_SIZE];
-		memset(copy, NONE_DATA, sizeof(int) * size);
-		memcpy(copy, data, sizeof(int) * dataNum);
+		iHeapData* copy = new iHeapData[size += DEFAULT_HEAP_SIZE];
+		memcpy(copy, data, sizeof(iHeapData) * dataNum);
 		delete[] data;
 		data = copy;
 	}
 
-	data[dataNum] = d;
+	data[dataNum].data = d;
 
 	int idx = dataNum;
+	int parentIdx;
 
 	while (idx != 0)
 	{
-		if (idx % 2)
-		{
-			// left
-			int parentIdx = idx / 2;
+		if (idx % 2) parentIdx = idx / 2;
+		else parentIdx = idx / 2 - 1;
 
-			if (flag)
-			{
-				//max
-				if (data[parentIdx] < data[idx])
-				{
-					swap(data[parentIdx], data[idx]);
-					idx = parentIdx;
-				}
-				else
-				{
-					break;
-				}
-			}
-			else
-			{
-				//min
-				if (data[parentIdx] > data[idx])
-				{
-					swap(data[parentIdx], data[idx]);
-					idx = parentIdx;
-				}
-				else
-				{
-					break;
-				}
-			}
+		if (compare(data[parentIdx].data, data[idx].data))
+		{
+			swap(&data[parentIdx], &data[idx], sizeof(iHeapData));
+			idx = parentIdx;
 		}
 		else
 		{
-			// right
-			int parentIdx = idx / 2 - 1;
-
-			if (flag)
-			{
-				//max
-				if (data[parentIdx] < data[idx])
-				{
-					swap(data[parentIdx], data[idx]);
-					idx = parentIdx;
-				}
-				else
-				{
-					break;
-				}
-			}
-			else
-			{
-				//min
-				if (data[parentIdx] > data[idx])
-				{
-					swap(data[parentIdx], data[idx]);
-					idx = parentIdx;
-				}
-				else
-				{
-					break;
-				}
-			}
+			break;
 		}
 	}
 
@@ -103,15 +50,15 @@ void iHeap::insert(unsigned int d)
 	height = floor(log2(dataNum)) + 1;
 }
 
-int iHeap::pop()
+void* iHeap::pop()
 {
-	if (dataNum < 1) return NONE_DATA;
+	if (dataNum < 1) return NULL;
 
-	int r = data[0];
+	void* r = data[0].data;
 
 	dataNum--;
 	data[0] = data[dataNum];
-	data[dataNum] = NONE_DATA;
+	data[dataNum].data = NULL;
 	height = floor(log2(dataNum)) + 1;
 
 	int idx = 0;
@@ -122,74 +69,35 @@ int iHeap::pop()
 		int left = idx * 2 + 1;
 		int right = idx * 2 + 2;
 
-		if (flag)
+		if (left >= dataNum)
 		{
-			//max
-			if (data[left] == NONE_DATA)
+			break;
+		}
+		else if (right >= dataNum)
+		{
+			if (compare(data[idx].data, data[left].data))
 			{
-				break;
-			}
-			else if (data[right] == NONE_DATA)
-			{
-				if (data[left] > data[idx])
-				{
-					swap(data[left], data[idx]);
-					idx = left;
-				}
-			}
-			else
-			{
-				if (data[left] > data[right] &&
-					data[left] > data[idx])
-				{
-					swap(data[left], data[idx]);
-					idx = left;
-				}
-				else if (data[left] < data[right] &&
-						 data[right] > data[idx])
-				{
-					swap(data[right], data[idx]);
-					idx = right;
-				}
-				else
-				{
-					break;
-				}
+				swap(&data[left], &data[idx], sizeof(iHeapData));
+				idx = left;
 			}
 		}
 		else
 		{
-			//min
-			if (data[left] == NONE_DATA)
+			if (compare(data[right].data, data[left].data) &&
+				compare(data[idx].data, data[left].data))
 			{
-				break;
+				swap(&data[left], &data[idx], sizeof(iHeapData));
+				idx = left;
 			}
-			else if (data[right] == NONE_DATA)
+			else if (compare(data[left].data, data[right].data) &&
+					 compare(data[idx].data, &data[right].data))
 			{
-				if (data[left] < data[idx])
-				{
-					swap(data[left], data[idx]);
-					idx = left;
-				}
+				swap(&data[right], &data[idx], sizeof(iHeapData));
+				idx = right;
 			}
 			else
 			{
-				if (data[left] < data[right] &&
-					data[left] < data[idx])
-				{
-					swap(data[left], data[idx]);
-					idx = left;
-				}
-				else if (data[left] > data[right] &&
-						 data[right] < data[idx])
-				{			
-					swap(data[right], data[idx]);
-					idx = right;
-				}
-				else
-				{
-					break;
-				}
+				break;
 			}
 		}
 
@@ -198,3 +106,5 @@ int iHeap::pop()
 
 	return r;
 }
+
+

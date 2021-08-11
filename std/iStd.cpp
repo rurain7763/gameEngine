@@ -34,11 +34,14 @@ float itan(float degree)
 	return tan(ToRadian(degree));
 }
 
-void swap(int& left, int& right)
+void swap(void* left, void* right, int argSize)
 {
-	int copy = left;
-	left = right;
-	right = copy;
+	char* copy = new char[argSize];
+	memcpy(copy, left, argSize);
+	memcpy(left, right, argSize);
+	memcpy(right, copy, argSize);
+
+	delete[] copy;
 }
 
 void printBit(unsigned int v)
@@ -56,4 +59,9 @@ void printBit(unsigned int v)
 	}
 
 	printf("\n");
+}
+
+int random()
+{
+	return rand();
 }

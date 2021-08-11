@@ -2,7 +2,7 @@
 #include"iStd.h"
 
 iInputManager* inputMgt;
-iTime* time;
+iTime* timeMgt;
 iCamera* camera;
 bool cameraMode;
 iSize* devSize;
@@ -17,8 +17,9 @@ GLuint program;
 
 void loadGame()
 {
+	srand(time(NULL));
 	inputMgt = iInputManager::share();
-	time = iTime::share();
+	timeMgt = iTime::share();
 
 	devSize = new iSize;
 	devSize->width = DEV_WIDTH;
@@ -48,12 +49,28 @@ void loadGame()
 	cameraMode = false;
 
 	iPngReader png("assets/test/sample2.png");
+
+	iHeap heap([](void* x, void* y) { return *(int*)x < *(int*)y; });
+
+	int x[10];
+	for (int i = 0; i < 10; i++)
+	{
+		x[i] = random() % 100;
+		heap.insert(&x[i]);
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		printf("%d ", *(int*)heap.pop());
+	}
+
+	int y = 10;
 }
 
 void drawGame()
 {
 	static float degree = 0.f;
-	degree += time->deltaTime * 50.f;
+	degree += timeMgt->deltaTime * 50.f;
 
 	glUseProgram(program);
 
@@ -128,11 +145,11 @@ void drawGame()
 
 	if (cameraMode)
 	{
-		camera->onKey(inputMgt->keyDown, time->deltaTime);
-		camera->onMouse(inputMgt->mousePos, time->deltaTime);
+		camera->onKey(inputMgt->keyDown, timeMgt->deltaTime);
+		camera->onMouse(inputMgt->mousePos, timeMgt->deltaTime);
 	}
 
-	time->update();
+	timeMgt->update();
 	inputMgt->update();
 }
 
@@ -147,7 +164,7 @@ void endGame()
 	deleteProgram(program);
 
 	delete inputMgt;
-	delete time;
+	delete timeMgt;
 	delete devSize;
 	delete camera;
 }

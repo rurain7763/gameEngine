@@ -9,6 +9,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 
 #include "iVector.h"
 #include "iSize.h"
@@ -32,5 +33,6 @@ char* readFile(const char* path);
 float isin(float degree);
 float icos(float degree);
 float itan(float degree);
-void swap(int& left, int& right);
+void swap(void* left, void* right, int argSize);
 void printBit(unsigned int v);
+int random();
