@@ -49,22 +49,6 @@ void loadGame()
 	cameraMode = false;
 
 	iPngReader png("assets/test/sample2.png");
-
-	iHeap heap([](void* x, void* y) { return *(int*)x < *(int*)y; });
-
-	int x[10];
-	for (int i = 0; i < 10; i++)
-	{
-		x[i] = random() % 100;
-		heap.insert(&x[i]);
-	}
-
-	for (int i = 0; i < 10; i++)
-	{
-		printf("%d ", *(int*)heap.pop());
-	}
-
-	int y = 10;
 }
 
 void drawGame()

@@ -90,7 +90,7 @@ void* iHeap::pop()
 				idx = left;
 			}
 			else if (compare(data[left].data, data[right].data) &&
-					 compare(data[idx].data, &data[right].data))
+					 compare(data[idx].data, data[right].data))
 			{
 				swap(&data[right], &data[idx], sizeof(iHeapData));
 				idx = right;
