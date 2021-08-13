@@ -16,9 +16,9 @@ struct iChunk
 
 struct iLZ77Tuple
 {
-	uint8 distance;
-	uint8 length;
-	uint8 lit;
+	uint32 distance;
+	uint32 length;
+	uint32 lit;
 };
 
 struct iZlibBlock
@@ -36,7 +36,7 @@ struct iHuffCode
 {
 	uint32 code = -1;
 	uint8 bitCount = -1;
-	char c = -1;
+	uint32 c = -1;
 };
 
 class iPngReader
@@ -49,7 +49,7 @@ public:
 	iChunk* readChunk(uint8* data);
 
 	uint8* decodeLz77(iLZ77Tuple* tuple, int num);
-	int makeHuffCode(iHuffCode*& code, int num);
+	void makeHuffCode(iHuffCode*& code, uint32& num);
 	iHuffCode decodeHuffman(iHuffCode* code, int codeNum,
 						 iZlibBlock* stream);
 

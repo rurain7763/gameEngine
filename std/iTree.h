@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEFAULT_HEAP_SIZE	 20
+#define DEFAULT_HEAP_SIZE	 300
 
 typedef bool Flag;
 typedef bool (*iHeapCompareMethod)(void* left, void* right);
