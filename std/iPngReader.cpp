@@ -1,49 +1,40 @@
 #include"iPngReader.h"
 #include"iStd.h"
 
-iPngReader::iPngReader(const char* path)
+iPngReader* iPngReader::S = NULL;
+
+iPngReader::iPngReader()
 {
-	char* data = readFile(path);
-
-	char png[4] = { 0 };
-	memcpy(png, &data[1], sizeof(char) * 3);
-
-	if (strcmp(png, "PNG"))
+	litDistBitLengthOrder = new uint8[]
 	{
-		delete data;
-		return;
-	}
-
-	uint8 ldOrder[] = 
-	{ 
 		16, 17, 18, 0, 8, 7, 9,
 		6, 10, 5, 11, 4, 12, 3,
-		13, 2, 14, 1, 15 
+		13, 2, 14, 1, 15
 	};
 
-	uint32 lenBase[] = 
+	lz77LengthBaseLen = new uint32[]
 	{
 		3, 4, 5, 6, 7, 8, 9, 10, //257 - 264
 		11, 13, 15, 17,          //265 - 268
-		19, 23, 27, 31,          //269 - 273 
+		19, 23, 27, 31,          //269 - 273
 		35, 43, 51, 59,          //274 - 276
 		67, 83, 99, 115,         //278 - 280
 		131, 163, 195, 227,      //281 - 284
 		258                      //285
 	};
 
-	uint8 lenExtraBit[] = 
+	lz77LengthExtraBit = new uint8[]
 	{
 		0, 0, 0, 0, 0, 0, 0, 0, //257 - 264
 		1, 1, 1, 1,				//265 - 268
-		2, 2, 2, 2,				//269 - 273 
+		2, 2, 2, 2,				//269 - 273
 		3, 3, 3, 3,				//274 - 276
 		4, 4, 4, 4,				//278 - 280
 		5, 5, 5, 5,				//281 - 284
 		0						//285
 	};
 
-	uint32 distBase[] = 
+	lz77DistBaseLen = new uint32[]
 	{
 		/*0*/	1, 2, 3, 4,    //0-3
 		/*1*/	5, 7,          //4-5
@@ -62,7 +53,8 @@ iPngReader::iPngReader(const char* path)
 				0   , 0        //30-31
 	};
 
-	uint32 distExtraBit[] = {
+	lz77DistExtraBit = new uint32[]
+	{
 		/*0*/	0, 0, 0, 0, //0-3
 		/*1*/	1, 1,       //4-5
 		/*2*/	2, 2,       //6-7
@@ -77,8 +69,37 @@ iPngReader::iPngReader(const char* path)
 		/*11*/	11, 11,     //24-25
 		/*12*/	12, 12,     //26-27
 		/*13*/	13, 13,     //28-29
-				0 , 0	    //30-31 
+				0 , 0		//30-31
 	};
+}
+
+iPngReader::~iPngReader()
+{
+	delete[] litDistBitLengthOrder;
+	delete[] lz77LengthBaseLen;
+	delete[] lz77LengthExtraBit; 
+	delete[] lz77DistBaseLen;
+	delete[] lz77DistExtraBit;
+}
+
+iPngReader* iPngReader::share()
+{
+	if (!S) S = new iPngReader();
+	return S;
+}
+
+void* iPngReader::readPng(const char* path)
+{
+	char* data = readFile(path);
+
+	char png[4] = { 0 };
+	memcpy(png, &data[1], sizeof(char) * 3);
+
+	if (strcmp(png, "PNG"))
+	{
+		delete[] data;
+		return NULL;
+	}
 
 	int step = 8;
 
@@ -102,177 +123,11 @@ iPngReader::iPngReader(const char* path)
 		{
 			uint8 compression = chunk->data[0];
 			uint8 flag = chunk->data[1];
+			
+			uint8* result = readZLib(&chunk->data[2]);
+			delete result;
 
-			int size = chunk->len - 1 - 1 - 2;
-			uint8* compressed = new uint8[size];
-			memcpy(compressed, &chunk->data[2], sizeof(uint8) * size);
-
-			//data
-			{
-				iZlibBlock zBlock(compressed);
-
-				uint8 fin = zBlock.readBit(1);
-				// 0 : compressed x / 1 : fixed huffman 
-				// 2 : dynamic huffman / 3 : error
-				uint8 compressed = zBlock.readBit(2);
-
-				//============================== data
-				uint32 lenLit = zBlock.readBit(5) + 257;
-				uint32 lenDist = zBlock.readBit(5) + 1;
-				uint32 lenLD = zBlock.readBit(4) + 4;
-
-				iHuffCode* ldCode = new iHuffCode[lenLD];
-				
-				for (int i = 0; i < lenLD; i++)
-				{
-					iHuffCode* hc = &ldCode[i];
-					hc->c = ldOrder[i];
-					hc->bitCount = zBlock.readBit(3);
-				}
-
-				makeHuffCode(ldCode, lenLD);
-
-				iHuffCode* litHuffCode = new iHuffCode[lenLit];
-				iHuffCode* distHuffCode = new iHuffCode[lenDist];
-				uint32 curReadLen = 0;
-				uint32 prev = 0;
-				uint8 symbol = 0;
-				int repeat = 0;
-
-				uint32 numldHuffTree = lenLit + lenDist;
-				while (curReadLen < numldHuffTree)
-				{
-					iHuffCode v = decodeHuffman(ldCode, lenLD, &zBlock);
-
-					if (v.c <= 15)
-					{
-						symbol = v.c;
-						repeat = 1;
-					}
-					else if (v.c == 16)
-					{
-						symbol = prev;
-						repeat = 3 + zBlock.readBit(2);			
-					}
-					else if (v.c == 17)
-					{
-						symbol = 0;
-						repeat = 3 + zBlock.readBit(3);
-					}
-					else if (v.c == 18)
-					{
-						symbol = 0;
-						repeat = 11 + zBlock.readBit(7);						
-					}
-
-					for (int i = 0; i < repeat; i++)
-					{
-						if (curReadLen < lenLit)
-						{
-							int idx = curReadLen;
-							litHuffCode[idx].bitCount = symbol;
-							litHuffCode[idx].c = idx;
-						}
-						else
-						{
-							int idx = curReadLen - lenLit;
-							distHuffCode[idx].bitCount = symbol;
-							distHuffCode[idx].c = idx;
-						}
-
-						printf("(%d:%d) ", v.c, symbol);
-
-						curReadLen++;
-					}
-
-					prev = symbol;
-				}
-
-				makeHuffCode(litHuffCode, lenLit);
-				makeHuffCode(distHuffCode, lenDist);
-
-#if 1
-				iHuffCode test[171];
-				memcpy(test, litHuffCode, sizeof(iHuffCode)* lenLit);
-
-				uint32 tcodenum = 5;
-				iHuffCode* tcode = new iHuffCode[tcodenum];
-
-				tcode[0].bitCount = 4;
-				tcode[0].c = 'a';
-
-				tcode[1].bitCount = 2;
-				tcode[1].c = 'b';
-
-				tcode[2].bitCount = 1;
-				tcode[2].c = 'c';
-
-				tcode[3].bitCount = 4;
-				tcode[3].c = 'd';
-
-				tcode[4].bitCount = 3;
-				tcode[4].c = 'e';
-
-				makeHuffCode(tcode, tcodenum);
-
-				iHuffCode tcodeTest[5];
-				memcpy(tcodeTest, tcode, sizeof(iHuffCode) * tcodenum);
-
-				uint8 testStream[] = { 191 , 123 };
-				iZlibBlock tblock(testStream);
-
-				for (int i = 0; i < 4; i++)
-				{
-					iHuffCode v = decodeHuffman(tcode, tcodenum, &tblock);
-					printf("%c ", v.c);
-				}
-
-				delete[] tcode;
-#endif
-
-				int resultIdx = 0;
-
-				while (1)
-				{
-					if (resultIdx == 6)
-					{
-						int x = 10;
-					}
-
-					iHuffCode hc = decodeHuffman(litHuffCode, lenLit, &zBlock);
-					
-					if (hc.c == 256)
-					{
-						break;
-					}
-					else if (hc.c < 257)
-					{
-						//result[resultIdx] = hc.c;
-						printf("%d ", hc.c);
-						resultIdx++;
-					}
-					else
-					{
-						iLZ77Tuple tuple;
-
-						int lenIdx = hc.c - 257;
-						tuple.length = lenBase[lenIdx] + zBlock.readBit(lenExtraBit[lenIdx]);
-
-						iHuffCode dc = decodeHuffman(distHuffCode, lenDist, &zBlock);
-						tuple.distance = distBase[dc.c] + zBlock.readBit(distExtraBit[dc.c]);
-
-						resultIdx++;
-					}
-				}
-
-				delete[] ldCode;
-				delete[] litHuffCode;
-				delete[] distHuffCode;
-			}
-
-			delete[] compressed;
-
-			uint16 adler32 = bigEndian((uint8*)&chunk->data[2 + size], 2);
+			uint16 adler32 = bigEndian((uint8*)&chunk->data[chunk->len - 2], 2);
 		}
 		else // ...
 		{
@@ -284,10 +139,8 @@ iPngReader::iPngReader(const char* path)
 	}
 
 	delete[] data;
-}
 
-iPngReader::~iPngReader()
-{
+	return NULL;
 }
 
 uint32 iPngReader::bigEndian(uint8* data, int num)
@@ -315,8 +168,7 @@ iChunk* iPngReader::readChunk(uint8* data)
 	r->type[4] = 0;
 	step += sizeof(char) * 4;
 
-	r->data = new uint8[r->len];
-	memcpy(r->data, &data[step], sizeof(uint8) * r->len);
+	r->data = &data[step];
 	step += sizeof(uint8) * r->len;
 
 	r->crc32 = bigEndian((uint8*)&data[step], 4);
@@ -325,37 +177,154 @@ iChunk* iPngReader::readChunk(uint8* data)
 	return r;
 }
 
-uint8* iPngReader::decodeLz77(iLZ77Tuple* tuple, int num)
+uint8* iPngReader::readZLib(uint8* data)
 {
-	int bufferSize = 0;
-	for (int i = 0; i < num; i++)
-		bufferSize += tuple[i].length + 1;
-	
-	uint8* r = new uint8[bufferSize];
-	memset(r, 0, sizeof(uint8) * bufferSize);
+	iZlibBlock zBlock(data);
 
-	int left = 0;
-	int right = 0;
+	uint8 fin = zBlock.readBit(1);
+	// 0 : compressed x / 1 : fixed huffman
+	// 2 : dynamic huffman / 3 : error
+	uint8 compressed = zBlock.readBit(2);
 
-	for (int i = 0; i < num; i++)
+	uint8* r = NULL;
+
+	if (compressed == 0)
 	{
-		iLZ77Tuple* t = &tuple[i];
-		
-		left = right - t->distance;
-		for (int j = 0; j < t->length; j++)
-		{
-			r[right] = r[left];
-			right++, left++;
-		}
+		int x = 10;
+	}
+	else if (compressed == 1)
+	{
+		int y = 10;
+	}
+	else if (compressed == 2)
+	{
+		r = decodeDynamicHuffman(zBlock);
+	}
+	else if (compressed == 3)
+	{
 
-		r[right] = t->lit;
-		right++;
 	}
 
 	return r;
 }
 
-void iPngReader::makeHuffCode(iHuffCode*& code, uint32& num)
+uint8* iPngReader::decodeDynamicHuffman(iZlibBlock& zBlock)
+{
+	uint32 litLenLengthNum = zBlock.readBit(5) + 257;
+	uint32 distLengthNum = zBlock.readBit(5) + 1;
+	uint32 lDLengthNum = zBlock.readBit(4) + 4;
+
+	iHuffCode* ldCode = new iHuffCode[lDLengthNum];
+
+	for (int i = 0; i < lDLengthNum; i++)
+	{
+		iHuffCode* hc = &ldCode[i];
+		hc->c = litDistBitLengthOrder[i];
+		hc->bitCount = zBlock.readBit(3);
+	}
+
+	makeDynamicHuffCode(ldCode, lDLengthNum);
+
+	iHuffCode* litHuffCode = new iHuffCode[litLenLengthNum];
+	iHuffCode* distHuffCode = new iHuffCode[distLengthNum];
+	uint32 curReadLen = 0;
+	uint32 prev = 0;
+	uint8 symbol = 0;
+	int repeat = 0;
+
+	uint32 numldHuffTree = litLenLengthNum + distLengthNum;
+	while (curReadLen < numldHuffTree)
+	{
+		iHuffCode* v = decodeHuffman(ldCode, lDLengthNum, &zBlock);
+
+		if (v->c <= 15)
+		{
+			symbol = v->c;
+			repeat = 1;
+		}
+		else if (v->c == 16)
+		{
+			symbol = prev;
+			repeat = 3 + zBlock.readBit(2);
+		}
+		else if (v->c == 17)
+		{
+			symbol = 0;
+			repeat = 3 + zBlock.readBit(3);
+		}
+		else if (v->c == 18)
+		{
+			symbol = 0;
+			repeat = 11 + zBlock.readBit(7);
+		}
+
+		for (int i = 0; i < repeat; i++)
+		{
+			if (curReadLen < litLenLengthNum)
+			{
+				int idx = curReadLen;
+				litHuffCode[idx].bitCount = symbol;
+				litHuffCode[idx].c = idx;
+			}
+			else
+			{
+				int idx = curReadLen - litLenLengthNum;
+				distHuffCode[idx].bitCount = symbol;
+				distHuffCode[idx].c = idx;
+			}
+
+			curReadLen++;
+		}
+
+		prev = symbol;
+	}
+
+	makeDynamicHuffCode(litHuffCode, litLenLengthNum);
+	makeDynamicHuffCode(distHuffCode, distLengthNum);
+
+	iArray rgba;
+
+	while (1)
+	{
+		iHuffCode* hc = decodeHuffman(litHuffCode, litLenLengthNum, &zBlock);
+
+		if (hc->c == 256)
+		{
+			break;
+		}
+		else if (hc->c < 257)
+		{
+			rgba.push_back(&hc->c);
+		}
+		else
+		{
+			int lenIdx = hc->c - 257;
+			int length = lz77LengthBaseLen[lenIdx] + zBlock.readBit(lz77LengthExtraBit[lenIdx]);
+
+			iHuffCode* dc = decodeHuffman(distHuffCode, distLengthNum, &zBlock);
+			int dist = lz77DistBaseLen[dc->c] + zBlock.readBit(lz77DistExtraBit[dc->c]);
+
+			int start = rgba.dataNum - dist;
+			for (int i = 0; i < length; i++)
+			{
+				rgba.push_back(rgba[start + i]);
+			}
+		}
+	}
+
+	uint8* r = new uint8[rgba.dataNum];
+
+	for (int i = 0; i < rgba.dataNum; i++)
+		r[i] = *(uint8*)rgba[i];
+
+	delete[] ldCode;
+	delete[] litHuffCode;
+	delete[] distHuffCode;
+
+	return r;
+}
+
+void iPngReader::makeDynamicHuffCode(iHuffCode*& code, uint32& num)
 {
 	iHeap sort
 	(
@@ -373,9 +342,7 @@ void iPngReader::makeHuffCode(iHuffCode*& code, uint32& num)
 	{
 		iHuffCode* hc = &code[i];
 
-		if (hc->bitCount == 0) continue;
-
-		sort.insert(hc);
+		if (hc->bitCount != 0) sort.insert(hc);
 	}
 
 	num = sort.dataNum;
@@ -387,10 +354,12 @@ void iPngReader::makeHuffCode(iHuffCode*& code, uint32& num)
 	{
 		iHuffCode* hc = &r[i];
 
-		*hc = *(iHuffCode*)sort.pop();
-		if (hc->bitCount != prevBit) hc->code = (prevCode + 1) << 1;
+		memcpy(hc, sort.pop(), sizeof(iHuffCode));
+
+		if (hc->bitCount != prevBit)		
+			hc->code = (prevCode + 1) << (hc->bitCount - prevBit);		
 		else hc->code = prevCode + 1;
-		
+
 		prevCode = hc->code;
 		prevBit = hc->bitCount;
 	}
@@ -399,37 +368,31 @@ void iPngReader::makeHuffCode(iHuffCode*& code, uint32& num)
 	code = r;
 }
 
-iHuffCode iPngReader::decodeHuffman(iHuffCode* code, int codeNum, 
-									iZlibBlock* stream)
+iHuffCode* iPngReader::decodeHuffman(iHuffCode* code, int codeNum,
+									 iZlibBlock* stream)
 {
-	int i, j;
-	for (i = 0; i < codeNum; i++)
+	uint32 curBitCount = 0;
+	uint32 reverseBit = 0;
+	uint32 bits = 0;
+	for (int i = 0; i < codeNum; i++)
 	{
 		iHuffCode* hc = &code[i];
-		uint32 v = stream->readBit(hc->bitCount);
 
-		uint32 inv = 0;
-		for (j = 0; j < hc->bitCount; j++)
+		if (curBitCount != hc->bitCount)
 		{
-			inv <<= 1;
-			inv |= (v & (1 << j)) >> j;
+			stream->buffer <<= curBitCount;
+			stream->buffer |= bits;
+			stream->remain += curBitCount;
+
+			bits = stream->readBit(hc->bitCount);
+			reverseBit = stream->reverseBit(bits, hc->bitCount);
+			curBitCount = hc->bitCount;
 		}
-		
-		if (hc->code != inv)
-		{
-			stream->buffer <<= hc->bitCount;
-			stream->buffer |= v;
-			stream->remain += hc->bitCount;
-		}
-		else break;	
+
+		if (hc->code == reverseBit) return hc;
 	}
 
-	return code[i];
-}
-
-iChunk::~iChunk()
-{
-	delete[] data;
+	return NULL;
 }
 
 iZlibBlock::iZlibBlock(uint8* s)
@@ -441,6 +404,8 @@ iZlibBlock::iZlibBlock(uint8* s)
 
 uint32 iZlibBlock::readBit(int readBit)
 {
+	if (readBit == 0) return 0;
+
 	if (remain < readBit)
 	{
 		float needBit = readBit - remain;
@@ -450,22 +415,29 @@ uint32 iZlibBlock::readBit(int readBit)
 		for (int i = 0; i < needByte; i++)
 		{
 			uint32 v = stream[i];
-			buffer |= v << (i*8 + remain);
+			buffer |= v << (i * 8 + remain);
 		}
 
 		stream = &stream[(int)needByte];
 		remain += needByte * 8;
 	}
 
-	uint32 result = 0;
-	for (int i = 0; i < readBit; i++)
-	{
-		result |= buffer & (1 << i);
-	}
-
+	uint32 mask = 0xffffffff >> (32 - readBit);
+	uint32 result = buffer & mask;
+	
 	remain -= readBit;
 	buffer >>= readBit;
 
 	return result;
 }
 
+uint32 iZlibBlock::reverseBit(uint32 v, int bitNum)
+{
+	v = ((v & 0xffff0000) >> 16) | ((v & 0x0000ffff) << 16);
+	v = ((v & 0xff00ff00) >> 8) | ((v & 0x00ff00ff) << 8);
+	v = ((v & 0xf0f0f0f0) >> 4) | ((v & 0x0f0f0f0f) << 4);
+	v = ((v & 0xcccccccc) >> 2) | ((v & 0x33333333) << 2);
+	v = ((v & 0xaaaaaaaa) >> 1) | ((v & 0x55555555) << 1);
+
+	return v >> (32 - bitNum);
+}

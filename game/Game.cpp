@@ -4,6 +4,7 @@
 iInputManager* inputMgt;
 iTime* timeMgt;
 iCamera* camera;
+iPngReader* pngReader;
 bool cameraMode;
 iSize* devSize;
 
@@ -48,7 +49,8 @@ void loadGame()
 	camera = new iCamera(*devSize, { 0.f, 0.f, -5.f });
 	cameraMode = false;
 
-	iPngReader png("assets/test/sample2.png");
+	pngReader = iPngReader::share();
+	pngReader->readPng("assets/test/sample2.png");
 }
 
 void drawGame()
@@ -151,5 +153,6 @@ void endGame()
 	delete timeMgt;
 	delete devSize;
 	delete camera;
+	delete pngReader;
 }
 

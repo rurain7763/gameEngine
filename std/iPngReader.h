@@ -4,9 +4,45 @@ typedef unsigned char	uint8;
 typedef unsigned short	uint16;
 typedef unsigned int	uint32;
 
+struct iChunk;
+struct iZlibBlock;
+struct iHuffCode;
+
+class iPngReader
+{
+private:
+	static iPngReader* S;
+	iPngReader();
+
+public:
+	virtual ~iPngReader();
+
+	static iPngReader* share();
+	void* readPng(const char* path);
+
+private:
+	uint32 bigEndian(uint8* data, int num);
+	iChunk* readChunk(uint8* data);
+	uint8* readZLib(uint8* data);
+
+	uint8* decodeDynamicHuffman(iZlibBlock& zBlock);
+
+	void makeDynamicHuffCode(iHuffCode*& code, uint32& num);
+	iHuffCode* decodeHuffman(iHuffCode* code, int codeNum,
+							iZlibBlock* stream);
+
+private:
+	uint8* litDistBitLengthOrder;
+
+	uint32* lz77LengthBaseLen;
+	uint8* lz77LengthExtraBit;
+
+	uint32* lz77DistBaseLen;
+	uint32* lz77DistExtraBit;
+};
+
 struct iChunk
 {
-	~iChunk();
 	char type[5];
 
 	uint32 len;
@@ -14,17 +50,11 @@ struct iChunk
 	uint32 crc32;
 };
 
-struct iLZ77Tuple
-{
-	uint32 distance;
-	uint32 length;
-	uint32 lit;
-};
-
 struct iZlibBlock
 {
 	iZlibBlock(uint8* stream);
 	uint32 readBit(int readBit);
+	uint32 reverseBit(uint32 v, int bitNum);
 
 	uint8* stream;
 
@@ -39,20 +69,5 @@ struct iHuffCode
 	uint32 c = -1;
 };
 
-class iPngReader
-{
-public:
-	iPngReader(const char* path);
-	virtual ~iPngReader();
 
-	uint32 bigEndian(uint8* data, int num);
-	iChunk* readChunk(uint8* data);
-
-	uint8* decodeLz77(iLZ77Tuple* tuple, int num);
-	void makeHuffCode(iHuffCode*& code, uint32& num);
-	iHuffCode decodeHuffman(iHuffCode* code, int codeNum,
-						 iZlibBlock* stream);
-
-public:
-};
 

@@ -16,12 +16,14 @@
 #include "iRect.h"
 #include "iMatirx.h"
 #include "iQuaternion.h"
-#include "iTransform.h"
-#include "iCamera.h"
+#include "iTree.h"
+#include "iArray.h"
+
+#include "iPngReader.h"
 #include "iInputManager.h"
 #include "iTime.h"
-#include "iPngReader.h"
-#include "iTree.h"
+#include "iTransform.h"
+#include "iCamera.h"
 
 #include "iOpenGL.h"
 #include "iWindows.h"
@@ -29,10 +31,14 @@
 #define ToRadian(degree) degree * M_PI / 180
 #define ToDegree(radian) radian * 180 / M_PI
 
-char* readFile(const char* path);
+typedef bool (*CompareMethod)(void* left, void* right);
+
 float isin(float degree);
 float icos(float degree);
 float itan(float degree);
+int random();
+
+char* readFile(const char* path);
+void bubbleSort(CompareMethod method, void* data, int elementSize, int num);
 void swap(void* left, void* right, int argSize);
 void printBit(unsigned int v);
-int random();

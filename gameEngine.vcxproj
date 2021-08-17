@@ -147,6 +147,7 @@
     <ClInclude Include="gameEngine.h" />
     <ClInclude Include="game\Game.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="std\iArray.h" />
     <ClInclude Include="std\iCamera.h" />
     <ClInclude Include="std\iInputManager.h" />
     <ClInclude Include="std\iMatirx.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="gameEngine.cpp" />
     <ClCompile Include="game\Game.cpp" />
     <ClCompile Include="std\glew.c" />
+    <ClCompile Include="std\iArray.cpp" />
     <ClCompile Include="std\iCamera.cpp" />
     <ClCompile Include="std\iInputManager.cpp" />
     <ClCompile Include="std\iMatirx.cpp" />

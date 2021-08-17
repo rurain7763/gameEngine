@@ -1,23 +1,5 @@
 #include"iStd.h"
 
-char* readFile(const char* path)
-{
-	FILE* file = fopen(path, "rb");
-
-	if (!file) return NULL;
-
-	fseek(file, 0, SEEK_END);
-	int len = ftell(file);
-	fseek(file, 0, SEEK_SET);
-	char* buffer = new char[len+1];
-	fread(buffer, sizeof(char), len, file);
-	buffer[len] = 0;
-
-	fclose(file);
-
-	return buffer;
-}
-
 float isin(float degree)
 {
 	return sin(ToRadian(degree));
@@ -32,6 +14,48 @@ float icos(float degree)
 float itan(float degree)
 {
 	return tan(ToRadian(degree));
+}
+
+int random()
+{
+	return rand();
+}
+
+char* readFile(const char* path)
+{
+	FILE* file = fopen(path, "rb");
+
+	if (!file) return NULL;
+
+	fseek(file, 0, SEEK_END);
+	int len = ftell(file);
+	fseek(file, 0, SEEK_SET);
+	char* buffer = new char[len + 1];
+	fread(buffer, sizeof(char), len, file);
+	buffer[len] = 0;
+
+	fclose(file);
+
+	return buffer;
+}
+
+void bubbleSort(CompareMethod m, void* data, int elementSize, int num)
+{
+	char* d = (char*)data;
+
+	for (int i = num - 1; i > 0; i--)
+	{
+		for (int j = 0; j < i; j++)
+		{
+			int leftIdx = j * elementSize;
+			int rightIdx = (j + 1) * elementSize;
+
+			if (m(&d[leftIdx], &d[rightIdx]))
+			{
+				swap(&d[leftIdx], &d[rightIdx], elementSize);
+			}
+		}
+	}
 }
 
 void swap(void* left, void* right, int argSize)
@@ -61,7 +85,3 @@ void printBit(unsigned int v)
 	printf("\n");
 }
 
-int random()
-{
-	return rand();
-}
