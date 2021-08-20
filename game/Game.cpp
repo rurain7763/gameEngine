@@ -11,6 +11,7 @@ iSize* devSize;
 GLuint vao;
 GLuint vbo;
 GLuint ebo;
+GLuint tex;
 
 GLuint vert;
 GLuint frag;
@@ -40,7 +41,6 @@ void loadGame()
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	vert = createShader("assets/shader/test.vert", VERTEX_SHADER);
 	frag = createShader("assets/shader/test.frag", FRAGMENT_SHADER);
@@ -49,8 +49,30 @@ void loadGame()
 	camera = new iCamera(*devSize, { 0.f, 0.f, -5.f });
 	cameraMode = false;
 
+
+#if 1
 	pngReader = iPngReader::share();
-	pngReader->readPng("assets/test/sample2.png");
+	//pngReader->readPng("assets/test/sample2.png");
+	//Bitmap* bmp = Bitmap::FromFile(L"assets/test/sample4.png", PixelFormat32bppARGB);
+
+	int w, h, bpp;
+	unsigned char* data = stbi_load("assets/test/sample4.png", &w, &h, &bpp, 0);
+
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex);
+
+	if(bpp == 4)
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	else if (bpp == 3)
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	stbi_image_free(data);
+#endif
 }
 
 void drawGame()
@@ -66,32 +88,32 @@ void drawGame()
 
 	iVertex vertices[] =
 	{
-		{{.5f,.5,.5f,1.f},{1.f,0.f,0.f,1.f}},
-		{{-.5f,.5f,-.5f,1.f},{0.f,1.f,0.f,1.f}},
-		{{-.5f,.5f,.5f,1.f},{0.f,0.f,1.f,1.f}},
-		{{.5f,-.5f,-.5f,1.f},{1.f,2.f,5.f,1.f}},
-		{{-.5f,-.5f,-.5f,1.f},{.8f,.8f,1.f,1.f}},
-		{{.5f,.5f,-.5f,1.f},{1.f,1.f,1.f,1.f}},
-		{{.5f,-.5f,.5f,1.f},{.2f,1.f,.5f,1.f}},
-		{{-.5f,-.5f,.5f,1.f},{1.f,.9f,6.f,1.f}}
+		{{.5f,.5,.5f,1.f},{1.f,1.f,1.f,1.f},{0.f,0.f}},
+		{{-.5f,.5f,-.5f,1.f},{1.f,1.f,1.f,1.f},{0.f,1.f}},
+		{{-.5f,.5f,.5f,1.f},{1.f,1.f,1.f,1.f},{1.f,0.f}},
+		{{.5f,-.5f,-.5f,1.f},{1.f,1.f,1.f,1.f},{1.f,1.f}},
+		{{-.5f,-.5f,-.5f,1.f},{1.f,1.f,1.f,1.f},{0.f,0.f}},
+		{{.5f,.5f,-.5f,1.f},{1.f,1.f,1.f,1.f},{1.f,0.f}},
+		{{.5f,-.5f,.5f,1.f},{1.f,1.f,1.f,1.f},{0.f,1.f}},
+		{{-.5f,-.5f,.5f,1.f},{1.f,1.f,1.f,1.f},{1.f,1.f}}
 	};
-	
+
 	GLubyte indices[] = { 0,1,2 ,1,3,4, 5,6,3, 7,3,6, 2,4,7, 0,7,6, 0,5,1, 1,5,3,
-						  5,0,6, 7,4,3, 2,1,4, 0,2,7};
+						  5,0,6, 7,4,3, 2,1,4, 0,2,7 };
 
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(indices), indices);
-		
+
 	iMatrix projMat;
 	projMat.loadIdentity();
 	projMat.frustrum(60.f, devSize->width, devSize->height, 0.f, 10.f);
 
 	iMatrix viewMat = camera->getMatrix();
-	
+
 	iTransform transMat;
 	//transMat.scale(isin(degree), 1, 1);
-	//transMat.rotate(0, degree, 0);
-	transMat.translate( isin(degree), 0, 5.f );
+	transMat.rotate(0, degree, 0);
+	transMat.translate(isin(degree), 0, 5.f);
 
 	iMatrix tvpMat = projMat * viewMat * transMat.getMatrix();
 
@@ -106,10 +128,21 @@ void drawGame()
 	glEnableVertexAttribArray(colAttr);
 	glVertexAttribPointer(colAttr, 4, GL_FLOAT, GL_FALSE, sizeof(iVertex), (const void*)offsetof(iVertex, color));
 
+	GLuint uvAttr = glGetAttribLocation(program, "uv");
+	glEnableVertexAttribArray(uvAttr);
+	glVertexAttribPointer(uvAttr, 2, GL_FLOAT, GL_FALSE, sizeof(iVertex), (const void*)offsetof(iVertex, uv));
+
+	GLuint sampler0 = glGetUniformLocation(program, "tex");
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glUniform1i(sampler0, 0);
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, NULL);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glDisableVertexAttribArray(posAttr);
 	glDisableVertexAttribArray(colAttr);
+	glDisableVertexAttribArray(uvAttr);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -141,6 +174,8 @@ void drawGame()
 
 void endGame()
 {
+	glDeleteTextures(1, &tex);
+
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
 	glDeleteVertexArrays(1, &vao);

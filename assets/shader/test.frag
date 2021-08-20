@@ -4,12 +4,15 @@
 precision mediump float;
 #endif
 
+uniform sampler2D tex;
+
 in vec4 colorV;
+in vec2 uvV;
 
 out vec4 throwColor;
 
 void main()
-{
-	throwColor = colorV;
+{ 
+	throwColor = texture2D(tex, uvV).rgba * colorV;
 }
 

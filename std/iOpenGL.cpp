@@ -55,6 +55,10 @@ void loadGL(HWND& hwnd)
 	}
 #endif
 
+	int maxTexUnit = 0;
+	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTexUnit);
+	printf("Max texture unit num : %d\n", maxTexUnit);
+
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CW);
 	glCullFace(GL_BACK);

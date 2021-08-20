@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 struct iVector2f
 {
@@ -40,6 +40,7 @@ struct iVertex
 {
 	iVector4f position;
 	iVector4f color;
+	iVector2f uv;
 };
 
 

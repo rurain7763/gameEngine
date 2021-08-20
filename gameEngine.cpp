@@ -69,6 +69,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return 0;
     }
 
+    GdiplusStartupInput gdiplusStartupInput;
+    ULONG_PTR gdiplusToken;
+
+    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+
     loadGL(hWnd);
     SetMenu(hWnd, NULL);
 
@@ -103,6 +108,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     endGame();
 
     endGL();
+    GdiplusShutdown(gdiplusToken);
 
     return (int)msg.wParam;
 }

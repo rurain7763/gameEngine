@@ -21,6 +21,18 @@ int random()
 	return rand();
 }
 
+unsigned int nextPow2(unsigned int v)
+{
+	v--;
+	v |= v >> 1;
+	v |= v >> 2;
+	v |= v >> 4;
+	v |= v >> 16;
+	v++;
+
+	return v;
+}
+
 char* readFile(const char* path)
 {
 	FILE* file = fopen(path, "rb");

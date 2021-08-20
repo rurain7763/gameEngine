@@ -3,6 +3,10 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define _USE_MATH_DEFINES
 
+#if 1
+#include "stb_image.h"
+#endif
+
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>
@@ -38,6 +42,7 @@ float icos(float degree);
 float itan(float degree);
 int random();
 
+unsigned int nextPow2(unsigned int v);
 char* readFile(const char* path);
 void bubbleSort(CompareMethod method, void* data, int elementSize, int num);
 void swap(void* left, void* right, int argSize);
