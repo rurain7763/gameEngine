@@ -13,26 +13,26 @@ iCamera::iCamera(iSize& ds, iVector3f pos)
 	hAngle = ToDegree(asin(lookAt.z));
 	vAngle = -ToDegree(asin(lookAt.y));
 
-	if (lookAt.z >= 0.0f)
+	if (lookAt.z >= 0.f)
 	{
-		if (lookAt.x >= 0.0f)
+		if (lookAt.x >= 0.f)
 		{
-			hAngle = 360.0f - hAngle;
+			hAngle = 360.f - hAngle;
 		}
 		else
 		{
-			hAngle = 180.0f + hAngle;
+			hAngle = 180.f + hAngle;
 		}
 	}
 	else
 	{
-		if (lookAt.x >= 0.0f)
+		if (lookAt.x >= 0.f)
 		{
 			hAngle *= -1;
 		}
 		else
 		{
-			hAngle = 180.0f + hAngle;
+			hAngle = 180.f + hAngle;
 		}
 	}
 }

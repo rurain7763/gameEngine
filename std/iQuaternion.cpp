@@ -9,7 +9,7 @@ iQuaternion::iQuaternion()
 
 iQuaternion::iQuaternion(iVector3f v, float angle)
 {
-	float _a = angle / 2;
+	float _a = angle / 2.f;
 
 	w = icos(_a);
 	axis.x = v.x * isin(_a);

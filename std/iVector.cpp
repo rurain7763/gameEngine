@@ -1,9 +1,6 @@
 #include"iVector.h"
 #include"iStd.h"
 
-//========================================
-//				iVector2f
-//========================================
 iVector2f& iVector2f::normalized()
 {
 	float len = sqrt(x * x + y * y);
@@ -15,20 +12,14 @@ iVector2f& iVector2f::normalized()
 
 float iVector2f::magnitudeSqrt()
 {
-	return x *x + y*y;
+	return x * x + y * y;
 }
 
 iVector2f operator-(const iVector2f& v1, const iVector2f& v2)
 {
 	return iVector2f{ v1.x - v2.x, v1.y - v2.y };
 }
-//========================================
-//				/iVector2f
-//========================================
 
-//========================================
-//				iVector3f
-//========================================
 iVector3f iVector3f::operator+(const iVector3f& v) const
 {
 	iVector3f r;
@@ -123,7 +114,5 @@ iVector3f& iVector3f::normalized()
 
 	return *this;
 }
-//========================================
-//				/iVector3f
-//========================================
+
 

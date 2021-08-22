@@ -58,12 +58,12 @@ void iMatrix::frustrum(float fov, float w, float h, float n, float f)
 {
 	if (n < 0 || f < 0) return;
 
-	data[0][0] = (1 / itan(fov/2)) / (w/h);
+	data[0][0] = (1.f / itan(fov/2.f)) / (w/h);
 
-	data[1][1] = 1 / itan(fov/2);
+	data[1][1] = 1.f / itan(fov/2.f);
 
 	data[2][2] = (- n - f) / (n - f);
-	data[2][3] = 2 * (f * n) / (n - f);
+	data[2][3] = 2.f * (f * n) / (n - f);
 
 	data[3][2] = 1.f;
 	data[3][3] = 0.f;
@@ -71,13 +71,13 @@ void iMatrix::frustrum(float fov, float w, float h, float n, float f)
 
 void iMatrix::ortho(float l, float r, float b, float t, float n, float f)
 {
-	data[0][0] = 2 / (r - l);
+	data[0][0] = 2.f / (r - l);
 	data[0][3] = -(r + l) / (r - l);
 
-	data[1][1] = 2 / (t - b);
+	data[1][1] = 2.f / (t - b);
 	data[1][3] = -(t + b) / (t - b);
 
-	data[2][2] = 2 / (f - n);
+	data[2][2] = 2.f / (f - n);
 	data[2][3] = -(f + n) / (f - n);
 
 	data[3][3] = 1.f;
@@ -116,27 +116,27 @@ void iMatrix::rotate(int x, int y, int z)
 
 void iMatrix::rotate(const iQuaternion& q)
 {
-	float yy2 = 2.0f * q.axis.y * q.axis.y;
-	float xy2 = 2.0f * q.axis.x * q.axis.y;
-	float xz2 = 2.0f * q.axis.x * q.axis.z;
-	float yz2 = 2.0f * q.axis.y * q.axis.z;
-	float zz2 = 2.0f * q.axis.z * q.axis.z;
-	float wz2 = 2.0f * q.w * q.axis.z;
-	float wy2 = 2.0f * q.w * q.axis.y;
-	float wx2 = 2.0f * q.w * q.axis.x;
-	float xx2 = 2.0f * q.axis.x * q.axis.x;
+	float yy2 = 2.f * q.axis.y * q.axis.y;
+	float xy2 = 2.f * q.axis.x * q.axis.y;
+	float xz2 = 2.f * q.axis.x * q.axis.z;
+	float yz2 = 2.f * q.axis.y * q.axis.z;
+	float zz2 = 2.f * q.axis.z * q.axis.z;
+	float wz2 = 2.f * q.w * q.axis.z;
+	float wy2 = 2.f * q.w * q.axis.y;
+	float wx2 = 2.f * q.w * q.axis.x;
+	float xx2 = 2.f * q.axis.x * q.axis.x;
 
-	data[0][0] = -yy2 - zz2 + 1.0f;
+	data[0][0] = -yy2 - zz2 + 1.f;
 	data[0][1] = xy2 + wz2;
 	data[0][2] = xz2 - wy2;
 
 	data[1][0] = xy2 - wz2;
-	data[1][1] = -xx2 - zz2 + 1.0f;
+	data[1][1] = -xx2 - zz2 + 1.f;
 	data[1][2] = yz2 + wx2;
 
 	data[2][0] = xz2 + wy2;
 	data[2][1] = yz2 - wx2;
-	data[2][2] = -xx2 - yy2 + 1.0f;
+	data[2][2] = -xx2 - yy2 + 1.f;
 
 	data[3][0] = data[3][1] = data[3][2] = 0;
 }

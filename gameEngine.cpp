@@ -43,8 +43,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     float monitorW = GetSystemMetrics(SM_CXSCREEN);
     float monitorH = GetSystemMetrics(SM_CYSCREEN);
-    float monitorX = monitorW / 2 - monitorW / 4;
-    float monitorY = monitorH / 2 - monitorH / 4;
+    float monitorX = monitorW / 2.f - monitorW / 4.f;
+    float monitorY = monitorH / 2.f - monitorH / 4.f;
     
     if (monitorX < 0.f || monitorY < 0.f)
     {
