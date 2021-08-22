@@ -14,7 +14,8 @@
 #define FRAGMENT_SHADER		1
 
 class iGLTexture;
-typedef iSharedPtr<iGLTexture> iGLTexturePTR;
+typedef iSharedPtr<iGLTexture>   iGLTexturePTR;
+typedef iSharedPtr<iGLTexture[]> iGLTextureARR;
 
 void loadGL(HWND& hwnd);
 void endGL();

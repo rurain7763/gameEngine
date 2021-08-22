@@ -4,7 +4,6 @@
 iInputManager* inputMgt;
 iTime* timeMgt;
 iCamera* camera;
-iPngReader* pngReader;
 bool cameraMode;
 iSize* devSize;
 
@@ -50,13 +49,10 @@ void loadGame()
 	cameraMode = false;
 
 #if 1
-	pngReader = iPngReader::share();
-	pngReader->readPng("assets/test/sample2.png");
-
 	tex = new iGLTexture();
 	tex.get()->load(GL_TEXTURE_2D, "assets/test/sample3.png");
 
-	iGLTexturePTR test = new iGLTexturePTR[5];
+	iGLTextureARR test = new iGLTexture[5];
 #endif
 }
 
@@ -169,6 +165,5 @@ void endGame()
 	delete timeMgt;
 	delete devSize;
 	delete camera;
-	delete pngReader;
 }
 

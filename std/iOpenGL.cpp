@@ -207,8 +207,8 @@ void coordMousePosToViewPort(iSize devSize, float& x, float& y)
 
 iGLTexture::iGLTexture()
 {
-	texType = -1;
-	texID = -1;
+	texType = 0;
+	texID = 0;
 	width = 0;
 	height = 0;
 	pow2Width = 0;
@@ -217,20 +217,22 @@ iGLTexture::iGLTexture()
 
 iGLTexture::~iGLTexture()
 {
-	glDeleteTextures(1, &texID);
+	if(texID != 0) glDeleteTextures(1, &texID);
 }
 
 void iGLTexture::load(GLenum type, const char* path)
 {
-	texType = type;
-
-	glGenTextures(1, &texID);
-	glBindTexture(texType, texID);
-
 	int bpp;
 	uint8* pixels = stbi_load(path, &width, &height, &bpp, 0);
+	
+	if (!pixels) return;
+
 	pow2Width = nextPow2(width);
 	pow2Height = nextPow2(height);
+
+	texType = type;
+	glGenTextures(1, &texID);
+	glBindTexture(texType, texID);
 
 	if(bpp == 3)
 		glTexImage2D(texType, 0, GL_RGB, width, height, 0, GL_RGB,
@@ -249,6 +251,8 @@ void iGLTexture::load(GLenum type, const char* path)
 
 void iGLTexture::load(GLenum type, GLint format, uint8* pixels, int w, int h)
 {
+	if (!pixels) return;
+
 	texType = type;
 
 	glGenTextures(1, &texID);
