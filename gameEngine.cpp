@@ -69,11 +69,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return 0;
     }
 
-    GdiplusStartupInput gdiplusStartupInput;
-    ULONG_PTR gdiplusToken;
-
-    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
-
+    loadGdi();
     loadGL(hWnd);
     SetMenu(hWnd, NULL);
 
@@ -108,7 +104,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     endGame();
 
     endGL();
-    GdiplusShutdown(gdiplusToken);
+    endGdi();
 
     return (int)msg.wParam;
 }
@@ -126,32 +122,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         float curH = rt.bottom - rt.top;
         setWndSizeInfo(curW, curH);        
 
-        float ratio = DEV_WIDTH / DEV_HEIGHT;
-
-        float h = curH;
-        float w = h * ratio;
-        int posX, posY;
-
-        if (w < curW)
-        {
-            posX = (curW - w) / 2;
-            posY = 0;
-
-            setViewPort(posX, posY, w, h);
-            return 0;
-        }
-
-        w = curW;
-        h = w / ratio;
-
-        if (h < curH)
-        {
-            posX = 0;
-            posY = (curH - h) / 2;
-
-            setViewPort(posX, posY, w, h);
-            return 0;
-        }
+        iRect viewPort = caculateViewPort({DEV_WIDTH, DEV_HEIGHT}, { curW, curH });
+        setViewPort(viewPort.x, viewPort.y, viewPort.width, viewPort.height);
 
         return 0;
     }
@@ -226,16 +198,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         float y = GET_Y_LPARAM(lParam);
 
         wrappingCursor(x, y);
-
-        x = GET_X_LPARAM(lParam);
-        y = GET_Y_LPARAM(lParam);
-
-        iRect viewPort = getViewPort();
-        iVector2f wRange = { viewPort.position.x, viewPort.position.x + viewPort.size.width };
-        iVector2f hRange = { viewPort.position.y, viewPort.position.y + viewPort.size.height };
-
-        x = ((x - wRange.x) / (wRange.y - wRange.x)) * DEV_WIDTH;
-        y = ((y - hRange.x) / (hRange.y - hRange.x)) * DEV_HEIGHT;
+        coordMousePosToViewPort({ DEV_WIDTH, DEV_HEIGHT }, x, y);
 
         inputMgt->setMousePos(x, y);
 

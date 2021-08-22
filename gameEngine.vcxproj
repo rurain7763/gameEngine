@@ -155,12 +155,12 @@
     <ClInclude Include="std\iOpenGL.h" />
     <ClInclude Include="std\iPngReader.h" />
     <ClInclude Include="std\iQuaternion.h" />
-    <ClInclude Include="std\iRect.h" />
-    <ClInclude Include="std\iSize.h" />
     <ClInclude Include="std\iStd.h" />
+    <ClInclude Include="std\iSharedPtr.h" />
     <ClInclude Include="std\iTime.h" />
     <ClInclude Include="std\iTransform.h" />
     <ClInclude Include="std\iTree.h" />
+    <ClInclude Include="std\iType.h" />
     <ClInclude Include="std\iVector.h" />
     <ClInclude Include="std\iWindows.h" />
   </ItemGroup>
@@ -176,8 +176,6 @@
     <ClCompile Include="std\iOpenGL.cpp" />
     <ClCompile Include="std\iPngReader.cpp" />
     <ClCompile Include="std\iQuaternion.cpp" />
-    <ClCompile Include="std\iRect.cpp" />
-    <ClCompile Include="std\iSize.cpp" />
     <ClCompile Include="std\iStd.cpp" />
     <ClCompile Include="std\iTime.cpp" />
     <ClCompile Include="std\iTransform.cpp" />

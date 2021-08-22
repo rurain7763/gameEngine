@@ -11,7 +11,7 @@ iSize* devSize;
 GLuint vao;
 GLuint vbo;
 GLuint ebo;
-GLuint tex;
+iGLTexturePTR tex;
 
 GLuint vert;
 GLuint frag;
@@ -49,29 +49,14 @@ void loadGame()
 	camera = new iCamera(*devSize, { 0.f, 0.f, -5.f });
 	cameraMode = false;
 
-
 #if 1
 	pngReader = iPngReader::share();
-	//pngReader->readPng("assets/test/sample2.png");
-	//Bitmap* bmp = Bitmap::FromFile(L"assets/test/sample4.png", PixelFormat32bppARGB);
+	pngReader->readPng("assets/test/sample2.png");
 
-	int w, h, bpp;
-	unsigned char* data = stbi_load("assets/test/sample4.png", &w, &h, &bpp, 0);
+	tex = new iGLTexture();
+	tex.get()->load(GL_TEXTURE_2D, "assets/test/sample3.png");
 
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_2D, tex);
-
-	if(bpp == 4)
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	else if (bpp == 3)
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	stbi_image_free(data);
+	iGLTexturePTR test = new iGLTexturePTR[5];
 #endif
 }
 
@@ -134,11 +119,9 @@ void drawGame()
 
 	GLuint sampler0 = glGetUniformLocation(program, "tex");
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, tex);
+	tex.get()->bind(GL_TEXTURE0);
 	glUniform1i(sampler0, 0);
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, NULL);
-	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glDisableVertexAttribArray(posAttr);
 	glDisableVertexAttribArray(colAttr);
@@ -174,8 +157,6 @@ void drawGame()
 
 void endGame()
 {
-	glDeleteTextures(1, &tex);
-
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
 	glDeleteVertexArrays(1, &vao);

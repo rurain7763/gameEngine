@@ -2,8 +2,7 @@
 
 #define DEFAULT_HEAP_SIZE	 300
 
-typedef bool Flag;
-typedef bool (*iHeapCompareMethod)(void* left, void* right);
+#include "iType.h"
 
 struct iHeapData
 {
@@ -13,14 +12,14 @@ struct iHeapData
 class iHeap
 {
 public:
-	iHeap(iHeapCompareMethod compare);
+	iHeap(CompareMethod compare);
 	virtual ~iHeap();
 
 	void insert(void* data);
 	void* pop();
 
 private:
-	iHeapCompareMethod compare;
+	CompareMethod compare;
 	int size;
 	iHeapData* data;
 

@@ -1,7 +1,7 @@
 #include"iTree.h"
 #include"iStd.h"
 
-iHeap::iHeap(iHeapCompareMethod c)
+iHeap::iHeap(CompareMethod c)
 {
 	compare = c;
 	size = DEFAULT_HEAP_SIZE;

@@ -83,36 +83,12 @@ void swapBuffer(HDC& hdc)
 	SwapBuffers(hdc);
 }
 
-void initWnd()
-{
-	viewPort = new iRect;
-	viewPort->position.x = 0;
-	viewPort->position.y = 0;
-	viewPort->size.width = 1024.f;
-	viewPort->size.height = 768.f;
-}
-
-void setViewPort(int x, int y, int width, int height)
-{
-	viewPort->position.x = x;
-	viewPort->position.y = y;
-	viewPort->size.width = width;
-	viewPort->size.height = height;
-
-	glViewport(x, y, width, height);
-}
-
-iRect getViewPort()
-{
-	return *viewPort;
-}
-
-GLuint createShader(const char* path, bool flag)
+GLuint createShader(const char* path, Flag flag)
 {
 	char* str = readFile(path);
 	if (!str) return -1;
 
-	GLenum f[] = { GL_VERTEX_SHADER,GL_FRAGMENT_SHADER };
+	GLenum f[] = { GL_VERTEX_SHADER, GL_FRAGMENT_SHADER };
 	GLuint id = glCreateShader(f[flag]);
 	int len = strlen(str);
 	glShaderSource(id, 1, &str, &len);
@@ -125,7 +101,7 @@ GLuint createShader(const char* path, bool flag)
 		int errLen = 0;
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &errLen);
 
-		char* error = new char[errLen+1];
+		char* error = new char[errLen + 1];
 		glGetShaderInfoLog(id, errLen, NULL, error);
 		printf("Error compiling shader type: '%s'\n", error);
 		delete[] error;
@@ -175,3 +151,135 @@ void deleteProgram(GLuint program)
 	glDeleteProgram(program);
 }
 
+iRect caculateViewPort(iSize devSize, iSize rederingSize)
+{
+	float ratio = devSize.width / devSize.height;
+
+	float h = rederingSize.height;
+	float w = h * ratio;
+	float posX, posY;
+
+	if (w < rederingSize.width)
+	{
+		posX = (rederingSize.width - w) / 2.f;
+		posY = 0;
+
+		return iRect{ posX, posY, w, h };
+	}
+
+	w = rederingSize.width;
+	h = w / ratio;
+
+	if (h < rederingSize.height)
+	{
+		posX = 0;
+		posY = (rederingSize.height - h) / 2.f;
+
+		return iRect{ posX, posY, w, h };
+	}
+
+	return iRect{ 0.f, 0.f, 0.f, 0.f };
+}
+
+void setViewPort(int x, int y, int width, int height)
+{
+	viewPort->x = x;
+	viewPort->y = y;
+	viewPort->width = width;
+	viewPort->height = height;
+
+	glViewport(x, y, width, height);
+}
+
+iRect getViewPort()
+{
+	return *viewPort;
+}
+
+void coordMousePosToViewPort(iSize devSize, float& x, float& y)
+{
+	iVector2f wRange = { viewPort->x, viewPort->x + viewPort->width };
+	iVector2f hRange = { viewPort->y, viewPort->y + viewPort->height };
+
+	x = ((x - wRange.x) / (wRange.y - wRange.x)) * devSize.width;
+	y = ((y - hRange.x) / (hRange.y - hRange.x)) * devSize.height;
+}
+
+iGLTexture::iGLTexture()
+{
+	texType = -1;
+	texID = -1;
+	width = 0;
+	height = 0;
+	pow2Width = 0;
+	pow2Height = 0;
+}
+
+iGLTexture::~iGLTexture()
+{
+	glDeleteTextures(1, &texID);
+}
+
+void iGLTexture::load(GLenum type, const char* path)
+{
+	texType = type;
+
+	glGenTextures(1, &texID);
+	glBindTexture(texType, texID);
+
+	int bpp;
+	uint8* pixels = stbi_load(path, &width, &height, &bpp, 0);
+	pow2Width = nextPow2(width);
+	pow2Height = nextPow2(height);
+
+	if(bpp == 3)
+		glTexImage2D(texType, 0, GL_RGB, width, height, 0, GL_RGB,
+					 GL_UNSIGNED_BYTE, pixels);
+	else if(bpp == 4)
+		glTexImage2D(texType, 0, GL_RGBA, width, height, 0, GL_RGBA,
+					 GL_UNSIGNED_BYTE, pixels);
+
+	glTexParameteri(texType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(texType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(texType, 0);
+
+	stbi_image_free(pixels);
+}
+
+void iGLTexture::load(GLenum type, GLint format, uint8* pixels, int w, int h)
+{
+	texType = type;
+
+	glGenTextures(1, &texID);
+	glBindTexture(texType, texID);
+
+	width = w;
+	height = h;
+	pow2Width = nextPow2(width);
+	pow2Height = nextPow2(height);
+
+	glTexImage2D(texType, 0, format, pow2Width, pow2Height, 0, format,
+				 GL_UNSIGNED_BYTE, pixels);
+
+	glTexParameteri(texType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(texType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(texType, 0);
+}
+
+void iGLTexture::bind(GLenum texUnit)
+{
+	glActiveTexture(texUnit);
+	glBindTexture(texType, texID);
+}
+
+void iGLTexture::setTexParmi(GLenum name, GLint parm)
+{
+	glBindTexture(texType, texID);
+
+	glTexParameteri(texType, name, parm);
+	glTexParameteri(texType, name, parm);
+
+	glBindTexture(texType, 0);
+}

@@ -1,9 +1,23 @@
 #include"iWindows.h"
 #include"iStd.h"
 
+static ULONG_PTR gdiplusToken;
 static iRect wndRtInfo;
 static bool wrapping = false;
 static bool run = true;
+
+void loadGdi()
+{
+    GdiplusStartupInput input;
+
+    //use default gdiplus
+    GdiplusStartup(&gdiplusToken, &input, NULL);
+}
+
+void endGdi()
+{
+    GdiplusShutdown(gdiplusToken);
+}
 
 iRect getWndRectInfo()
 {
@@ -12,26 +26,27 @@ iRect getWndRectInfo()
 
 void setWndPosInfo(float x, float y)
 {
-    wndRtInfo.position = { x,y };
+    wndRtInfo.x = x;
+    wndRtInfo.y = y;
 }
 
 void setWndSizeInfo(float width, float height)
 {
-    wndRtInfo.size = { width, height };
+    wndRtInfo.width = width;
+    wndRtInfo.height = height;
 }
 
 void setWndRectInfo(iRect& rt)
 {
-    wndRtInfo.position = rt.position;
-    wndRtInfo.size = rt.size;
+    wndRtInfo = rt;
 }
 
 void setWndRectInfo(float x, float y, float width, float height)
 {
-    wndRtInfo.position.x = x;
-    wndRtInfo.position.y = y;
-    wndRtInfo.size.width = width;
-    wndRtInfo.size.height = height;
+    wndRtInfo.x = x;
+    wndRtInfo.y = y;
+    wndRtInfo.width = width;
+    wndRtInfo.height = height;
 }
 
 void showCursor(bool show)
@@ -59,36 +74,36 @@ void wrappingCursor(float& x, float& y)
     if (!wrapping) return;
 
     RECT clip;
-    clip.left = wndRtInfo.position.x;
-    clip.top = wndRtInfo.position.y;
-    clip.right = wndRtInfo.position.x + wndRtInfo.size.width;
-    clip.bottom = wndRtInfo.position.y + wndRtInfo.size.height;
+    clip.left = wndRtInfo.x;
+    clip.top = wndRtInfo.y;
+    clip.right = wndRtInfo.x + wndRtInfo.width;
+    clip.bottom = wndRtInfo.y + wndRtInfo.height;
 
     ClipCursor(&clip);
 
-    float margin = min(wndRtInfo.size.width, wndRtInfo.size.height) * .04f;
+    float margin = min(wndRtInfo.width, wndRtInfo.height) * .04f;
 
     if (x < 0.f + margin)
-        SetCursorPos(wndRtInfo.position.x + (wndRtInfo.size.width - margin),
-            wndRtInfo.position.y + y);
-    else if (x > wndRtInfo.size.width - margin)
-        SetCursorPos(wndRtInfo.position.x + margin,
-            wndRtInfo.position.y + y);
+        SetCursorPos(wndRtInfo.x + (wndRtInfo.width - margin),
+                     wndRtInfo.y + y);
+    else if (x > wndRtInfo.width - margin)
+        SetCursorPos(wndRtInfo.x + margin,
+                     wndRtInfo.y + y);
 
     if (y < 0.f + margin)
-        SetCursorPos(wndRtInfo.position.x + x,
-            wndRtInfo.position.y + (wndRtInfo.size.height - margin));
-    else if (y > wndRtInfo.size.height - margin)
-        SetCursorPos(wndRtInfo.position.x + x,
-            wndRtInfo.position.y + margin);
+        SetCursorPos(wndRtInfo.x + x,
+                     wndRtInfo.y + (wndRtInfo.height - margin));
+    else if (y > wndRtInfo.height - margin)
+        SetCursorPos(wndRtInfo.x + x,
+                     wndRtInfo.y + margin);
 }
 
 void wrapCursor(bool wrap)
 {
     wrapping = wrap;
     if (!wrap) ClipCursor(nullptr);
-    else SetCursorPos(wndRtInfo.position.x + wndRtInfo.size.width / 2,
-                      wndRtInfo.position.y + wndRtInfo.size.height / 2);
+    else SetCursorPos(wndRtInfo.x + wndRtInfo.width / 2,
+                      wndRtInfo.y + wndRtInfo.height / 2);
 }
 
 bool isContinueApp()

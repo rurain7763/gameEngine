@@ -316,7 +316,7 @@ uint8* iPngReader::decodeDynamicHuffman(iZlibBlock& zBlock)
 
 	for (int i = 0; i < rgba.dataNum; i++)
 		r[i] = *(uint8*)rgba[i];
-
+	
 	delete[] ldCode;
 	delete[] litHuffCode;
 	delete[] distHuffCode;

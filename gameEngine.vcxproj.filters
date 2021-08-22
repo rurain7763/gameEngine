@@ -60,16 +60,16 @@
     <ClInclude Include="std\iTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="std\iSize.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="std\iRect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="std\iArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="reference\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="std\iType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="std\iSharedPtr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -117,12 +117,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="std\iTree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="std\iRect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="std\iSize.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="std\iArray.cpp">

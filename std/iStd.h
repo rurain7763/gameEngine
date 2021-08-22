@@ -15,13 +15,13 @@
 #include <math.h>
 #include <time.h>
 
+#include "iType.h"
 #include "iVector.h"
-#include "iSize.h"
-#include "iRect.h"
 #include "iMatirx.h"
 #include "iQuaternion.h"
 #include "iTree.h"
 #include "iArray.h"
+#include "iSharedPtr.h"
 
 #include "iPngReader.h"
 #include "iInputManager.h"
@@ -34,8 +34,6 @@
 
 #define ToRadian(degree) degree * M_PI / 180
 #define ToDegree(radian) radian * 180 / M_PI
-
-typedef bool (*CompareMethod)(void* left, void* right);
 
 float isin(float degree);
 float icos(float degree);

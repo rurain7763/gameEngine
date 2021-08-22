@@ -7,8 +7,10 @@
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
-#include"iSize.h"
-#include"iRect.h"
+#include "iType.h"
+
+void loadGdi();
+void endGdi();
 
 iRect getWndRectInfo();
 

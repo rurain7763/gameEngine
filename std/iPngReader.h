@@ -1,8 +1,6 @@
 #pragma once
 
-typedef unsigned char	uint8;
-typedef unsigned short	uint16;
-typedef unsigned int	uint32;
+#include "iType.h"
 
 struct iChunk;
 struct iZlibBlock;
@@ -29,7 +27,7 @@ private:
 
 	void makeDynamicHuffCode(iHuffCode*& code, uint32& num);
 	iHuffCode* decodeHuffman(iHuffCode* code, int codeNum,
-							iZlibBlock* stream);
+							 iZlibBlock* stream);
 
 private:
 	uint8* litDistBitLengthOrder;
