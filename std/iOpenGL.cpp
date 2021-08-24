@@ -3,6 +3,7 @@
 
 HGLRC hGlrc;
 iRect* viewPort;
+iGLShader* iGLShader::S = NULL;
 
 void loadGL(HWND& hwnd)
 {
@@ -221,32 +222,53 @@ iGLTexture::~iGLTexture()
 }
 
 void iGLTexture::load(GLenum type, const char* path)
-{
-	int bpp;
-	uint8* pixels = stbi_load(path, &width, &height, &bpp, 0);
-	
-	if (!pixels) return;
-
-	pow2Width = nextPow2(width);
-	pow2Height = nextPow2(height);
+{	
+	iPng* png = readPng(path);
+	pow2Width = nextPow2(png->width);
+	pow2Height = nextPow2(png->height);
 
 	texType = type;
 	glGenTextures(1, &texID);
 	glBindTexture(texType, texID);
 
-	if(bpp == 3)
-		glTexImage2D(texType, 0, GL_RGB, width, height, 0, GL_RGB,
-					 GL_UNSIGNED_BYTE, pixels);
-	else if(bpp == 4)
-		glTexImage2D(texType, 0, GL_RGBA, width, height, 0, GL_RGBA,
-					 GL_UNSIGNED_BYTE, pixels);
+	/*
+		Color    Allowed    Interpretation
+		Type    Bit Depths
+		
+		0       1,2,4,8,16  Each pixel is a grayscale sample.
+		
+		2       8,16        Each pixel is an R,G,B triple.
+		
+		3       1,2,4,8     Each pixel is a palette index;
+		                    a PLTE chunk must appear.
+		
+		4       8,16        Each pixel is a grayscale sample,
+		                    followed by an alpha sample.
+		
+		6       8,16        Each pixel is an R,G,B triple,
+		                    followed by an alpha sample.
+	*/
+
+	if (png->colorType == 0)
+		glTexImage2D(texType, 0, GL_RED, png->width, png->height, 0, GL_RED,
+					 GL_UNSIGNED_BYTE, png->rgba);
+	else if(png->colorType == 2)
+		glTexImage2D(texType, 0, GL_RGB, png->width, png->height, 0, GL_RGB,
+					 GL_UNSIGNED_BYTE, png->rgba);
+	else if(png->colorType == 6)
+		glTexImage2D(texType, 0, GL_RGBA, png->width, png->height, 0, GL_RGBA,
+					 GL_UNSIGNED_BYTE, png->rgba);
+	else
+	{
+		bool exception_occured = 0;
+	}
 
 	glTexParameteri(texType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(texType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glBindTexture(texType, 0);
 
-	stbi_image_free(pixels);
+	delete png;
 }
 
 void iGLTexture::load(GLenum type, GLint format, uint8* pixels, int w, int h)
@@ -286,4 +308,81 @@ void iGLTexture::setTexParmi(GLenum name, GLint parm)
 	glTexParameteri(texType, name, parm);
 
 	glBindTexture(texType, 0);
+}
+
+iGLShader::iGLShader()
+{
+	program = new iHashTable(SHADERPROGRAM_BUFFER_SIZE);
+	shader = new iHashTable(SHADERPROGRAM_BUFFER_SIZE * 2);
+	backBuff = new iArray(SHADERPROGRAM_BUFFER_SIZE * 2);
+}
+
+iGLShader::~iGLShader()
+{
+	for (int i = 0; i < backBuff->dataNum; i++)
+		delete &backBuff[i];
+
+	delete backBuff;
+	delete shader;
+	delete program;
+}
+
+iGLShader* iGLShader::share()
+{
+	if (!S) S = new iGLShader();
+	return S;
+}
+
+void iGLShader::addProgram(const char* vs, const char* fs)
+{
+	GLuint* vertID = (GLuint*)shader->at(vs);
+	GLuint* fragID = (GLuint*)shader->at(fs);
+	bool shouldMake = false;
+
+	if (!vertID)
+	{
+		GLuint* v = new GLuint;
+		*v = createShader(vs, VERTEX_SHADER);
+		vertID = v;
+
+		shader->insert(vs, v);
+		backBuff->push_back(v);
+		shouldMake = true;
+	}
+	
+	if (!fragID)
+	{
+		GLuint* f = new GLuint;
+		*f = createShader(fs, FRAGMENT_SHADER);
+		fragID = f;
+
+		shader->insert(fs, f);
+		backBuff->push_back(f);
+		shouldMake = true;
+	}
+
+	if (shouldMake)
+	{
+		GLuint* programID = new GLuint;
+		*programID = createProgram(*vertID, *fragID);
+
+		int len = strlen(vs) + strlen(fs);
+		char* str = new char[len + 1];
+		sprintf(str, "%s/%s", vs, fs);
+		str[len] = 0;
+
+		program->insert(str, programID);
+		backBuff->push_back(programID);
+		backBuff->push_back(str);
+	}
+}
+
+void iGLShader::useProgram(const char* vs, const char* fs) const
+{
+	char str[30];
+	sprintf(str, "%s/%s", vs, fs);
+
+	GLuint* programID = (GLuint*)program->at(str);
+
+	if (programID) glUseProgram(*programID);
 }

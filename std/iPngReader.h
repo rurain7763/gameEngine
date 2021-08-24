@@ -42,9 +42,14 @@ private:
 
 struct iPng
 {
-	uint8** rgba;
+	iPng();
+	virtual ~iPng();
+
+	uint8* rgba;
+	uint32 stride;
 	uint32 width, height;
 	uint8 colorType;
+	uint8 channels;
 	uint8 bitDepth;
 };
 

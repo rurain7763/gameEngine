@@ -397,6 +397,20 @@ iHuffCode* iPngReader::decodeHuffman(iHuffCode* code, int codeNum,
 	return NULL;
 }
 
+iPng::iPng()
+{
+	rgba = NULL;
+	width = 0, height = 0;
+	colorType = 0xff;
+	channels = 0xff;
+	bitDepth = 0xff;
+}
+
+iPng::~iPng()
+{
+	delete[] rgba;
+}
+
 iZlibBlock::iZlibBlock(uint8* s)
 {
 	stream = s;
@@ -449,10 +463,24 @@ iPng* readPng(const char* path)
 	iPng* r = new iPng;
 	FILE* file = fopen(path, "rb");
 
+	uint8 header[8];
+	fread(header, 1, 8, file);
+	if (png_sig_cmp(header, 0, 8)) return NULL;
+	fseek(file, 0, SEEK_SET);
+
 	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	png_infop info = png_create_info_struct(png);
 
-	setjmp(png_jmpbuf(png));
+	if (setjmp(png_jmpbuf(png))) 
+	{
+		png_destroy_read_struct(&png, &info, NULL);
+		printf("readPng() : error occured when png read\n");
+
+		//Make sure you return here. libPNG will jump to here if something
+		//goes wrong, and if you continue with your normal code, you might
+		//End up with an infinite loop.
+		return NULL;
+	}
 
 	png_init_io(png, file);
 	png_read_info(png, info);
@@ -460,42 +488,67 @@ iPng* readPng(const char* path)
 	r->width = png_get_image_width(png, info);
 	r->height = png_get_image_height(png, info);
 	r->colorType = png_get_color_type(png, info);
+	r->channels = png_get_channels(png, info);
 	r->bitDepth = png_get_bit_depth(png, info);
+
+	if (r->colorType == PNG_COLOR_TYPE_PALETTE)
+	{
+		png_set_palette_to_rgb(png);
+		r->channels = 3;
+	}
+	else if ((r->colorType == PNG_COLOR_TYPE_GRAY) && (r->bitDepth < 8))
+	{
+		//PNG_COLOR_TYPE_GRAY is always 8 bit depth
+		png_set_expand_gray_1_2_4_to_8(png);
+		r->bitDepth = 8;
+	}
+
+	if (png_get_valid(png, info, PNG_INFO_tRNS))
+	{
+		png_set_tRNS_to_alpha(png);
+		r->channels += 1;
+	}
 
 	//read any color_type into 8bit depth, rgba format
 	if (r->bitDepth == 16)
 		png_set_strip_16(png);
-	if (r->colorType == PNG_COLOR_TYPE_PALETTE)
-		png_set_palette_to_rgb(png);
-
-	//PNG_COLOR_TYPE_GRAY is always 8 bit depth
-	if ((r->colorType == PNG_COLOR_TYPE_GRAY) && (r->bitDepth < 8))
-		png_set_expand_gray_1_2_4_to_8(png);
-
-	if (png_get_valid(png, info, PNG_INFO_tRNS))
-		png_set_tRNS_to_alpha(png);
 
 	//if don't have alpha channel then fill it with 0
 	if (r->colorType == PNG_COLOR_TYPE_RGB ||
 		r->colorType == PNG_COLOR_TYPE_GRAY ||
 		r->colorType == PNG_COLOR_TYPE_PALETTE)
+	{
 		png_set_filter(png, 0, PNG_FILLER_AFTER);
+	}
 
 	if (r->colorType == PNG_COLOR_TYPE_GRAY ||
 		r->colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
+	{
 		png_set_gray_to_rgb(png);
+	}
+
+	png_read_update_info(png, info);
+
+	r->stride = r->width * r->bitDepth * r->channels / 8;
 
 	uint8** row = new uint8*[r->height];
 	for (int i = 0; i < r->height; i++)
-	{
 		row[i] = new uint8[png_get_rowbytes(png, info)];
+	
+	png_read_image(png, row);
+	r->rgba = new uint8[r->width * r->height * r->bitDepth * r->channels / 8];
+	
+	for (int i = 0; i < r->height; i++)
+	{
+		memcpy(&r->rgba[r->stride * i], row[i], sizeof(uint8) * r->stride);
+		delete[] row[i];
 	}
 
-	png_read_image(png, row);
-	r->rgba = row;
-
+	delete[] row;
 	png_destroy_read_struct(&png, &info, NULL);
 	fclose(file);
 
 	return r;
 }
+
+

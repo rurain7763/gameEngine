@@ -63,9 +63,6 @@
     <ClInclude Include="std\iArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="reference\stb_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="std\iType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -126,6 +123,9 @@
     <ClInclude Include="reference\zlib\include\zutil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="std\iHashTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gameEngine.cpp">
@@ -176,7 +176,7 @@
     <ClCompile Include="std\iArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="reference\stb_image.cpp">
+    <ClCompile Include="std\iHashTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

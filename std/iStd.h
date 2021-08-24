@@ -1,11 +1,6 @@
 #pragma once
 
-#define _CRT_SECURE_NO_WARNINGS
 #define _USE_MATH_DEFINES
-
-#if 1
-#include "stb_image.h"
-#endif
 
 #include <stdlib.h>
 #include <malloc.h>
@@ -22,6 +17,7 @@
 #include "iTree.h"
 #include "iArray.h"
 #include "iSharedPtr.h"
+#include "iHashTable.h"
 
 #include "iPngReader.h"
 #include "iInputManager.h"

@@ -50,9 +50,7 @@ void loadGame()
 
 #if 1
 	tex = new iGLTexture();
-	tex.get()->load(GL_TEXTURE_2D, "assets/test/sample3.png");
-
-	iPng* rgba = readPng("assets/test/sample3.png");
+	tex.get()->load(GL_TEXTURE_2D, "assets/test/dragon.png");
 #endif
 }
 

@@ -12,7 +12,10 @@
 
 #define VERTEX_SHADER		0
 #define FRAGMENT_SHADER		1
+#define SHADERPROGRAM_BUFFER_SIZE  100
 
+class iArray;
+class iHashTable;
 class iGLTexture;
 typedef iSharedPtr<iGLTexture>   iGLTexturePTR;
 typedef iSharedPtr<iGLTexture[]> iGLTextureARR;
@@ -59,24 +62,22 @@ private:
 	static iGLShader* S;
 	iGLShader();
 
-	GLuint createShader(const char* path, Flag flag);
-	void deleteShader(GLuint id);
-	GLuint createProgram(GLuint vert, GLuint frag);
-	void deleteProgram(GLuint program);
-
 public:
 	virtual ~iGLShader();
 
 	static iGLShader* share();
 
 	void addProgram(const char* vertexShader, const char* fragmentShader);
-	GLuint useProgram(const char* vertexShader, const char* fragmentShader) const;
+	void useProgram(const char* vertexShader, const char* fragmentShader) const;
 
 	GLuint setUniformMatrix4x(const char* uniformName) const;
 
-public:
-	// ? hash table
+private:
+	iArray* backBuff;
 
+public:
+	iHashTable* shader;
+	iHashTable* program;
 };
 
 
