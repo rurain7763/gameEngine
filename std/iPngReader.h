@@ -2,6 +2,7 @@
 
 #include "iType.h"
 
+struct iPng;
 struct iChunk;
 struct iZlibBlock;
 struct iHuffCode;
@@ -39,6 +40,14 @@ private:
 	uint32* lz77DistExtraBit;
 };
 
+struct iPng
+{
+	uint8** rgba;
+	uint32 width, height;
+	uint8 colorType;
+	uint8 bitDepth;
+};
+
 struct iChunk
 {
 	char type[5];
@@ -67,5 +76,5 @@ struct iHuffCode
 	uint32 c = -1;
 };
 
-
+iPng* readPng(const char* path);
 

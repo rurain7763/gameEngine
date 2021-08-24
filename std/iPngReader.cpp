@@ -1,6 +1,8 @@
 #include"iPngReader.h"
 #include"iStd.h"
 
+#include <png.h>
+
 iPngReader* iPngReader::S = NULL;
 
 iPngReader::iPngReader()
@@ -440,4 +442,60 @@ uint32 iZlibBlock::reverseBit(uint32 v, int bitNum)
 	v = ((v & 0xaaaaaaaa) >> 1) | ((v & 0x55555555) << 1);
 
 	return v >> (32 - bitNum);
+}
+
+iPng* readPng(const char* path)
+{
+	iPng* r = new iPng;
+	FILE* file = fopen(path, "rb");
+
+	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	png_infop info = png_create_info_struct(png);
+
+	setjmp(png_jmpbuf(png));
+
+	png_init_io(png, file);
+	png_read_info(png, info);
+
+	r->width = png_get_image_width(png, info);
+	r->height = png_get_image_height(png, info);
+	r->colorType = png_get_color_type(png, info);
+	r->bitDepth = png_get_bit_depth(png, info);
+
+	//read any color_type into 8bit depth, rgba format
+	if (r->bitDepth == 16)
+		png_set_strip_16(png);
+	if (r->colorType == PNG_COLOR_TYPE_PALETTE)
+		png_set_palette_to_rgb(png);
+
+	//PNG_COLOR_TYPE_GRAY is always 8 bit depth
+	if ((r->colorType == PNG_COLOR_TYPE_GRAY) && (r->bitDepth < 8))
+		png_set_expand_gray_1_2_4_to_8(png);
+
+	if (png_get_valid(png, info, PNG_INFO_tRNS))
+		png_set_tRNS_to_alpha(png);
+
+	//if don't have alpha channel then fill it with 0
+	if (r->colorType == PNG_COLOR_TYPE_RGB ||
+		r->colorType == PNG_COLOR_TYPE_GRAY ||
+		r->colorType == PNG_COLOR_TYPE_PALETTE)
+		png_set_filter(png, 0, PNG_FILLER_AFTER);
+
+	if (r->colorType == PNG_COLOR_TYPE_GRAY ||
+		r->colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
+		png_set_gray_to_rgb(png);
+
+	uint8** row = new uint8*[r->height];
+	for (int i = 0; i < r->height; i++)
+	{
+		row[i] = new uint8[png_get_rowbytes(png, info)];
+	}
+
+	png_read_image(png, row);
+	r->rgba = row;
+
+	png_destroy_read_struct(&png, &info, NULL);
+	fclose(file);
+
+	return r;
 }

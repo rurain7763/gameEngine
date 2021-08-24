@@ -52,7 +52,7 @@ void loadGame()
 	tex = new iGLTexture();
 	tex.get()->load(GL_TEXTURE_2D, "assets/test/sample3.png");
 
-	iGLTextureARR test = new iGLTexture[5];
+	iPng* rgba = readPng("assets/test/sample3.png");
 #endif
 }
 
