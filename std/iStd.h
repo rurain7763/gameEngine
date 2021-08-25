@@ -18,6 +18,8 @@
 #include "iArray.h"
 #include "iSharedPtr.h"
 #include "iHashTable.h"
+#include "iQueue.h"
+#include "iStack.h"
 
 #include "iPngReader.h"
 #include "iInputManager.h"

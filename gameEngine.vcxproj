@@ -183,6 +183,8 @@
     <ClInclude Include="std\iOpenGL.h" />
     <ClInclude Include="std\iPngReader.h" />
     <ClInclude Include="std\iQuaternion.h" />
+    <ClInclude Include="std\iQueue.h" />
+    <ClInclude Include="std\iStack.h" />
     <ClInclude Include="std\iStd.h" />
     <ClInclude Include="std\iSharedPtr.h" />
     <ClInclude Include="std\iTime.h" />
@@ -204,6 +206,8 @@
     <ClCompile Include="std\iOpenGL.cpp" />
     <ClCompile Include="std\iPngReader.cpp" />
     <ClCompile Include="std\iQuaternion.cpp" />
+    <ClCompile Include="std\iQueue.cpp" />
+    <ClCompile Include="std\iStack.cpp" />
     <ClCompile Include="std\iStd.cpp" />
     <ClCompile Include="std\iTime.cpp" />
     <ClCompile Include="std\iTransform.cpp" />

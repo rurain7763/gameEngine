@@ -49,8 +49,25 @@ void loadGame()
 	cameraMode = false;
 
 #if 1
+	iBinarySearchTree bt
+	(
+		[](void* left, void* right) { return *(int*)left == *(int*)right; },
+		[](void* left, void* right) { return *(int*)left < *(int*)right; }
+	);
+	
+	int x[] = { 60, 41, 74, 16, 53, 65, 25, 46, 55, 63, 70, 42, 62, 64};
+
+	for (int i = 0; i < sizeof(x) / sizeof(int); i++)
+	{
+		bt.insert(&x[i]);
+	}
+
+	int comp = 60;
+	bt.remove(&comp);
+
 	tex = new iGLTexture();
 	tex.get()->load(GL_TEXTURE_2D, "assets/test/dragon.png");
+
 #endif
 }
 

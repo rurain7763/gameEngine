@@ -126,6 +126,12 @@
     <ClInclude Include="std\iHashTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="std\iQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="std\iStack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gameEngine.cpp">
@@ -177,6 +183,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="std\iHashTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="std\iQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="std\iStack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -107,4 +107,167 @@ void* iHeap::pop()
 	return r;
 }
 
+iBinarySearchTree::iBinarySearchTree(CompareMethod e, CompareMethod m)
+{
+	root = NULL;
+	equalFunc = e;
+	minFunc = m;
+	num = 0;
+}
 
+iBinarySearchTree::~iBinarySearchTree()
+{
+	iQueue q(num == 0 ? num++ : num);
+	q.push(root);
+
+	while (!q.empty())
+	{
+		iBinaryTreeNode* n = (iBinaryTreeNode*)q.pop();
+
+		if (!n) continue;
+
+		q.push(n->left);
+		q.push(n->right);
+
+		delete n;
+	}
+}
+
+void iBinarySearchTree::insert(void* v)
+{
+	iBinaryTreeNode* n = root;
+	int flag = ROOT_NODE;
+
+	while (n)
+	{
+		if (equalFunc(n->data, v)) return;
+
+		if (minFunc(n->data, v)) //right
+		{
+			if (!n->right)
+			{
+				flag = RIGHT_NODE;
+				break;
+			}
+			n = n->right;
+		}
+		else //left
+		{
+			if (!n->left)
+			{
+				flag = LEFT_NODE;
+				break;
+			}
+
+			n = n->left;
+		}
+	}
+
+	if (flag == LEFT_NODE)
+	{
+		n->left = new iBinaryTreeNode;
+		n->left->data = v;
+		n->left->left = NULL;
+		n->left->right = NULL;	
+	}
+	else if (flag == RIGHT_NODE)
+	{
+		n->right = new iBinaryTreeNode;
+		n->right->data = v;
+		n->right->left = NULL;
+		n->right->right = NULL;
+	}
+	else
+	{
+		root = new iBinaryTreeNode;
+		root->data = v;
+		root->left = NULL;
+		root->right = NULL;
+	}
+
+	num++;
+	height = floor(log2(num)) + 1;
+}
+
+void iBinarySearchTree::remove(void* v)
+{
+	if (num == 0) return;
+
+	iBinaryTreeNode* parent = root;
+	iBinaryTreeNode* curr = root;
+
+	while (curr)
+	{
+		if (equalFunc(curr->data, v))
+		{
+			break;
+		}
+
+		parent = curr;
+		
+		if (minFunc(curr->data, v)) curr = curr->right;	
+		else curr = curr->left;
+	}
+
+	if (!curr) return; // no such data
+
+	if (curr->left && curr->right)
+	{
+		// 2 child
+		iBinaryTreeNode* min = curr->right;
+		parent = curr->right;
+
+		// ?
+	}
+	else if (curr->left || curr->right)
+	{
+		// 1 child
+		iBinaryTreeNode* child = curr->left ? curr->left : curr->right;
+
+		if (curr == root) root = child;
+		else if (parent->left == curr) parent->left = child;
+		else parent->right = child;
+		delete curr;
+	}
+	else
+	{
+		// no child
+		if (parent->left == curr) parent->left = NULL;
+		else parent->right = NULL;
+		delete curr;
+	}
+
+	num--;
+	height = floor(log2(num)) + 1;
+}
+
+iBinaryTreeNode* iBinarySearchTree::inOrder(void* v)
+{
+	iStack stk(num);
+	iBinaryTreeNode* n = root;
+
+	while (1)
+	{
+		while (n)
+		{
+			stk.push(n);
+			n = n->left;
+		}
+
+		if (!stk.empty())
+		{
+			iBinaryTreeNode* tn = (iBinaryTreeNode*)stk.pop();
+
+			if (equalFunc(tn->data, v))
+			{
+				n = tn;
+				break;
+			}
+
+			n = tn->right;
+		}
+		else break;
+	}
+
+	return n;
+}
