@@ -48,6 +48,7 @@ public:
 
 	void insert(void* v);
 	void remove(void* v);
+	bool find(void* v);
 
 private:
 	iBinaryTreeNode* inOrder(void* v);

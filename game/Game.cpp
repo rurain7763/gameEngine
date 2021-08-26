@@ -10,11 +10,9 @@ iSize* devSize;
 GLuint vao;
 GLuint vbo;
 GLuint ebo;
-iGLTexturePTR tex;
 
-GLuint vert;
-GLuint frag;
-GLuint program;
+iGLTexturePTR tex;
+iGLShader* shader;
 
 void loadGame()
 {
@@ -41,34 +39,14 @@ void loadGame()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	vert = createShader("assets/shader/test.vert", VERTEX_SHADER);
-	frag = createShader("assets/shader/test.frag", FRAGMENT_SHADER);
-	program = createProgram(vert, frag);
+	shader = iGLShader::share();
+	shader->addProgram("test", "test");
 
 	camera = new iCamera(*devSize, { 0.f, 0.f, -5.f });
 	cameraMode = false;
 
-#if 1
-	iBinarySearchTree bt
-	(
-		[](void* left, void* right) { return *(int*)left == *(int*)right; },
-		[](void* left, void* right) { return *(int*)left < *(int*)right; }
-	);
-	
-	int x[] = { 60, 41, 74, 16, 53, 65, 25, 46, 55, 63, 70, 42, 62, 64};
-
-	for (int i = 0; i < sizeof(x) / sizeof(int); i++)
-	{
-		bt.insert(&x[i]);
-	}
-
-	int comp = 60;
-	bt.remove(&comp);
-
 	tex = new iGLTexture();
 	tex.get()->load(GL_TEXTURE_2D, "assets/test/dragon.png");
-
-#endif
 }
 
 void drawGame()
@@ -76,7 +54,7 @@ void drawGame()
 	static float degree = 0.f;
 	degree += timeMgt->deltaTime * 50.f;
 
-	glUseProgram(program);
+	GLuint program = shader->useProgram("test", "test");
 
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -172,13 +150,10 @@ void endGame()
 	glDeleteBuffers(1, &ebo);
 	glDeleteVertexArrays(1, &vao);
 
-	deleteShader(vert);
-	deleteShader(frag);
-	deleteProgram(program);
-
 	delete inputMgt;
 	delete timeMgt;
 	delete devSize;
 	delete camera;
+	delete shader;
 }
 

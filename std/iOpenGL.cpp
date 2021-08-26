@@ -84,74 +84,6 @@ void swapBuffer(HDC& hdc)
 	SwapBuffers(hdc);
 }
 
-GLuint createShader(const char* path, Flag flag)
-{
-	char* str = readFile(path);
-	if (!str) return -1;
-
-	GLenum f[] = { GL_VERTEX_SHADER, GL_FRAGMENT_SHADER };
-	GLuint id = glCreateShader(f[flag]);
-	int len = strlen(str);
-	glShaderSource(id, 1, &str, &len);
-	glCompileShader(id);
-
-	GLint success;
-	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		int errLen = 0;
-		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &errLen);
-
-		char* error = new char[errLen + 1];
-		glGetShaderInfoLog(id, errLen, NULL, error);
-		printf("Error compiling shader type: '%s'\n", error);
-		delete[] error;
-
-		delete[] str;
-		return -1;
-	}
-
-	delete[] str;
-	return id;
-}
-
-void deleteShader(GLuint id)
-{
-	glDeleteShader(id);
-}
-
-GLuint createProgram(GLuint vert, GLuint frag)
-{
-	GLuint id = glCreateProgram();
-	glAttachShader(id, vert);
-	glAttachShader(id, frag);
-	glLinkProgram(id);
-	glDetachShader(id, vert);
-	glDetachShader(id, frag);
-
-	GLint success;
-	glGetProgramiv(id, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		int errLen = 0;
-		glGetProgramiv(id, GL_INFO_LOG_LENGTH, &errLen);
-
-		char* error = new char[errLen + 1];
-		glGetProgramInfoLog(id, errLen, NULL, error);
-		printf("Error linking shader program: '%s'\n", error);
-		delete[] error;
-
-		return -1;
-	}
-
-	return id;
-}
-
-void deleteProgram(GLuint program)
-{
-	glDeleteProgram(program);
-}
-
 iRect caculateViewPort(iSize devSize, iSize rederingSize)
 {
 	float ratio = devSize.width / devSize.height;
@@ -312,17 +244,22 @@ void iGLTexture::setTexParmi(GLenum name, GLint parm)
 
 iGLShader::iGLShader()
 {
-	program = new iHashTable(SHADERPROGRAM_BUFFER_SIZE);
-	shader = new iHashTable(SHADERPROGRAM_BUFFER_SIZE * 2);
-	backBuff = new iArray(SHADERPROGRAM_BUFFER_SIZE * 2);
+	program = new iHashTable();
+	shader = new iHashTable();
 }
 
 iGLShader::~iGLShader()
 {
-	for (int i = 0; i < backBuff->dataNum; i++)
-		delete &backBuff[i];
+	for (int i = 0; i < ids.dataNum; i++)
+	{
+		iGLShaderInfo* info = (iGLShaderInfo*)ids[i];
+		
+		if (info->flag) deleteProgram(info->id);
+		else deleteShader(info->id);
 
-	delete backBuff;
+		delete info;
+	}
+
 	delete shader;
 	delete program;
 }
@@ -337,52 +274,131 @@ void iGLShader::addProgram(const char* vs, const char* fs)
 {
 	GLuint* vertID = (GLuint*)shader->at(vs);
 	GLuint* fragID = (GLuint*)shader->at(fs);
+	char path[100];
 	bool shouldMake = false;
 
 	if (!vertID)
 	{
-		GLuint* v = new GLuint;
-		*v = createShader(vs, VERTEX_SHADER);
-		vertID = v;
+		sprintf(path, "assets/shader/%s.vert", vs);
 
-		shader->insert(vs, v);
-		backBuff->push_back(v);
+		iGLShaderInfo* info = new iGLShaderInfo;
+		info->flag = 0;
+		info->id = createShader(path, VERTEX_SHADER);
+		vertID = &info->id;
+
+		shader->insert(vs, &info->id);
+		ids.push_back(info);
 		shouldMake = true;
 	}
 	
 	if (!fragID)
 	{
-		GLuint* f = new GLuint;
-		*f = createShader(fs, FRAGMENT_SHADER);
-		fragID = f;
+		sprintf(path, "assets/shader/%s.frag", fs);
 
-		shader->insert(fs, f);
-		backBuff->push_back(f);
+		iGLShaderInfo* info = new iGLShaderInfo;
+		info->flag = 0;
+		info->id = createShader(path, FRAGMENT_SHADER);
+		fragID = &info->id;
+
+		shader->insert(fs, &info->id);
+		ids.push_back(info);
 		shouldMake = true;
 	}
 
 	if (shouldMake)
 	{
-		GLuint* programID = new GLuint;
-		*programID = createProgram(*vertID, *fragID);
+		iGLShaderInfo* info = new iGLShaderInfo;
+		info->flag = 1;
+		info->id = createProgram(*vertID, *fragID);
 
-		int len = strlen(vs) + strlen(fs);
-		char* str = new char[len + 1];
+		char str[50];
 		sprintf(str, "%s/%s", vs, fs);
-		str[len] = 0;
 
-		program->insert(str, programID);
-		backBuff->push_back(programID);
-		backBuff->push_back(str);
+		program->insert(str, &info->id);
+		ids.push_back(info);
 	}
 }
 
-void iGLShader::useProgram(const char* vs, const char* fs) const
+GLuint iGLShader::useProgram(const char* vs, const char* fs) const
 {
-	char str[30];
+	char str[50];
 	sprintf(str, "%s/%s", vs, fs);
 
 	GLuint* programID = (GLuint*)program->at(str);
 
-	if (programID) glUseProgram(*programID);
+	if (programID)
+	{
+		glUseProgram(*programID);
+		return *programID;
+	}
+
+	return 0;
+}
+
+GLuint iGLShader::createShader(const char* path, Flag flag)
+{
+	char* str = readFile(path);
+	if (!str) return -1;
+
+	GLenum f[] = { GL_VERTEX_SHADER, GL_FRAGMENT_SHADER };
+	GLuint id = glCreateShader(f[flag]);
+	int len = strlen(str);
+	glShaderSource(id, 1, &str, &len);
+	glCompileShader(id);
+
+	GLint success;
+	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		int errLen = 0;
+		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &errLen);
+
+		char* error = new char[errLen + 1];
+		glGetShaderInfoLog(id, errLen, NULL, error);
+		printf("Error compiling shader type: '%s'\n", error);
+		delete[] error;
+
+		delete[] str;
+		return -1;
+	}
+
+	delete[] str;
+	return id;
+}
+
+void iGLShader::deleteShader(GLuint id)
+{
+	glDeleteShader(id);
+}
+
+GLuint iGLShader::createProgram(GLuint vert, GLuint frag)
+{
+	GLuint id = glCreateProgram();
+	glAttachShader(id, vert);
+	glAttachShader(id, frag);
+	glLinkProgram(id);
+	glDetachShader(id, vert);
+	glDetachShader(id, frag);
+
+	GLint success;
+	glGetProgramiv(id, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		int errLen = 0;
+		glGetProgramiv(id, GL_INFO_LOG_LENGTH, &errLen);
+
+		char* error = new char[errLen + 1];
+		glGetProgramInfoLog(id, errLen, NULL, error);
+		printf("Error linking shader program: '%s'\n", error);
+		delete[] error;
+
+		return -1;
+	}
+
+	return id;
+}
+
+void iGLShader::deleteProgram(GLuint program)
+{
+	glDeleteProgram(program);
 }

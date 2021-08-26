@@ -113,21 +113,20 @@ iBinarySearchTree::iBinarySearchTree(CompareMethod e, CompareMethod m)
 	equalFunc = e;
 	minFunc = m;
 	num = 0;
+	height = 0;
 }
 
 iBinarySearchTree::~iBinarySearchTree()
 {
-	iQueue q(num == 0 ? num++ : num);
+	iQueue q(num == 0 ? num + 1 : num);
 	q.push(root);
 
 	while (!q.empty())
 	{
 		iBinaryTreeNode* n = (iBinaryTreeNode*)q.pop();
 
-		if (!n) continue;
-
-		q.push(n->left);
-		q.push(n->right);
+		if(n->left) q.push(n->left);
+		if(n->right) q.push(n->right);
 
 		delete n;
 	}
@@ -191,8 +190,6 @@ void iBinarySearchTree::insert(void* v)
 
 void iBinarySearchTree::remove(void* v)
 {
-	if (num == 0) return;
-
 	iBinaryTreeNode* parent = root;
 	iBinaryTreeNode* curr = root;
 
@@ -215,9 +212,32 @@ void iBinarySearchTree::remove(void* v)
 	{
 		// 2 child
 		iBinaryTreeNode* min = curr->right;
-		parent = curr->right;
+		parent = curr;
 
-		// ?
+		while (min->left != NULL)
+		{
+			parent = min;
+			min = min->left;
+		}
+
+		if (min == curr->right)
+		{
+			curr->data = min->data;
+			curr->right = min->right;
+			delete min;
+		}
+		else if (min->right == NULL)
+		{
+			curr->data = min->data;
+			parent->left = NULL;
+			delete min;
+		}
+		else if (min->right)
+		{
+			curr->data = min->data;
+			parent->left = min->right;
+			delete min;
+		}
 	}
 	else if (curr->left || curr->right)
 	{
@@ -239,6 +259,21 @@ void iBinarySearchTree::remove(void* v)
 
 	num--;
 	height = floor(log2(num)) + 1;
+}
+
+bool iBinarySearchTree::find(void* v)
+{
+	iBinaryTreeNode* curr = root;
+
+	while (curr)
+	{
+		if (equalFunc(curr->data, v)) return true;
+		
+		if (minFunc(curr->data, v)) curr = curr->right;
+		else curr = curr->left;
+	}
+
+	return false;
 }
 
 iBinaryTreeNode* iBinarySearchTree::inOrder(void* v)

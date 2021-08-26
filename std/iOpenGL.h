@@ -8,13 +8,12 @@
 #pragma comment (lib, "opengl32.lib")
 
 #include "iType.h"
+#include "iArray.h"
 #include "iSharedPtr.h"
 
 #define VERTEX_SHADER		0
 #define FRAGMENT_SHADER		1
-#define SHADERPROGRAM_BUFFER_SIZE  100
 
-class iArray;
 class iHashTable;
 class iGLTexture;
 typedef iSharedPtr<iGLTexture>   iGLTexturePTR;
@@ -24,11 +23,6 @@ void loadGL(HWND& hwnd);
 void endGL();
 void clear();
 void swapBuffer(HDC& hdc);
-
-GLuint createShader(const char* path, Flag flag);
-void deleteShader(GLuint id);
-GLuint createProgram(GLuint vert, GLuint frag);
-void deleteProgram(GLuint program);
 
 iRect caculateViewPort(iSize devSize, iSize rederingSize);
 void setViewPort(int left, int top, int width, int height);
@@ -68,17 +62,28 @@ public:
 	static iGLShader* share();
 
 	void addProgram(const char* vertexShader, const char* fragmentShader);
-	void useProgram(const char* vertexShader, const char* fragmentShader) const;
+	GLuint useProgram(const char* vertexShader, const char* fragmentShader) const;
 
 	GLuint setUniformMatrix4x(const char* uniformName) const;
 
 private:
-	iArray* backBuff;
+	GLuint createShader(const char* path, Flag flag);
+	void deleteShader(GLuint id);
+	GLuint createProgram(GLuint vert, GLuint frag);
+	void deleteProgram(GLuint program);
+
+private:
+	iArray ids;
 
 public:
 	iHashTable* shader;
 	iHashTable* program;
 };
 
+struct iGLShaderInfo
+{
+	bool flag; // 0 : shader 1 : program
+	GLuint id;
+};
 
 
