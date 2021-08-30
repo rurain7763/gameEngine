@@ -6,6 +6,9 @@
 #include <gl/wglew.h>
 #include <gl/GL.h>
 #pragma comment (lib, "opengl32.lib")
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include "iType.h"
 #include "iArray.h"
@@ -13,6 +16,7 @@
 
 #define VERTEX_SHADER		0
 #define FRAGMENT_SHADER		1
+#define ASSIMP_LOAD_FLAGS	aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices
 
 class iHashTable;
 class iGLTexture;
@@ -86,4 +90,17 @@ struct iGLShaderInfo
 	GLuint id;
 };
 
+class iGLMesh
+{
+public:
+	iGLMesh();
+	virtual ~iGLMesh();
+
+	void load(const char* path);
+
+public:
+	GLuint vao;
+	GLuint vbo;
+	GLuint ibo;
+};
 
