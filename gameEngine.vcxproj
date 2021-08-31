@@ -89,13 +89,13 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)reference/assimp/lib/x64_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc142-mt.lib;zlib.lib;pnglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)reference/assimp/lib/x64_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc142-mt.lib;zlib.lib;pnglib.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -106,7 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -114,8 +114,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>zlib.lib;pnglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)reference/assimp/lib/x64_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc142-mt.lib;zlib.lib;pnglib.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -124,13 +124,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>zlib.lib;pnglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)reference/assimp/lib/x64_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc142-mt.lib;zlib.lib;pnglib.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -141,7 +141,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -149,8 +149,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>zlib.lib;pnglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)reference/assimp/lib/x64_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc142-mt.lib;zlib.lib;pnglib.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
