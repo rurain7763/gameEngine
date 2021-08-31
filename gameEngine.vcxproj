@@ -261,6 +261,7 @@
     <ClInclude Include="reference\zlib\include\zutil.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="std\iArray.h" />
+    <ClInclude Include="std\iAssetReader.h" />
     <ClInclude Include="std\iCamera.h" />
     <ClInclude Include="std\iHashTable.h" />
     <ClInclude Include="std\iInputManager.h" />
@@ -284,6 +285,7 @@
     <ClCompile Include="game\Game.cpp" />
     <ClCompile Include="std\glew.c" />
     <ClCompile Include="std\iArray.cpp" />
+    <ClCompile Include="std\iAssetReader.cpp" />
     <ClCompile Include="std\iCamera.cpp" />
     <ClCompile Include="std\iHashTable.cpp" />
     <ClCompile Include="std\iInputManager.cpp" />

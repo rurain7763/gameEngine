@@ -6,9 +6,6 @@
 #include <gl/wglew.h>
 #include <gl/GL.h>
 #pragma comment (lib, "opengl32.lib")
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include "iType.h"
 #include "iArray.h"
@@ -96,11 +93,15 @@ public:
 	iGLMesh();
 	virtual ~iGLMesh();
 
-	void load(const char* path);
+	void draw();
 
 public:
+	iArray vertices;
+	iArray indices;
+	iArray textures;
+
 	GLuint vao;
 	GLuint vbo;
-	GLuint ibo;
+	GLuint ebo;
 };
 

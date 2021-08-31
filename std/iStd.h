@@ -22,6 +22,7 @@
 #include "iStack.h"
 
 #include "iPngReader.h"
+#include "iAssetReader.h"
 #include "iInputManager.h"
 #include "iTime.h"
 #include "iTransform.h"

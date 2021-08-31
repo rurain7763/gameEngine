@@ -32,7 +32,7 @@ void loadGame()
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(iVertex) * 8, NULL, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(iVertexPCU) * 8, NULL, GL_DYNAMIC_DRAW);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLubyte) * 36, NULL, GL_DYNAMIC_DRAW);
 
 	glBindVertexArray(0);
@@ -46,7 +46,9 @@ void loadGame()
 	cameraMode = false;
 
 	tex = new iGLTexture();
-	tex.get()->load(GL_TEXTURE_2D, "assets/test/dragon.png");
+	tex.get()->load(GL_TEXTURE_2D, "assets/test/sample3.png");
+
+	loadAsset("assets/test/spider.obj");
 }
 
 void drawGame()
@@ -60,7 +62,7 @@ void drawGame()
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
-	iVertex vertices[] =
+	iVertexPCU vertices[] =
 	{
 		{{.5f,.5,.5f,1.f},{1.f,1.f,1.f,1.f},{0.f,0.f}},
 		{{-.5f,.5f,-.5f,1.f},{1.f,1.f,1.f,1.f},{0.f,1.f}},
@@ -72,7 +74,7 @@ void drawGame()
 		{{-.5f,-.5f,.5f,1.f},{1.f,1.f,1.f,1.f},{1.f,1.f}}
 	};
 
-	GLubyte indices[] = { 0,1,2 ,1,3,4, 5,6,3, 7,3,6, 2,4,7, 0,7,6, 0,5,1, 1,5,3,
+	GLubyte indices[] = { 0,1,2, 1,3,4, 5,6,3, 7,3,6, 2,4,7, 0,7,6, 0,5,1, 1,5,3,
 						  5,0,6, 7,4,3, 2,1,4, 0,2,7 };
 
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
@@ -96,15 +98,15 @@ void drawGame()
 
 	GLuint posAttr = glGetAttribLocation(program, "position");
 	glEnableVertexAttribArray(posAttr);
-	glVertexAttribPointer(posAttr, 4, GL_FLOAT, GL_FALSE, sizeof(iVertex), (const void*)offsetof(iVertex, position));
+	glVertexAttribPointer(posAttr, 4, GL_FLOAT, GL_FALSE, sizeof(iVertexPCU), (const void*)offsetof(iVertexPCU, position));
 
 	GLuint colAttr = glGetAttribLocation(program, "color");
 	glEnableVertexAttribArray(colAttr);
-	glVertexAttribPointer(colAttr, 4, GL_FLOAT, GL_FALSE, sizeof(iVertex), (const void*)offsetof(iVertex, color));
+	glVertexAttribPointer(colAttr, 4, GL_FLOAT, GL_FALSE, sizeof(iVertexPCU), (const void*)offsetof(iVertexPCU, color));
 
 	GLuint uvAttr = glGetAttribLocation(program, "uv");
 	glEnableVertexAttribArray(uvAttr);
-	glVertexAttribPointer(uvAttr, 2, GL_FLOAT, GL_FALSE, sizeof(iVertex), (const void*)offsetof(iVertex, uv));
+	glVertexAttribPointer(uvAttr, 2, GL_FLOAT, GL_FALSE, sizeof(iVertexPCU), (const void*)offsetof(iVertexPCU, uv));
 
 	GLuint sampler0 = glGetUniformLocation(program, "tex");
 

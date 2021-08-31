@@ -403,30 +403,4 @@ void iGLShader::deleteProgram(GLuint program)
 	glDeleteProgram(program);
 }
 
-iGLMesh::iGLMesh()
-{
-	vao = 0;
-	vbo = 0;
-	ibo = 0;
-}
 
-iGLMesh::~iGLMesh()
-{
-}
-
-void iGLMesh::load(const char* path)
-{
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	Assimp::Importer imp;	
-	const aiScene* scene = imp.ReadFile(path, ASSIMP_LOAD_FLAGS);
-
-	if (scene)
-	{
-
-	}
-	else printf("iGLMesh::load() = Error parsing %s , %s\n", path, imp.GetErrorString());
-
-	glBindVertexArray(0);
-}

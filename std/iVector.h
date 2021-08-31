@@ -36,10 +36,17 @@ struct iVector4f
 	float x, y, z, w;
 };
 
-struct iVertex
+struct iVertexPCU
 {
 	iVector4f position;
 	iVector4f color;
+	iVector2f uv;
+};
+
+struct iVertexPNU
+{
+	iVector3f position;
+	iVector3f normal;
 	iVector2f uv;
 };
 
