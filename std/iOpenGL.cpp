@@ -403,4 +403,43 @@ void iGLShader::deleteProgram(GLuint program)
 	glDeleteProgram(program);
 }
 
+iGLModel::iGLModel(uint32 nm)
+{
+	num = 0;
+	meshs = new iGLMesh * [nm];
+	numMeshs = nm;
+}
 
+iGLModel::~iGLModel()
+{
+	for (int i = 0; i < num; i++)
+		delete meshs[i];
+	
+	delete[] meshs;
+}
+
+void iGLModel::addMesh(iGLMesh* mesh)
+{
+	meshs[num] = mesh;
+	num++;
+}
+
+iGLMesh::iGLMesh()
+{
+	vertices = NULL;
+	numVertices = 0;
+	indices = NULL;
+	numIndices = 0;
+
+	vao = 0;
+	vbo = 0;
+	ebo = 0;
+}
+
+iGLMesh::~iGLMesh()
+{
+	delete[] vertices;
+	delete[] indices;
+
+	//...
+}

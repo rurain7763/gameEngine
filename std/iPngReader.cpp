@@ -1,8 +1,6 @@
 #include"iPngReader.h"
 #include"iStd.h"
 
-#include <png.h>
-
 iPngReader* iPngReader::S = NULL;
 
 iPngReader::iPngReader()
@@ -397,20 +395,6 @@ iHuffCode* iPngReader::decodeHuffman(iHuffCode* code, int codeNum,
 	return NULL;
 }
 
-iPng::iPng()
-{
-	rgba = NULL;
-	width = 0, height = 0;
-	colorType = 0xff;
-	channels = 0xff;
-	bitDepth = 0xff;
-}
-
-iPng::~iPng()
-{
-	delete[] rgba;
-}
-
 iZlibBlock::iZlibBlock(uint8* s)
 {
 	stream = s;
@@ -456,6 +440,21 @@ uint32 iZlibBlock::reverseBit(uint32 v, int bitNum)
 	v = ((v & 0xaaaaaaaa) >> 1) | ((v & 0x55555555) << 1);
 
 	return v >> (32 - bitNum);
+}
+
+iPng::iPng()
+{
+	rgba = NULL;
+	stride = 0;
+	width = 0, height = 0;
+	colorType = 0xff;
+	channels = 0xff;
+	bitDepth = 0xff;
+}
+
+iPng::~iPng()
+{
+	delete[] rgba;
 }
 
 iPng* readPng(const char* path)

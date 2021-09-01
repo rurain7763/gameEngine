@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iType.h"
+#include <png.h>
 
 struct iPng;
 struct iChunk;
@@ -40,19 +41,6 @@ private:
 	uint32* lz77DistExtraBit;
 };
 
-struct iPng
-{
-	iPng();
-	virtual ~iPng();
-
-	uint8* rgba;
-	uint32 stride;
-	uint32 width, height;
-	uint8 colorType;
-	uint8 channels;
-	uint8 bitDepth;
-};
-
 struct iChunk
 {
 	char type[5];
@@ -79,6 +67,19 @@ struct iHuffCode
 	uint32 code = -1;
 	uint8 bitCount = -1;
 	uint32 c = -1;
+};
+
+struct iPng
+{
+	iPng();
+	virtual ~iPng();
+
+	uint8* rgba;
+	uint32 stride;
+	uint32 width, height;
+	uint8 colorType;
+	uint8 channels;
+	uint8 bitDepth;
 };
 
 iPng* readPng(const char* path);

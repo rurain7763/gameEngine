@@ -6,6 +6,7 @@ iTime* timeMgt;
 iCamera* camera;
 bool cameraMode;
 iSize* devSize;
+iAssetReader* assetReader;
 
 GLuint vao;
 GLuint vbo;
@@ -23,6 +24,8 @@ void loadGame()
 	devSize = new iSize;
 	devSize->width = DEV_WIDTH;
 	devSize->height = DEV_HEIGHT;
+
+	assetReader = iAssetReader::share();
 
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
@@ -48,7 +51,7 @@ void loadGame()
 	tex = new iGLTexture();
 	tex.get()->load(GL_TEXTURE_2D, "assets/test/sample3.png");
 
-	loadAsset("assets/test/spider.obj");
+	assetReader->loadGLAsset("assets/test/gun_b.fbx");
 }
 
 void drawGame()
@@ -157,5 +160,6 @@ void endGame()
 	delete devSize;
 	delete camera;
 	delete shader;
+	delete assetReader;
 }
 

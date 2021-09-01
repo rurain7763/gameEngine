@@ -10,13 +10,15 @@
 #include "iType.h"
 #include "iArray.h"
 #include "iSharedPtr.h"
+#include "iVector.h"
 
 #define VERTEX_SHADER		0
 #define FRAGMENT_SHADER		1
-#define ASSIMP_LOAD_FLAGS	aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices
 
 class iHashTable;
 class iGLTexture;
+class iGLModel;
+class iGLMesh;
 typedef iSharedPtr<iGLTexture>   iGLTexturePTR;
 typedef iSharedPtr<iGLTexture[]> iGLTextureARR;
 
@@ -87,6 +89,23 @@ struct iGLShaderInfo
 	GLuint id;
 };
 
+class iGLModel
+{
+public:
+	iGLModel(uint32 numMeshs);
+	virtual ~iGLModel();
+
+	void addMesh(iGLMesh* mesh);
+	void draw();
+
+private:
+	int num;
+
+public:
+	iGLMesh** meshs;
+	int numMeshs;
+};
+
 class iGLMesh
 {
 public:
@@ -96,8 +115,12 @@ public:
 	void draw();
 
 public:
-	iArray vertices;
-	iArray indices;
+	iVertexPNU* vertices;
+	int numVertices;
+
+	uint32* indices;
+	int numIndices;
+
 	iArray textures;
 
 	GLuint vao;
