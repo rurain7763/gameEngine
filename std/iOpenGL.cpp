@@ -153,61 +153,112 @@ iGLTexture::~iGLTexture()
 	if(texID != 0) glDeleteTextures(1, &texID);
 }
 
-void iGLTexture::load(GLenum type, const char* path)
+void iGLTexture::load(GLenum tt, const char* path, iGLTexMapType mt)
 {	
-	iPng* png = readPng(path);
-	pow2Width = nextPow2(png->width);
-	pow2Height = nextPow2(png->height);
+	char* t = getImageType(path);
 
-	texType = type;
-	glGenTextures(1, &texID);
-	glBindTexture(texType, texID);
+	if (!strcmp(t, "png"))
+	{
+		iPng* png = readPng(path);
+		if (!png)
+		{
+			delete[] t;
+			return;
+		}
+		width = png->width;
+		height = png->height;
+		pow2Width = nextPow2(png->width);
+		pow2Height = nextPow2(png->height);
 
-	/*
+		texType = tt;
+		mapType = mt;
+		glGenTextures(1, &texID);
+		glBindTexture(texType, texID);
+
+		/*
 		Color    Allowed    Interpretation
 		Type    Bit Depths
-		
-		0       1,2,4,8,16  Each pixel is a grayscale sample.
-		
-		2       8,16        Each pixel is an R,G,B triple.
-		
-		3       1,2,4,8     Each pixel is a palette index;
-		                    a PLTE chunk must appear.
-		
-		4       8,16        Each pixel is a grayscale sample,
-		                    followed by an alpha sample.
-		
-		6       8,16        Each pixel is an R,G,B triple,
-		                    followed by an alpha sample.
-	*/
 
-	if (png->colorType == 0)
-		glTexImage2D(texType, 0, GL_RED, png->width, png->height, 0, GL_RED,
-					 GL_UNSIGNED_BYTE, png->rgba);
-	else if(png->colorType == 2)
-		glTexImage2D(texType, 0, GL_RGB, png->width, png->height, 0, GL_RGB,
-					 GL_UNSIGNED_BYTE, png->rgba);
-	else if(png->colorType == 6)
-		glTexImage2D(texType, 0, GL_RGBA, png->width, png->height, 0, GL_RGBA,
-					 GL_UNSIGNED_BYTE, png->rgba);
+		0       1,2,4,8,16  Each pixel is a grayscale sample.
+
+		2       8,16        Each pixel is an R,G,B triple.
+
+		3       1,2,4,8     Each pixel is a palette index;
+							a PLTE chunk must appear.
+
+		4       8,16        Each pixel is a grayscale sample,
+							followed by an alpha sample.
+
+		6       8,16        Each pixel is an R,G,B triple,
+							followed by an alpha sample.
+		*/
+
+		if (png->colorType == 0)
+			glTexImage2D(texType, 0, GL_RED, png->width, png->height, 0, GL_RED,
+						 GL_UNSIGNED_BYTE, png->rgba);
+		else if (png->colorType == 2)
+			glTexImage2D(texType, 0, GL_RGB, png->width, png->height, 0, GL_RGB,
+						 GL_UNSIGNED_BYTE, png->rgba);
+		else if (png->colorType == 6)
+			glTexImage2D(texType, 0, GL_RGBA, png->width, png->height, 0, GL_RGBA,
+						 GL_UNSIGNED_BYTE, png->rgba);
+		else
+		{
+			bool exception_occured = 0;
+		}
+
+		glTexParameteri(texType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(texType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glBindTexture(texType, 0);
+
+		delete png;
+	}
+	else if (!strcmp(t, "jpg") ||
+			 !strcmp(t, "jfif") ||
+			 !strcmp(t, "jpeg"))
+	{
+		iJpg* jpg = readJpg(path);
+		if (!jpg)
+		{
+			delete[] t;
+			return;
+		}
+		width = jpg->width;
+		height = jpg->height;
+		pow2Width = nextPow2(jpg->width);
+		pow2Height = nextPow2(jpg->height);
+
+		texType = tt;
+		mapType = mt;
+		glGenTextures(1, &texID);
+		glBindTexture(texType, texID);
+
+		glTexImage2D(texType, 0, GL_RGB, jpg->width, jpg->height, 0, GL_RGB,
+					 GL_UNSIGNED_BYTE, jpg->rgb);
+
+		glTexParameteri(texType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(texType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glBindTexture(texType, 0);
+
+		delete jpg;
+	}
 	else
 	{
-		bool exception_occured = 0;
+		int exception = 10;
 	}
 
-	glTexParameteri(texType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(texType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glBindTexture(texType, 0);
-
-	delete png;
+	delete[] t;
 }
 
-void iGLTexture::load(GLenum type, GLint format, uint8* pixels, int w, int h)
+void iGLTexture::load(GLenum tt, GLint format,
+					  uint8* pixels, int w, int h, iGLTexMapType mt)
 {
 	if (!pixels) return;
 
-	texType = type;
+	texType = tt;
+	mapType = mt;
 
 	glGenTextures(1, &texID);
 	glBindTexture(texType, texID);
@@ -244,22 +295,26 @@ void iGLTexture::setTexParmi(GLenum name, GLint parm)
 
 iGLShader::iGLShader()
 {
-	program = new iHashTable();
-	shader = new iHashTable();
+	program = new iHashTable
+	(
+		[](void* data)
+		{
+			GLuint* id = (GLuint*)data;
+			deleteProgram(*id);
+		}
+	);
+	shader = new iHashTable
+	(
+		[](void* data)
+		{
+			GLuint* id = (GLuint*)data;
+			deleteShader(*id);
+		}
+	);
 }
 
 iGLShader::~iGLShader()
 {
-	for (int i = 0; i < ids.dataNum; i++)
-	{
-		iGLShaderInfo* info = (iGLShaderInfo*)ids[i];
-		
-		if (info->flag) deleteProgram(info->id);
-		else deleteShader(info->id);
-
-		delete info;
-	}
-
 	delete shader;
 	delete program;
 }
@@ -281,13 +336,12 @@ void iGLShader::addProgram(const char* vs, const char* fs)
 	{
 		sprintf(path, "assets/shader/%s.vert", vs);
 
-		iGLShaderInfo* info = new iGLShaderInfo;
-		info->flag = 0;
-		info->id = createShader(path, VERTEX_SHADER);
-		vertID = &info->id;
+		GLuint* id = new GLuint;
+		*id = createShader(path, VERTEX_SHADER);
+		vertID = id;
 
-		shader->insert(vs, &info->id);
-		ids.push_back(info);
+		sprintf(path, "%s.vert", vs);
+		shader->insert(path, id);
 		shouldMake = true;
 	}
 	
@@ -295,27 +349,24 @@ void iGLShader::addProgram(const char* vs, const char* fs)
 	{
 		sprintf(path, "assets/shader/%s.frag", fs);
 
-		iGLShaderInfo* info = new iGLShaderInfo;
-		info->flag = 0;
-		info->id = createShader(path, FRAGMENT_SHADER);
-		fragID = &info->id;
+		GLuint* id = new GLuint;
+		*id = createShader(path, FRAGMENT_SHADER);
+		fragID = id;
 
-		shader->insert(fs, &info->id);
-		ids.push_back(info);
+		sprintf(path, "%s.frag", vs);
+		shader->insert(path, id);
 		shouldMake = true;
 	}
 
 	if (shouldMake)
 	{
-		iGLShaderInfo* info = new iGLShaderInfo;
-		info->flag = 1;
-		info->id = createProgram(*vertID, *fragID);
+		GLuint* id = new GLuint;
+		*id = createProgram(*vertID, *fragID);
 
 		char str[50];
 		sprintf(str, "%s/%s", vs, fs);
 
-		program->insert(str, &info->id);
-		ids.push_back(info);
+		program->insert(str, id);
 	}
 }
 
@@ -403,33 +454,51 @@ void iGLShader::deleteProgram(GLuint program)
 	glDeleteProgram(program);
 }
 
-iGLModel::iGLModel(uint32 nm)
+iGLModel::iGLModel()
 {
-	num = 0;
-	meshs = new iGLMesh * [nm];
-	numMeshs = nm;
+	meshs.resize(10);
+
+	textures = new iHashTable
+	(10, 
+		[](void* tex)
+		{
+			iGLTexture* t = (iGLTexture*)tex;
+			delete t;
+		}
+	);
 }
 
 iGLModel::~iGLModel()
 {
-	for (int i = 0; i < num; i++)
-		delete meshs[i];
+	for (int i = 0; i < meshs.dataNum; i++)
+		delete (iGLMesh*)meshs[i];
 	
-	delete[] meshs;
+	delete textures;
 }
 
 void iGLModel::addMesh(iGLMesh* mesh)
 {
-	meshs[num] = mesh;
-	num++;
+	meshs.push_back(mesh);
+}
+
+void iGLModel::draw(iMatrix* tvpMat)
+{
+	for (int i = 0; i < meshs.dataNum; i++)
+	{
+		iGLMesh* mesh = (iGLMesh*)meshs[i];
+		mesh->draw(tvpMat);
+	}
 }
 
 iGLMesh::iGLMesh()
 {
 	vertices = NULL;
 	numVertices = 0;
+
 	indices = NULL;
 	numIndices = 0;
+
+	textures = new iArray(10);
 
 	vao = 0;
 	vbo = 0;
@@ -438,8 +507,79 @@ iGLMesh::iGLMesh()
 
 iGLMesh::~iGLMesh()
 {
+	if(vertices) delete[] vertices;
+	if(indices) delete[] indices;
+	delete textures;
+
+	if (vao != 0) glDeleteVertexArrays(1, &vao);
+	if (vbo != 0) glDeleteBuffers(1, &vbo);
+	if (ebo != 0) glDeleteBuffers(1, &ebo);
+}
+
+void iGLMesh::sendToBuffer()
+{
+	if (!vertices || !indices) return;
+
+	glGenVertexArrays(1, &vao);
+	glGenBuffers(1, &vbo);
+	glGenBuffers(1, &ebo);
+
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(iVertexPNU) * numVertices, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * numIndices, indices, GL_STATIC_DRAW);
+
 	delete[] vertices;
 	delete[] indices;
+	vertices = NULL;
+	indices = NULL;
 
-	//...
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void iGLMesh::draw(iMatrix* tvpMat)
+{
+	if (vao == 0) return;
+
+	iGLShader* shader = iGLShader::share();
+	GLuint programID = shader->useProgram("asset", "asset");
+
+	if (!programID)
+	{
+		shader->addProgram("asset", "asset");
+		programID = shader->useProgram("asset", "asset");
+	}
+
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
+	GLuint mat = glGetUniformLocation(programID, "tvpMat");
+	glUniformMatrix4fv(mat, 1, GL_TRUE, tvpMat->getData());
+
+	GLuint pos = glGetAttribLocation(programID, "position");
+	glEnableVertexAttribArray(pos);
+	glVertexAttribPointer(pos, 3, GL_FLOAT, GL_FALSE, sizeof(iVertexPNU), (const void*)offsetof(iVertexPNU, position));
+
+	GLuint normal = glGetAttribLocation(programID, "normal");
+	glEnableVertexAttribArray(normal);
+	glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, sizeof(iVertexPNU), (const void*)offsetof(iVertexPNU, normal));
+
+	GLuint uv = glGetAttribLocation(programID, "uv");
+	glEnableVertexAttribArray(uv);
+	glVertexAttribPointer(uv, 2, GL_FLOAT, GL_FALSE, sizeof(iVertexPNU), (const void*)offsetof(iVertexPNU, uv));
+
+	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, NULL);
+
+	glDisableVertexAttribArray(pos);
+	glDisableVertexAttribArray(normal);
+	glDisableVertexAttribArray(uv);
+
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

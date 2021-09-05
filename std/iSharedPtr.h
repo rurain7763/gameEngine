@@ -13,7 +13,6 @@ public:
 	
 	iSharedPtr<T>& operator=(T* ptr);
 	iSharedPtr<T>& operator=(const iSharedPtr<T>& sharedPtr);
-	T& operator[](const int idx);
 		
 	T* get();
 	
@@ -92,12 +91,6 @@ iSharedPtr<T>& iSharedPtr<T>::operator=(const iSharedPtr<T>& sp)
 	ptr = sp.ptr;
 
 	return *this;
-}
-
-template<class T>
-T& iSharedPtr<T>::operator[](const int idx)
-{
-	return ptr[idx];
 }
 
 template<class T>

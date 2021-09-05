@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEFAULT_ARRAY_SIZE			  1000
+#define DEFAULT_ARRAY_SIZE			   100
 #define DUMY_DATA			0xffffffff / 2
 
 struct iArrayData;

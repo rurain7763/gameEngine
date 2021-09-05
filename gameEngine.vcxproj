@@ -89,13 +89,13 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)reference/jpglib/include;$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)reference/assimp/lib/x86_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc141-mt.lib;zlib.lib;pnglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)reference/jpglib/lib/x86_;$(ProjectDir)reference/assimp/lib/x86_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc141-mt.lib;zlib.lib;pnglib.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -108,6 +108,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -115,7 +116,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>zlib.lib;pnglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zlib.lib;pnglib.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -241,6 +242,19 @@
     <ClInclude Include="reference\assimp\include\Compiler\pushpack1.h" />
     <ClInclude Include="reference\assimp\include\port\AndroidJNI\AndroidJNIIOSystem.h" />
     <ClInclude Include="reference\assimp\include\port\AndroidJNI\BundledAssetIOSystem.h" />
+    <ClInclude Include="reference\jpglib\include\cderror.h" />
+    <ClInclude Include="reference\jpglib\include\jchuff.h" />
+    <ClInclude Include="reference\jpglib\include\jconfig.h" />
+    <ClInclude Include="reference\jpglib\include\jdct.h" />
+    <ClInclude Include="reference\jpglib\include\jdhuff.h" />
+    <ClInclude Include="reference\jpglib\include\jerror.h" />
+    <ClInclude Include="reference\jpglib\include\jinclude.h" />
+    <ClInclude Include="reference\jpglib\include\jmemsys.h" />
+    <ClInclude Include="reference\jpglib\include\jmorecfg.h" />
+    <ClInclude Include="reference\jpglib\include\jpegint.h" />
+    <ClInclude Include="reference\jpglib\include\jpeglib.h" />
+    <ClInclude Include="reference\jpglib\include\jversion.h" />
+    <ClInclude Include="reference\jpglib\include\transupp.h" />
     <ClInclude Include="reference\pnglib\include\png.h" />
     <ClInclude Include="reference\pnglib\include\pngconf.h" />
     <ClInclude Include="reference\pnglib\include\pngdebug.h" />
@@ -267,7 +281,7 @@
     <ClInclude Include="std\iInputManager.h" />
     <ClInclude Include="std\iMatirx.h" />
     <ClInclude Include="std\iOpenGL.h" />
-    <ClInclude Include="std\iPngReader.h" />
+    <ClInclude Include="std\iImageReader.h" />
     <ClInclude Include="std\iQuaternion.h" />
     <ClInclude Include="std\iQueue.h" />
     <ClInclude Include="std\iStack.h" />
@@ -291,7 +305,7 @@
     <ClCompile Include="std\iInputManager.cpp" />
     <ClCompile Include="std\iMatirx.cpp" />
     <ClCompile Include="std\iOpenGL.cpp" />
-    <ClCompile Include="std\iPngReader.cpp" />
+    <ClCompile Include="std\iImageReader.cpp" />
     <ClCompile Include="std\iQuaternion.cpp" />
     <ClCompile Include="std\iQueue.cpp" />
     <ClCompile Include="std\iStack.cpp" />

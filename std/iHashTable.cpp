@@ -1,10 +1,11 @@
 #include "iHashTable.h"
 #include "iStd.h"
 
-iHashTable::iHashTable()
+iHashTable::iHashTable(DeleteDataMethod dm)
 {
 	uint32 prime = nextPrime(DEFAULT_HASHTABLE_SIZE);
 
+	delMethod = dm;
 	data = new iBucket[prime];
 	strcpy(dummy, "DUMMY");
 	dummyNum = 0;
@@ -13,10 +14,11 @@ iHashTable::iHashTable()
 	num = 0;
 }
 
-iHashTable::iHashTable(int s)
+iHashTable::iHashTable(int s, DeleteDataMethod dm)
 {
 	uint32 prime = nextPrime(s);
 
+	delMethod = dm;
 	data = new iBucket[prime];
 	strcpy(dummy, "DUMMY");
 	dummyNum = 0;
@@ -27,6 +29,18 @@ iHashTable::iHashTable(int s)
 
 iHashTable::~iHashTable()
 {
+	if (delMethod)
+	{
+		for (int i = 0; i < size; i++)
+		{
+			if (data[i].data != dummy &&
+				data[i].data)
+			{
+				delMethod(data[i].data);
+			}
+		}
+	}
+
 	delete[] data;
 }
 

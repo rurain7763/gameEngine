@@ -14,6 +14,7 @@ GLuint ebo;
 
 iGLTexturePTR tex;
 iGLShader* shader;
+iGLModel* model;
 
 void loadGame()
 {
@@ -49,15 +50,28 @@ void loadGame()
 	cameraMode = false;
 
 	tex = new iGLTexture();
-	tex.get()->load(GL_TEXTURE_2D, "assets/test/sample3.png");
+	tex.get()->load(GL_TEXTURE_2D, "assets/test/2.jfif");
 
-	assetReader->loadGLAsset("assets/test/gun_b.fbx");
+	model = assetReader->loadGLAsset("assets/test/back/backpack.obj");
 }
 
 void drawGame()
 {
 	static float degree = 0.f;
 	degree += timeMgt->deltaTime * 50.f;
+
+	iMatrix projMat;
+	projMat.loadIdentity();
+	projMat.frustrum(60.f, devSize->width, devSize->height, 0.f, 10.f);
+
+	iMatrix viewMat = camera->getMatrix();
+
+	iTransform transMat;
+	transMat.rotate(0, degree, 0);
+
+	iMatrix tvpMat = projMat * viewMat * transMat.getMatrix();
+
+	model->draw(&tvpMat);
 
 	GLuint program = shader->useProgram("test", "test");
 
@@ -83,18 +97,11 @@ void drawGame()
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(indices), indices);
 
-	iMatrix projMat;
-	projMat.loadIdentity();
-	projMat.frustrum(60.f, devSize->width, devSize->height, 0.f, 10.f);
-
-	iMatrix viewMat = camera->getMatrix();
-
-	iTransform transMat;
 	//transMat.scale(isin(degree), 1, 1);
 	transMat.rotate(0, degree, 0);
 	transMat.translate(isin(degree), 0, 5.f);
 
-	iMatrix tvpMat = projMat * viewMat * transMat.getMatrix();
+	tvpMat = projMat * viewMat * transMat.getMatrix();
 
 	GLuint loc = glGetUniformLocation(program, "tvpMat");
 	glUniformMatrix4fv(loc, 1, GL_TRUE, tvpMat.getData());
@@ -161,5 +168,6 @@ void endGame()
 	delete camera;
 	delete shader;
 	delete assetReader;
+	delete model;
 }
 

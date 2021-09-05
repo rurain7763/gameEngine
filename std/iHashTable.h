@@ -14,8 +14,8 @@ struct iBucket;
 class iHashTable
 {
 public:
-	iHashTable();
-	iHashTable(int size);
+	iHashTable(DeleteDataMethod delMethod = NULL);
+	iHashTable(int size, DeleteDataMethod delMethod = NULL);
 	virtual ~iHashTable();
 
 	void insert(const char* key, void* data);
@@ -35,6 +35,7 @@ private:
 	iBucket* doubleHashing(uint64 hash);
 
 private:
+	DeleteDataMethod delMethod;
 	iBucket* data;
 	char dummy[6];
 	int dummyNum;

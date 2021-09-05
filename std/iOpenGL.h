@@ -15,12 +15,29 @@
 #define VERTEX_SHADER		0
 #define FRAGMENT_SHADER		1
 
+class iMatrix;
 class iHashTable;
 class iGLTexture;
 class iGLModel;
 class iGLMesh;
 typedef iSharedPtr<iGLTexture>   iGLTexturePTR;
 typedef iSharedPtr<iGLTexture[]> iGLTextureARR;
+
+enum iGLTexMapType
+{
+	iGLTexMapTypeNone = 0,
+	iGLTexMapTypeDiffuse,
+	iGLTexMapTypeSpecular,
+	iGLTexMapTypeAmbient,
+	iGLTexMapTypeEmissive,
+	iGLTexMapTypeHeight,
+	iGLTexMapTypeNormals,
+	iGLTexMapTypeShininess,
+	iGLTexMapTypeOpacity,
+	iGLTexMapTypeLightMap,
+	iGLTexMapTypeReflection,
+	iGLTexMapTypeMax
+};
 
 void loadGL(HWND& hwnd);
 void endGL();
@@ -38,8 +55,9 @@ public:
 	iGLTexture();
 	virtual ~iGLTexture();
 
-	void load(GLenum texType, const char* path);
-	void load(GLenum texType, GLint format, uint8* pixels, int width, int height);
+	void load(GLenum texType, const char* path, iGLTexMapType mapType = iGLTexMapTypeNone);
+	void load(GLenum texType, GLint format, 
+			  uint8* pixels, int width, int height, iGLTexMapType mapType = iGLTexMapTypeNone);
 	void bind(GLenum texUnit);
 
 	void setTexParmi(GLenum name, GLint parm);
@@ -47,6 +65,8 @@ public:
 public:
 	GLenum texType;
 	GLuint texID;
+
+	iGLTexMapType mapType;
 	int width;
 	int height;
 	int pow2Width;
@@ -67,43 +87,31 @@ public:
 	void addProgram(const char* vertexShader, const char* fragmentShader);
 	GLuint useProgram(const char* vertexShader, const char* fragmentShader) const;
 
-	GLuint setUniformMatrix4x(const char* uniformName) const;
+	//TODO
+	//GLuint setUniformMatrix4x(const char* uniformName) const;
 
-private:
-	GLuint createShader(const char* path, Flag flag);
-	void deleteShader(GLuint id);
-	GLuint createProgram(GLuint vert, GLuint frag);
-	void deleteProgram(GLuint program);
-
-private:
-	iArray ids;
+	static GLuint createShader(const char* path, Flag flag);
+	static void deleteShader(GLuint id);
+	static GLuint createProgram(GLuint vert, GLuint frag);
+	static void deleteProgram(GLuint program);
 
 public:
 	iHashTable* shader;
 	iHashTable* program;
 };
 
-struct iGLShaderInfo
-{
-	bool flag; // 0 : shader 1 : program
-	GLuint id;
-};
-
 class iGLModel
 {
 public:
-	iGLModel(uint32 numMeshs);
+	iGLModel();
 	virtual ~iGLModel();
 
 	void addMesh(iGLMesh* mesh);
-	void draw();
-
-private:
-	int num;
+	void draw(iMatrix* tvpMat);
 
 public:
-	iGLMesh** meshs;
-	int numMeshs;
+	iHashTable* textures;
+	iArray meshs;
 };
 
 class iGLMesh
@@ -112,7 +120,8 @@ public:
 	iGLMesh();
 	virtual ~iGLMesh();
 
-	void draw();
+	void sendToBuffer();
+	void draw(iMatrix* tvpMat);
 
 public:
 	iVertexPNU* vertices;
@@ -121,7 +130,7 @@ public:
 	uint32* indices;
 	int numIndices;
 
-	iArray textures;
+	iArray* textures;
 
 	GLuint vao;
 	GLuint vbo;
