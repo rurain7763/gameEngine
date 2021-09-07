@@ -122,7 +122,8 @@ void iAssetReader::getGLVertices(aiMesh* src, iGLMesh* dst)
 		if (src->mTextureCoords[0])
 		{
 			aiVector3D* uv = &src->mTextureCoords[0][i];
-			vertex->uv = { uv->x, uv->y };
+			// 1.f - uv.y => because openGL uvs are flip vertically
+			vertex->uv = { uv->x, 1.f - uv->y };
 		}
 		else vertex->uv = { 0.f, 0.f };
 	}

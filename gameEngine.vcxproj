@@ -279,6 +279,7 @@
     <ClInclude Include="std\iCamera.h" />
     <ClInclude Include="std\iHashTable.h" />
     <ClInclude Include="std\iInputManager.h" />
+    <ClInclude Include="std\iLighting.h" />
     <ClInclude Include="std\iMatirx.h" />
     <ClInclude Include="std\iOpenGL.h" />
     <ClInclude Include="std\iImageReader.h" />
@@ -303,6 +304,7 @@
     <ClCompile Include="std\iCamera.cpp" />
     <ClCompile Include="std\iHashTable.cpp" />
     <ClCompile Include="std\iInputManager.cpp" />
+    <ClCompile Include="std\iLighting.cpp" />
     <ClCompile Include="std\iMatirx.cpp" />
     <ClCompile Include="std\iOpenGL.cpp" />
     <ClCompile Include="std\iImageReader.cpp" />

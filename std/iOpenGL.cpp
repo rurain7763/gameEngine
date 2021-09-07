@@ -581,13 +581,23 @@ void iGLMesh::draw(iMatrix* tvpMat)
 		if (tex->mapType == iGLTexMapTypeNone) continue;
 
 		GLenum unit = GL_TEXTURE0 + i;
+		tex->bind(unit);
+		GLuint loc;
 
 		switch (tex->mapType)
 		{
 		case iGLTexMapTypeDiffuse:
+		{
+			loc = glGetUniformLocation(programID, "diffuse");
+			glUniform1i(loc, i);
 			break;
+		}
 		case iGLTexMapTypeSpecular:
+		{
+			loc = glGetUniformLocation(programID, "specular");
+			glUniform1i(loc, i);
 			break;
+		}
 		case iGLTexMapTypeAmbient:
 			break;
 		case iGLTexMapTypeEmissive:
@@ -605,8 +615,6 @@ void iGLMesh::draw(iMatrix* tvpMat)
 		case iGLTexMapTypeReflection:
 			break;
 		}
-
-		tex->bind(unit);
 	}
 
 	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, NULL);

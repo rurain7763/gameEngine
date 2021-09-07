@@ -4,7 +4,15 @@
 precision mediump float;
 #endif
 
+struct iDirectionLight
+{
+	vec3 color;
+	float intensity;
+	vec3 position;
+};
+
 uniform sampler2D tex;
+uniform iDirectionLight dirLight;
 
 in vec4 colorV;
 in vec2 uvV;
@@ -13,6 +21,8 @@ out vec4 throwColor;
 
 void main()
 { 
-	throwColor = texture2D(tex, uvV).rgba * colorV;
+	vec4 color = texture2D(tex, uvV).rgba * colorV;
+
+	throwColor = color * vec4(dirLight.color, 1.0) * dirLight.intensity;
 }
 

@@ -6,9 +6,18 @@
 precision mediump float;
 #endif
 
-uniform sampler2D diffuse0;
-uniform sampler2D specular0;
-uniform sampler2D normal0;
+struct iDirectionLight
+{
+	vec3 color;
+	float intensity;
+	vec3 position;
+};
+
+uniform iDirectionLight dirLight;
+
+uniform sampler2D diffuse;
+uniform sampler2D specular;
+uniform sampler2D normal;
 
 in vec3 normalV;
 in vec2 uvV;
@@ -17,10 +26,13 @@ out vec4 throwColor;
 
 void main()
 { 
-	vec4 diffuse = texture(diffuse0, uvV);
-	vec4 specular = texture(specular0, uvV);
-	vec4 normal = texture(normal0, uvV);
+	vec4 color = texture(diffuse, uvV);
+	color *= vec4(dirLight.color, 1.0) * dirLight.intensity; //ambient
 
-	throwColor = (diffuse + specular) * normal;
+	//diffuse
+	vec3 n = normalize(normalV);
+	vec3 dir = normalize(dirLight.position - gl_FragCoord.xyz);
+
+	throwColor = texture(diffuse, uvV);
 }
 

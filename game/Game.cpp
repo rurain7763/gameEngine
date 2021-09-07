@@ -16,6 +16,7 @@ iMatrix projMat;
 iGLTexturePTR tex;
 iGLShader* shader;
 iGLModel* model;
+iLighting* dirLight;
 
 void loadGame()
 {
@@ -57,6 +58,9 @@ void loadGame()
 	tex.get()->load(GL_TEXTURE_2D, "assets/test/2.jfif");
 
 	model = assetReader->loadGLAsset("assets/test/back/backpack.obj");
+
+	dirLight = new iLighting();
+	dirLight->setDirectionLight({ 1.f, 0.f, 0.f }, .1f);
 }
 
 void drawGame()
@@ -69,9 +73,14 @@ void drawGame()
 	iTransform transMat;
 	transMat.rotate(0, degree, 0);
 
-	iMatrix tvpMat = projMat * viewMat * transMat.getMatrix();
+	iMatrix tvpMat;
 
-	model->draw(&tvpMat);
+	for (int i = 0; i < 10; i++)
+	{
+		transMat.translate(i * 5, 0, 0.f);
+		tvpMat = projMat * viewMat * transMat.getMatrix();
+		model->draw(&tvpMat);
+	}
 
 	GLuint program = shader->useProgram("test", "test");
 
@@ -106,6 +115,12 @@ void drawGame()
 
 	GLuint loc = glGetUniformLocation(program, "tvpMat");
 	glUniformMatrix4fv(loc, 1, GL_TRUE, tvpMat.getData());
+
+	loc = glGetUniformLocation(program, "dirLight.color");
+	glUniform3fv(loc, 1, (float*)&dirLight->light->color);
+
+	loc = glGetUniformLocation(program, "dirLight.intensity");
+	glUniform1f(loc, dirLight->light->intensity);
 
 	GLuint posAttr = glGetAttribLocation(program, "position");
 	glEnableVertexAttribArray(posAttr);
