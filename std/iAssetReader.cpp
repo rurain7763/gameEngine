@@ -64,6 +64,7 @@ iGLModel* iAssetReader::loadGLAsset(const char* path)
 	}
 
 	delete[] dir;
+	imp->FreeScene();
 
 	return r;
 }

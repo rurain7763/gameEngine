@@ -63,6 +63,7 @@ void loadGL(HWND& hwnd)
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CW);
 	glCullFace(GL_BACK);
+	glEnable(GL_DEPTH_TEST);
 
 	viewPort = new iRect;
 }
@@ -572,6 +573,41 @@ void iGLMesh::draw(iMatrix* tvpMat)
 	GLuint uv = glGetAttribLocation(programID, "uv");
 	glEnableVertexAttribArray(uv);
 	glVertexAttribPointer(uv, 2, GL_FLOAT, GL_FALSE, sizeof(iVertexPNU), (const void*)offsetof(iVertexPNU, uv));
+
+	for (int i = 0; i < textures->dataNum; i++)
+	{
+		iGLTexture* tex = (iGLTexture*)(*textures)[i];
+
+		if (tex->mapType == iGLTexMapTypeNone) continue;
+
+		GLenum unit = GL_TEXTURE0 + i;
+
+		switch (tex->mapType)
+		{
+		case iGLTexMapTypeDiffuse:
+			break;
+		case iGLTexMapTypeSpecular:
+			break;
+		case iGLTexMapTypeAmbient:
+			break;
+		case iGLTexMapTypeEmissive:
+			break;
+		case iGLTexMapTypeHeight:
+			break;
+		case iGLTexMapTypeNormals:
+			break;
+		case iGLTexMapTypeShininess:
+			break;
+		case iGLTexMapTypeOpacity:
+			break;
+		case iGLTexMapTypeLightMap:
+			break;	
+		case iGLTexMapTypeReflection:
+			break;
+		}
+
+		tex->bind(unit);
+	}
 
 	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, NULL);
 

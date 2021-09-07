@@ -12,6 +12,7 @@ GLuint vao;
 GLuint vbo;
 GLuint ebo;
 
+iMatrix projMat;
 iGLTexturePTR tex;
 iGLShader* shader;
 iGLModel* model;
@@ -46,6 +47,9 @@ void loadGame()
 	shader = iGLShader::share();
 	shader->addProgram("test", "test");
 
+	projMat.loadIdentity();
+	projMat.frustrum(60.f, devSize->width, devSize->height, 1.f, 100.f);
+
 	camera = new iCamera(*devSize, { 0.f, 0.f, -5.f });
 	cameraMode = false;
 
@@ -59,10 +63,6 @@ void drawGame()
 {
 	static float degree = 0.f;
 	degree += timeMgt->deltaTime * 50.f;
-
-	iMatrix projMat;
-	projMat.loadIdentity();
-	projMat.frustrum(60.f, devSize->width, devSize->height, 0.f, 10.f);
 
 	iMatrix viewMat = camera->getMatrix();
 
@@ -97,11 +97,12 @@ void drawGame()
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(indices), indices);
 
+	iTransform transMat1;
 	//transMat.scale(isin(degree), 1, 1);
-	transMat.rotate(0, degree, 0);
-	transMat.translate(isin(degree), 0, 5.f);
+	transMat1.rotate(0, degree, 0);
+	transMat1.translate(5 + isin(degree), 0, 5.f);
 
-	tvpMat = projMat * viewMat * transMat.getMatrix();
+	tvpMat = projMat * viewMat * transMat1.getMatrix();
 
 	GLuint loc = glGetUniformLocation(program, "tvpMat");
 	glUniformMatrix4fv(loc, 1, GL_TRUE, tvpMat.getData());
