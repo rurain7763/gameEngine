@@ -65,6 +65,8 @@ void loadGame()
 
 void drawGame()
 {
+	static float lightInten = 1.f;
+
 	static float degree = 0.f;
 	degree += timeMgt->deltaTime * 50.f;
 
@@ -79,7 +81,7 @@ void drawGame()
 	{
 		transMat.translate(i * 5, 0, 0.f);
 		tvpMat = projMat * viewMat * transMat.getMatrix();
-		model->draw(&tvpMat);
+		model->draw(&tvpMat, dirLight->light);
 	}
 
 	GLuint program = shader->useProgram("test", "test");
@@ -120,7 +122,7 @@ void drawGame()
 	glUniform3fv(loc, 1, (float*)&dirLight->light->color);
 
 	loc = glGetUniformLocation(program, "dirLight.intensity");
-	glUniform1f(loc, dirLight->light->intensity);
+	glUniform1f(loc, lightInten);
 
 	GLuint posAttr = glGetAttribLocation(program, "position");
 	glEnableVertexAttribArray(posAttr);
@@ -160,6 +162,7 @@ void drawGame()
 		showCursor(true);
 		wrapCursor(false);
 		cameraMode = false;
+		lightInten -= .1f;
 	}
 
 	if (cameraMode)

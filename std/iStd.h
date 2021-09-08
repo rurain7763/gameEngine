@@ -1,6 +1,12 @@
 #pragma once
 
+#ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
+#endif
+
+#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 
 #include <stdlib.h>
 #include <malloc.h>
@@ -47,7 +53,6 @@ char* readFile(const char* path);
 
 void bubbleSort(CompareMethod method, void* data, int elementSize, int num);
 
-char* istrcpy(const char* str);
 void swap(void* left, void* right, int argSize);
 
 void printBit(unsigned int v);

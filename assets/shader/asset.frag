@@ -10,7 +10,6 @@ struct iDirectionLight
 {
 	vec3 color;
 	float intensity;
-	vec3 position;
 };
 
 uniform iDirectionLight dirLight;
@@ -29,10 +28,6 @@ void main()
 	vec4 color = texture(diffuse, uvV);
 	color *= vec4(dirLight.color, 1.0) * dirLight.intensity; //ambient
 
-	//diffuse
-	vec3 n = normalize(normalV);
-	vec3 dir = normalize(dirLight.position - gl_FragCoord.xyz);
-
-	throwColor = texture(diffuse, uvV);
+	throwColor = color;
 }
 

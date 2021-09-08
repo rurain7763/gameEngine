@@ -12,7 +12,7 @@ enum iImageType
 	iImageTypeJpg,
 	iImageTypeJfif,
 	iImageTypeJpeg,
-	iImageTypeUNKNOWN
+	iImageTypeUnknown
 };
 
 struct iImage

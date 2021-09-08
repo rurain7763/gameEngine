@@ -121,7 +121,7 @@ iPng* readPng(const char* path)
 
 iJpg::iJpg()
 {
-	type = iImageTypeUNKNOWN;
+	type = iImageTypeUnknown;
 	rgb = NULL;
 	stride = 0;
 	width = 0;
@@ -223,7 +223,7 @@ iJpg* readJpg(const char* path)
 	}
 	else
 	{
-		r->type = iImageTypeUNKNOWN;
+		r->type = iImageTypeUnknown;
 	}
 
 	delete[] type;

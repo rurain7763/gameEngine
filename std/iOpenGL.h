@@ -20,6 +20,8 @@ class iHashTable;
 class iGLTexture;
 class iGLModel;
 class iGLMesh;
+struct iLight;
+
 typedef iSharedPtr<iGLTexture>   iGLTexturePTR;
 typedef iSharedPtr<iGLTexture[]> iGLTextureARR;
 
@@ -107,7 +109,7 @@ public:
 	virtual ~iGLModel();
 
 	void addMesh(iGLMesh* mesh);
-	void draw(iMatrix* tvpMat);
+	void draw(iMatrix* tvpMat, iLight* light = NULL);
 
 public:
 	iHashTable* textures;
@@ -121,7 +123,7 @@ public:
 	virtual ~iGLMesh();
 
 	void sendToBuffer();
-	void draw(iMatrix* tvpMat);
+	void draw(iMatrix* tvpMat, iLight* light = NULL);
 
 public:
 	iVertexPNU* vertices;

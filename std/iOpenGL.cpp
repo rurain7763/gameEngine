@@ -482,12 +482,12 @@ void iGLModel::addMesh(iGLMesh* mesh)
 	meshs.push_back(mesh);
 }
 
-void iGLModel::draw(iMatrix* tvpMat)
+void iGLModel::draw(iMatrix* tvpMat, iLight* light)
 {
 	for (int i = 0; i < meshs.dataNum; i++)
 	{
 		iGLMesh* mesh = (iGLMesh*)meshs[i];
-		mesh->draw(tvpMat);
+		mesh->draw(tvpMat, light);
 	}
 }
 
@@ -542,7 +542,7 @@ void iGLMesh::sendToBuffer()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void iGLMesh::draw(iMatrix* tvpMat)
+void iGLMesh::draw(iMatrix* tvpMat, iLight* light)
 {
 	if (vao == 0) return;
 
@@ -562,6 +562,24 @@ void iGLMesh::draw(iMatrix* tvpMat)
 	GLuint mat = glGetUniformLocation(programID, "tvpMat");
 	glUniformMatrix4fv(mat, 1, GL_TRUE, tvpMat->getData());
 
+	if (light)
+	{
+		switch (light->flag)
+		{
+		case DIRECTIONLIGHT:
+		{
+			GLuint dirLightColor = glGetUniformLocation(programID, "dirLight.color");
+			glUniform3fv(dirLightColor, 1, (GLfloat*)&light->color);
+
+			GLuint dirLightIntensity = glGetUniformLocation(programID, "dirLight.intensity");
+			glUniform1f(dirLightIntensity, light->intensity);
+			break;
+		}
+		case SPOTLIGHT:
+			break;
+		}
+	}
+	
 	GLuint pos = glGetAttribLocation(programID, "position");
 	glEnableVertexAttribArray(pos);
 	glVertexAttribPointer(pos, 3, GL_FLOAT, GL_FALSE, sizeof(iVertexPNU), (const void*)offsetof(iVertexPNU, position));

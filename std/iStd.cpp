@@ -92,16 +92,6 @@ void bubbleSort(CompareMethod m, void* data, int elementSize, int num)
 	}
 }
 
-char* istrcpy(const char* str)
-{
-	int len = strlen(str);
-	char* r = new char[len + 1];
-	memcpy(r, str, sizeof(char) * len);
-	r[len] = 0;
-
-	return r;
-}
-
 void swap(void* left, void* right, int argSize)
 {
 	char* copy = new char[argSize];
