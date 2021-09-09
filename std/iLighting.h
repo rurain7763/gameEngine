@@ -12,7 +12,9 @@ struct iLight
 	uint8 flag;
 	iVector3f color;
 	float intensity;
-	iVector4f position;
+	iVector3f dir;
+	float diffuseIntensity;
+	iVector3f position;
 };
 
 struct iDirectionLight : public iLight

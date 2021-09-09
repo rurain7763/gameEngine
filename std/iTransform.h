@@ -12,6 +12,10 @@ class iTransform
 public:
 	iTransform();
 
+	iMatrix getTransMatrix();
+	iMatrix getRotateMatrix();
+	iMatrix getScaleMatrix();
+
 	void translate(float x, float y, float z);
 	void rotate(float xAxis, float yAxis, float zAxis);
 	void scale(float x, float y, float z);

@@ -33,9 +33,6 @@
     <ClInclude Include="std\iMatirx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="std\iOpenGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="std\iImageReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -432,6 +429,9 @@
     <ClInclude Include="std\iLighting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="std\iOpenGL\iOpenGL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gameEngine.cpp">
@@ -450,9 +450,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="std\iMatirx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="std\iOpenGL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="std\iImageReader.cpp">
@@ -495,6 +492,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="std\iLighting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="std\iOpenGL\iOpenGL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

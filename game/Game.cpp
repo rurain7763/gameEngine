@@ -60,12 +60,15 @@ void loadGame()
 	model = assetReader->loadGLAsset("assets/test/back/backpack.obj");
 
 	dirLight = new iLighting();
-	dirLight->setDirectionLight({ 1.f, 0.f, 0.f }, .1f);
+	dirLight->setDirectionLight({ 1.f, 1.f, 1.f }, .1f);
 }
 
 void drawGame()
 {
 	static float lightInten = 1.f;
+	dirLight->light->dir = camera->lookAt;
+	dirLight->light->position = camera->position;
+	dirLight->light->diffuseIntensity = 1.f;
 
 	static float degree = 0.f;
 	degree += timeMgt->deltaTime * 50.f;

@@ -568,11 +568,23 @@ void iGLMesh::draw(iMatrix* tvpMat, iLight* light)
 		{
 		case DIRECTIONLIGHT:
 		{
+			GLuint transMat = glGetUniformLocation(programID, "transMat");
+			iMatrix trans;
+			trans.loadIdentity();
+			trans.translate({ light->position.x, light->position.y, light->position.z });
+			glUniformMatrix4fv(transMat, 1, GL_TRUE, trans.getData());
+
 			GLuint dirLightColor = glGetUniformLocation(programID, "dirLight.color");
 			glUniform3fv(dirLightColor, 1, (GLfloat*)&light->color);
 
 			GLuint dirLightIntensity = glGetUniformLocation(programID, "dirLight.intensity");
 			glUniform1f(dirLightIntensity, light->intensity);
+
+			GLuint dirLightDir = glGetUniformLocation(programID, "dirLight.dir");
+			glUniform3fv(dirLightDir, 1, (GLfloat*)&light->dir);
+
+			GLuint dirLightDiffIntens = glGetUniformLocation(programID, "dirLight.diffuseIntensity");
+			glUniform1f(dirLightDiffIntens, light->diffuseIntensity);
 			break;
 		}
 		case SPOTLIGHT:

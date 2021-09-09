@@ -31,7 +31,6 @@ void iLighting::setPosition(float x, float y, float z)
 	transform.translate(x, y, z);
 	iVector4f pos = { 0.f, 0.f, 0.f, 1.f };
 	transform.getMatrix() * pos;
-	light->position = pos;
 }
 
 iVector3f iLighting::getPosition()

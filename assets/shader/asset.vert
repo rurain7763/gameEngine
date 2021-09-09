@@ -5,6 +5,7 @@ precision mediump float;
 #endif
 
 uniform mat4 tvpMat;
+uniform mat4 transMat;
 
 out vec3 normalV;
 out vec2 uvV;
@@ -17,6 +18,6 @@ void main()
 {
 	gl_Position = tvpMat * vec4(position, 1.0);
 	uvV = uv;
-	normalV = normal;
+	normalV = (transMat * vec4(normal, 0.0)).xyz;
 }
 

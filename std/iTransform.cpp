@@ -1,4 +1,4 @@
-﻿#include"iTransform.h"
+#include"iTransform.h"
 #include"iStd.h"
 
 iTransform::iTransform()
@@ -9,6 +9,15 @@ iTransform::iTransform()
 	scaleV.x = 1.f;
 	scaleV.y = 1.f;
 	scaleV.z = 1.f;	
+}
+
+iMatrix iTransform::getTransMatrix()
+{
+	iMatrix t;
+	t.loadIdentity();
+	t.translate(positionV.x, positionV.y, positionV.z);
+
+	return t;
 }
 
 void iTransform::translate(float x, float y, float z)

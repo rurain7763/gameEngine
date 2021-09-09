@@ -89,7 +89,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)reference/jpglib/include;$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)reference/jpglib/include;$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std/iOpenGL;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -281,8 +281,8 @@
     <ClInclude Include="std\iInputManager.h" />
     <ClInclude Include="std\iLighting.h" />
     <ClInclude Include="std\iMatirx.h" />
-    <ClInclude Include="std\iOpenGL.h" />
     <ClInclude Include="std\iImageReader.h" />
+    <ClInclude Include="std\iOpenGL\iOpenGL.h" />
     <ClInclude Include="std\iQuaternion.h" />
     <ClInclude Include="std\iQueue.h" />
     <ClInclude Include="std\iStack.h" />
@@ -306,8 +306,8 @@
     <ClCompile Include="std\iInputManager.cpp" />
     <ClCompile Include="std\iLighting.cpp" />
     <ClCompile Include="std\iMatirx.cpp" />
-    <ClCompile Include="std\iOpenGL.cpp" />
     <ClCompile Include="std\iImageReader.cpp" />
+    <ClCompile Include="std\iOpenGL\iOpenGL.cpp" />
     <ClCompile Include="std\iQuaternion.cpp" />
     <ClCompile Include="std\iQueue.cpp" />
     <ClCompile Include="std\iStack.cpp" />

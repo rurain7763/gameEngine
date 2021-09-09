@@ -11,6 +11,7 @@
 #include "iArray.h"
 #include "iSharedPtr.h"
 #include "iVector.h"
+#include "iTransform.h"
 
 #define VERTEX_SHADER		0
 #define FRAGMENT_SHADER		1
@@ -112,6 +113,7 @@ public:
 	void draw(iMatrix* tvpMat, iLight* light = NULL);
 
 public:
+	iTransform transform;
 	iHashTable* textures;
 	iArray meshs;
 };
