@@ -110,7 +110,7 @@ public:
 	virtual ~iGLModel();
 
 	void addMesh(iGLMesh* mesh);
-	void draw(iMatrix* tvpMat, iLight* light = NULL);
+	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLight* light = NULL);
 
 public:
 	iTransform transform;
@@ -125,7 +125,7 @@ public:
 	virtual ~iGLMesh();
 
 	void sendToBuffer();
-	void draw(iMatrix* tvpMat, iLight* light = NULL);
+	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLight* light = NULL);
 
 public:
 	iVertexPNU* vertices;

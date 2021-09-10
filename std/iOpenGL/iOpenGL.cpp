@@ -482,12 +482,12 @@ void iGLModel::addMesh(iGLMesh* mesh)
 	meshs.push_back(mesh);
 }
 
-void iGLModel::draw(iMatrix* tvpMat, iLight* light)
+void iGLModel::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLight* light)
 {
 	for (int i = 0; i < meshs.dataNum; i++)
 	{
 		iGLMesh* mesh = (iGLMesh*)meshs[i];
-		mesh->draw(tvpMat, light);
+		mesh->draw(proj, camera, trans, light);
 	}
 }
 
@@ -542,7 +542,7 @@ void iGLMesh::sendToBuffer()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void iGLMesh::draw(iMatrix* tvpMat, iLight* light)
+void iGLMesh::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLight* light)
 {
 	if (vao == 0) return;
 
@@ -559,8 +559,9 @@ void iGLMesh::draw(iMatrix* tvpMat, iLight* light)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
+	iMatrix tvpMat = (*proj) * camera->getMatrix() * trans->getMatrix();
 	GLuint mat = glGetUniformLocation(programID, "tvpMat");
-	glUniformMatrix4fv(mat, 1, GL_TRUE, tvpMat->getData());
+	glUniformMatrix4fv(mat, 1, GL_TRUE, tvpMat.getData());
 
 	if (light)
 	{
@@ -569,10 +570,7 @@ void iGLMesh::draw(iMatrix* tvpMat, iLight* light)
 		case DIRECTIONLIGHT:
 		{
 			GLuint transMat = glGetUniformLocation(programID, "transMat");
-			iMatrix trans;
-			trans.loadIdentity();
-			trans.translate({ light->position.x, light->position.y, light->position.z });
-			glUniformMatrix4fv(transMat, 1, GL_TRUE, trans.getData());
+			//glUniformMatrix4fv(transMat, 1, GL_TRUE, );
 
 			GLuint dirLightColor = glGetUniformLocation(programID, "dirLight.color");
 			glUniform3fv(dirLightColor, 1, (GLfloat*)&light->color);

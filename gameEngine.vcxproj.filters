@@ -432,6 +432,9 @@
     <ClInclude Include="std\iOpenGL\iOpenGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="std\iSceneManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gameEngine.cpp">
@@ -495,6 +498,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="std\iOpenGL\iOpenGL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="std\iSceneManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

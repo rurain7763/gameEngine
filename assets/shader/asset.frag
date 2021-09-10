@@ -30,7 +30,7 @@ vec4 calculateDiffuseColor()
 	float diff = dot(normalize(normalV), normalize(-dirLight.dir));
 	diff = max(diff, 0.0);
 
-	return vec4(dirLight.color * dirLight.diffuseIntensity * diff, floor(diff));
+	return vec4(dirLight.color * dirLight.diffuseIntensity * diff, max(floor(diff), 0.0));
 }
 
 void main()

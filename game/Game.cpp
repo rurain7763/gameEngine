@@ -76,15 +76,12 @@ void drawGame()
 	iMatrix viewMat = camera->getMatrix();
 
 	iTransform transMat;
-	transMat.rotate(0, degree, 0);
+	//transMat.rotate(0, degree, 0);
 
-	iMatrix tvpMat;
-
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		transMat.translate(i * 5, 0, 0.f);
-		tvpMat = projMat * viewMat * transMat.getMatrix();
-		model->draw(&tvpMat, dirLight->light);
+		model->draw(&projMat, camera, &transMat, dirLight->light);
 	}
 
 	GLuint program = shader->useProgram("test", "test");
@@ -116,7 +113,7 @@ void drawGame()
 	transMat1.rotate(0, degree, 0);
 	transMat1.translate(5 + isin(degree), 0, 5.f);
 
-	tvpMat = projMat * viewMat * transMat1.getMatrix();
+	iMatrix tvpMat = projMat * viewMat * transMat1.getMatrix();
 
 	GLuint loc = glGetUniformLocation(program, "tvpMat");
 	glUniformMatrix4fv(loc, 1, GL_TRUE, tvpMat.getData());
@@ -193,3 +190,43 @@ void endGame()
 	delete model;
 }
 
+iGame* iGame::S = NULL;
+
+iGame::iGame()
+{
+	srand(time(NULL));
+
+	devSize = new iSize;
+	devSize->width = DEV_WIDTH;
+	devSize->height = DEV_HEIGHT;
+
+	inputMgt = iInputManager::share();
+	timeMgt = iTime::share();
+	assetReader = iAssetReader::share();
+	shader = iGLShader::share();
+
+	projMatrix = new iMatrix();
+	projMatrix->loadIdentity();
+	projMatrix->frustrum(60.f, devSize->width, devSize->height, 1.f, 100.f);
+
+	cameraMode = false;
+	mainCamera = new iCamera(*devSize, DEFAULT_CAMERA_POSITION);
+}
+
+iGame::~iGame()
+{
+	delete devSize;
+	delete inputMgt;
+	delete timeMgt;
+	delete assetReader;
+	delete shader;
+
+	delete projMatrix;
+	delete camera;
+}
+
+iGame* iGame::share()
+{
+	if (!S) S = new iGame();
+	return S;
+}
