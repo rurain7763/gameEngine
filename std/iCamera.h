@@ -1,6 +1,6 @@
 #pragma once
 
-#include"iMatirx.h"
+#include"iMatrix.h"
 
 #define DEFAULT_CAMERA_SPEED			10.f
 #define DEFAULT_CAMERA_SENSITIVE		0.05f

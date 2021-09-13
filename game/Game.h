@@ -23,26 +23,4 @@ extern iInputManager* inputMgt;
 
 extern iSize* devSize;
 
-class iGame
-{
-private:
-	iGame();
-	static iGame* S;
-	
-public:
-	virtual ~iGame();
-	static iGame* share();
-
-public:
-	iSize* devSize;
-
-	iInputManager* inputMgt;
-	iTime* timeMgt;
-	iAssetReader* assetReader;
-	iGLShader* shader;
-
-	iMatrix* projMatrix;
-	bool cameraMode; // 0 : edit , 1 : play
-	iCamera* mainCamera;
-};
 

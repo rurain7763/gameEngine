@@ -1,6 +1,6 @@
 #pragma once
 
-#include"iMatirx.h"
+#include"iMatrix.h"
 #include"iQuaternion.h"
 
 #define ELUER						  0

@@ -65,9 +65,13 @@ void loadGame()
 
 void drawGame()
 {
+	static iVector3f boxPos;
+	static iVector3f testModelPos = { 0,0,0 };
+
 	static float lightInten = 1.f;
-	dirLight->light->dir = camera->lookAt;
-	dirLight->light->position = camera->position;
+	
+	dirLight->light->dir = testModelPos - boxPos;
+	dirLight->light->position = boxPos;
 	dirLight->light->diffuseIntensity = 1.f;
 
 	static float degree = 0.f;
@@ -110,8 +114,10 @@ void drawGame()
 
 	iTransform transMat1;
 	//transMat.scale(isin(degree), 1, 1);
-	transMat1.rotate(0, degree, 0);
-	transMat1.translate(5 + isin(degree), 0, 5.f);
+	//transMat1.rotate(0, degree, 0);
+	//transMat1.translate(5 + isin(degree), 0, 5.f);
+	boxPos = { icos(degree) * 5.f, 0.f, isin(degree) * 5.f };
+	transMat1.translate(boxPos.x, boxPos.y, boxPos.z);
 
 	iMatrix tvpMat = projMat * viewMat * transMat1.getMatrix();
 
@@ -190,43 +196,3 @@ void endGame()
 	delete model;
 }
 
-iGame* iGame::S = NULL;
-
-iGame::iGame()
-{
-	srand(time(NULL));
-
-	devSize = new iSize;
-	devSize->width = DEV_WIDTH;
-	devSize->height = DEV_HEIGHT;
-
-	inputMgt = iInputManager::share();
-	timeMgt = iTime::share();
-	assetReader = iAssetReader::share();
-	shader = iGLShader::share();
-
-	projMatrix = new iMatrix();
-	projMatrix->loadIdentity();
-	projMatrix->frustrum(60.f, devSize->width, devSize->height, 1.f, 100.f);
-
-	cameraMode = false;
-	mainCamera = new iCamera(*devSize, DEFAULT_CAMERA_POSITION);
-}
-
-iGame::~iGame()
-{
-	delete devSize;
-	delete inputMgt;
-	delete timeMgt;
-	delete assetReader;
-	delete shader;
-
-	delete projMatrix;
-	delete camera;
-}
-
-iGame* iGame::share()
-{
-	if (!S) S = new iGame();
-	return S;
-}

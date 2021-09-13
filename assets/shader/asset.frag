@@ -9,7 +9,7 @@ precision mediump float;
 struct iDirectionLight
 {
 	vec3 color;
-	float intensity;
+	float ambientIntensity;
 	vec3 dir;
 	float diffuseIntensity;
 };
@@ -25,7 +25,12 @@ in vec2 uvV;
 
 out vec4 throwColor;
 
-vec4 calculateDiffuseColor()
+vec4 calcAmbientColor()
+{
+	return vec4(dirLight.color, 1.0) * dirLight.ambientIntensity;
+}
+
+vec4 calcDiffuseColor()
 {
 	float diff = dot(normalize(normalV), normalize(-dirLight.dir));
 	diff = max(diff, 0.0);
@@ -37,9 +42,9 @@ void main()
 { 
 	vec4 color = texture(diffuse, uvV);
 	
-	vec4 ambient = vec4(dirLight.color, 1.0) * dirLight.intensity;
-	vec4 diffuse = calculateDiffuseColor();
+	vec4 ambient = calcAmbientColor();
+	vec4 diffuse = calcDiffuseColor();
 
-	throwColor = color * (ambient, diffuse);
+	throwColor = color * (ambient + diffuse);
 }
 

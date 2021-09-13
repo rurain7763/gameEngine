@@ -31,6 +31,17 @@ iVector3f iVector3f::operator+(const iVector3f& v) const
 	return r;
 }
 
+iVector3f iVector3f::operator-(const iVector3f& v) const
+{
+	iVector3f r;
+
+	r.x = x - v.x;
+	r.y = y - v.y;
+	r.z = z - v.z;
+
+	return r;
+}
+
 iVector3f iVector3f::operator*(const float v) const
 {
 	iVector3f r;

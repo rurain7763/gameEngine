@@ -13,6 +13,7 @@ iVector2f operator-(const iVector2f& v1, const iVector2f& v2);
 struct iVector3f
 {
 	iVector3f operator+(const iVector3f& v) const;
+	iVector3f operator-(const iVector3f& v) const;
 	iVector3f operator*(const float v) const;
 
 	iVector3f& operator+=(const iVector3f& v);

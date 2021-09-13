@@ -1,4 +1,4 @@
-#include"iMatirx.h"
+#include"iMatrix.h"
 #include"iStd.h"
 
 iMatrix::iMatrix()

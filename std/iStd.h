@@ -18,7 +18,7 @@
 
 #include "iType.h"
 #include "iVector.h"
-#include "iMatirx.h"
+#include "iMatrix.h"
 #include "iQuaternion.h"
 #include "iTree.h"
 #include "iArray.h"
