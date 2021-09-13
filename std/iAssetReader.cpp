@@ -52,7 +52,7 @@ iGLModel* iAssetReader::loadGLAsset(const char* path)
 			if (src->mMaterialIndex >= 0)
 			{
 				aiMaterial* mat = scene->mMaterials[src->mMaterialIndex];
-				getGLMaterial(dir, r, mat, dst);				
+				getGLMaterial(dir, r, mat, dst);		
 			}
 
 			dst->sendToBuffer();
@@ -122,8 +122,8 @@ void iAssetReader::getGLVertices(aiMesh* src, iGLMesh* dst)
 		if (src->mTextureCoords[0])
 		{
 			aiVector3D* uv = &src->mTextureCoords[0][i];
-			// 1.f - uv.y => because openGL uvs are flip vertically
-			vertex->uv = { uv->x, 1.f - uv->y };
+			// 1.f - uv.y if aiProcess_FlipUVs flag is on because openGL uvs are flip vertically
+			vertex->uv = { uv->x, uv->y };
 		}
 		else vertex->uv = { 0.f, 0.f };
 	}
@@ -189,6 +189,12 @@ void iAssetReader::getGLMaterial(const char* dir, iGLModel* model,
 
 			delete[] fileName;
 		}
+	}
+
+	aiColor3D ambient;
+	if (src->Get(AI_MATKEY_COLOR_AMBIENT, ambient) == AI_SUCCESS)
+	{
+		dst->material = { ambient.r, ambient.g, ambient.b };
 	}
 
 	dst->textures->resize(dst->textures->dataNum);

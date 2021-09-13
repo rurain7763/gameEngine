@@ -16,7 +16,7 @@ iMatrix projMat;
 iGLTexturePTR tex;
 iGLShader* shader;
 iGLModel* model;
-iLighting* dirLight;
+iLight* dirLight;
 
 void loadGame()
 {
@@ -59,20 +59,21 @@ void loadGame()
 
 	model = assetReader->loadGLAsset("assets/test/back/backpack.obj");
 
-	dirLight = new iLighting();
-	dirLight->setDirectionLight({ 1.f, 1.f, 1.f }, .1f);
+	dirLight = new iDirectionLight();
+	dirLight->color = { 1.f, 1.f, 1.f };
+	dirLight->ambientIntensity = .1f;
 }
 
 void drawGame()
 {
 	static iVector3f boxPos;
-	static iVector3f testModelPos = { 0,0,0 };
+	static iVector3f testModelPos;
+	static iVector3f origin = { 0.f, 0.f, 0.f };
 
 	static float lightInten = 1.f;
-	
-	dirLight->light->dir = testModelPos - boxPos;
-	dirLight->light->position = boxPos;
-	dirLight->light->diffuseIntensity = 1.f;
+	dirLight->dir = origin - boxPos;
+	dirLight->position = boxPos;
+	dirLight->diffuseIntensity = 1.f;
 
 	static float degree = 0.f;
 	degree += timeMgt->deltaTime * 50.f;
@@ -80,12 +81,14 @@ void drawGame()
 	iMatrix viewMat = camera->getMatrix();
 
 	iTransform transMat;
+	testModelPos = { isin(degree) * 3.f, 0.f, 0.f };
+	//transMat.translate(testModelPos.x, testModelPos.y, testModelPos.z);
+	//transMat.scale(isin(degree) < 0 ? isin(degree) * - 1 : isin(degree), 0.4f, 1.6f);
 	//transMat.rotate(0, degree, 0);
 
 	for (int i = 0; i < 1; i++)
 	{
-		transMat.translate(i * 5, 0, 0.f);
-		model->draw(&projMat, camera, &transMat, dirLight->light);
+		model->draw(&projMat, camera, &transMat, dirLight);
 	}
 
 	GLuint program = shader->useProgram("test", "test");
@@ -125,8 +128,8 @@ void drawGame()
 	glUniformMatrix4fv(loc, 1, GL_TRUE, tvpMat.getData());
 
 	loc = glGetUniformLocation(program, "dirLight.color");
-	glUniform3fv(loc, 1, (float*)&dirLight->light->color);
-
+	glUniform3fv(loc, 1, (float*)&dirLight->color);
+	
 	loc = glGetUniformLocation(program, "dirLight.intensity");
 	glUniform1f(loc, lightInten);
 

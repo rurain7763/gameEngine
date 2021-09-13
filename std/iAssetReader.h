@@ -9,7 +9,8 @@
 #include <assimp/postprocess.h>
 using namespace Assimp;
 
-#define ASSIMP_LOAD_FLAGS aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices
+//aiProcess_FlipUVs
+#define ASSIMP_LOAD_FLAGS aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
 #define ASSIMP_TEXTURETYPE_NUM aiTextureType::aiTextureType_UNKNOWN
 
 struct iGLMesh;

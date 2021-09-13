@@ -18,6 +18,6 @@ void main()
 {
 	gl_Position = tvpMat * vec4(position, 1.0);
 	uvV = uv;
-	normalV = (transMat * vec4(normal, 0.0)).xyz;
+	normalV = mat3(transpose(inverse(transMat))) * normal;
 }
 

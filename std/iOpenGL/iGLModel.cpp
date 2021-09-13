@@ -46,6 +46,7 @@ iGLMesh::iGLMesh()
 	numIndices = 0;
 
 	textures = new iArray(10);
+	material = { 0.f, 0.f, 0.f };
 
 	vao = 0;
 	vbo = 0;
@@ -122,7 +123,7 @@ void iGLMesh::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLight* li
 			glUniform3fv(dirLightColor, 1, (GLfloat*)&light->color);
 
 			GLuint dirLightIntensity = glGetUniformLocation(programID, "dirLight.ambientIntensity");
-			glUniform1f(dirLightIntensity, light->intensity);
+			glUniform1f(dirLightIntensity, light->ambientIntensity);
 
 			GLuint dirLightDir = glGetUniformLocation(programID, "dirLight.dir");
 			glUniform3fv(dirLightDir, 1, (GLfloat*)&light->dir);
@@ -190,6 +191,9 @@ void iGLMesh::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLight* li
 			break;
 		}
 	}
+
+	GLuint materialLoc = glGetUniformLocation(programID, "material.ambient");
+	glUniform3fv(materialLoc, 1, (GLfloat*)&material.ambient);
 
 	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, NULL);
 

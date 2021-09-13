@@ -10,8 +10,9 @@
 struct iLight
 {
 	uint8 flag;
+
 	iVector3f color;
-	float intensity;
+	float ambientIntensity;
 	iVector3f dir;
 	float diffuseIntensity;
 	iVector3f position;
@@ -24,21 +25,4 @@ struct iDirectionLight : public iLight
 
 struct iSpotLight : public iLight
 {
-};
-
-class iLighting
-{
-public:
-	iLighting();
-	virtual ~iLighting();
-
-	void setDirectionLight(iVector3f color, float intensity);
-	void setSpotLight();
-
-	void setPosition(float x, float y, float z);
-	iVector3f getPosition();
-
-public:
-	iLight* light;
-	iTransform transform;
 };

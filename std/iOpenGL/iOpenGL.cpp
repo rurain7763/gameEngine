@@ -156,10 +156,12 @@ iVector3f* calcNormals(iVector3f* vertices, uint32 numVertices, uint32* indices,
 		iVector3f normal = v0.cross(v1);
 		normal.normalized();
 
-		r[i0] = normal;
-		r[i1] = normal;
-		r[i2] = normal;
+		r[i0] += normal;
+		r[i1] += normal;
+		r[i2] += normal;
 	}
+
+	for (int i = 0; i < numVertices; i++) r[i].normalized();
 
 	return r;
 }

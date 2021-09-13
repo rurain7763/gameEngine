@@ -12,6 +12,12 @@ class iGLMesh;
 class iLight;
 class iHashTable;
 
+struct iGLMaterial
+{
+	iVector3f ambient;
+	//...
+};
+
 class iGLModel
 {
 public:
@@ -44,9 +50,12 @@ public:
 	int numIndices;
 
 	iArray* textures;
+	iGLMaterial material;
 
 	GLuint vao;
 	GLuint vbo;
 	GLuint ebo;
 };
+
+
 
