@@ -191,10 +191,15 @@ void iAssetReader::getGLMaterial(const char* dir, iGLModel* model,
 		}
 	}
 
-	aiColor3D ambient;
-	if (src->Get(AI_MATKEY_COLOR_AMBIENT, ambient) == AI_SUCCESS)
+	aiColor3D color;
+	if (src->Get(AI_MATKEY_COLOR_AMBIENT, color) == AI_SUCCESS)
 	{
-		dst->material = { ambient.r, ambient.g, ambient.b };
+		dst->material.ambient = { color.r, color.g, color.b };
+	}
+
+	if (src->Get(AI_MATKEY_COLOR_SPECULAR, color) == AI_SUCCESS)
+	{
+		dst->material.specular = { color.r, color.g, color.b };
 	}
 
 	dst->textures->resize(dst->textures->dataNum);

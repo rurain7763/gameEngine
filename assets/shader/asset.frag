@@ -15,15 +15,18 @@ struct iDirectionLight
 struct iMaterial
 {
 	vec3 ambient;
+	vec3 specular;
 };
-
-uniform iDirectionLight dirLight;
-uniform iMaterial material;
 
 uniform sampler2D diffuse;
 uniform sampler2D specular;
 uniform sampler2D normal;
 
+uniform iDirectionLight dirLight;
+uniform iMaterial material;
+uniform vec3 cameraPos;
+
+in vec3 worldPos;
 in vec3 normalV;
 in vec2 uvV;
 
@@ -42,13 +45,29 @@ vec4 calcDiffuseColor()
 	return vec4(dirLight.color * dirLight.diffuseIntensity * diff, floor(diff));
 }
 
+vec4 calcSpecularColor()
+{
+	vec3 normal = normalize(-normalV);
+	vec3 dir = normalize(dirLight.dir);
+	float halfDist = dot(normal, dir);
+	vec3 reflectLight = dir + (-normal * 2 * halfDist);
+
+	//vec3 reflectLight = reflect(dirLight.dir, normalV);
+	vec3 toCamera = cameraPos - worldPos;
+	float specular = dot(normalize(toCamera), normalize(reflectLight));
+	specular = pow(specular, 32);
+
+	return vec4(dirLight.color * material.specular * specular , 1.0);
+}
+
 void main()
 { 
 	vec4 color = texture(diffuse, uvV);
 	
 	vec4 ambient = calcAmbientColor();
 	vec4 diffuse = calcDiffuseColor();
+	vec4 specular = calcSpecularColor() * diffuse.a;
 
-	throwColor = color * (ambient + diffuse);
+	throwColor = color * (ambient + diffuse + specular);
 }
 

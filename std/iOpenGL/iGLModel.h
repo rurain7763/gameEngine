@@ -15,6 +15,7 @@ class iHashTable;
 struct iGLMaterial
 {
 	iVector3f ambient;
+	iVector3f specular;
 	//...
 };
 

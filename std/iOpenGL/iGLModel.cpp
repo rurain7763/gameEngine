@@ -130,6 +130,10 @@ void iGLMesh::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLight* li
 
 			GLuint dirLightDiffIntens = glGetUniformLocation(programID, "dirLight.diffuseIntensity");
 			glUniform1f(dirLightDiffIntens, light->diffuseIntensity);
+
+			GLuint cameraPosLoc = glGetUniformLocation(programID, "cameraPos");
+			glUniform3fv(cameraPosLoc, 1, (GLfloat*)&camera->position);
+
 			break;
 		}
 		case SPOTLIGHT:
@@ -192,8 +196,11 @@ void iGLMesh::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLight* li
 		}
 	}
 
-	GLuint materialLoc = glGetUniformLocation(programID, "material.ambient");
-	glUniform3fv(materialLoc, 1, (GLfloat*)&material.ambient);
+	GLuint materialAmbientLoc = glGetUniformLocation(programID, "material.ambient");
+	glUniform3fv(materialAmbientLoc, 1, (GLfloat*)&material.ambient);
+
+	GLuint materialSpecularLoc = glGetUniformLocation(programID, "material.specular");
+	glUniform3fv(materialSpecularLoc, 1, (GLfloat*)&material.specular);
 
 	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, NULL);
 
