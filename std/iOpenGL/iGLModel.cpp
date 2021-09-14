@@ -68,9 +68,9 @@ void iGLMesh::sendToBuffer()
 {
 	if (!vertices || !indices) return;
 
-	glGenVertexArrays(1, &vao);
-	glGenBuffers(1, &vbo);
-	glGenBuffers(1, &ebo);
+	if(vao == 0) glGenVertexArrays(1, &vao);
+	if(vbo == 0) glGenBuffers(1, &vbo);
+	if(ebo == 0) glGenBuffers(1, &ebo);
 
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -122,14 +122,17 @@ void iGLMesh::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLight* li
 			GLuint dirLightColor = glGetUniformLocation(programID, "dirLight.color");
 			glUniform3fv(dirLightColor, 1, (GLfloat*)&light->color);
 
-			GLuint dirLightIntensity = glGetUniformLocation(programID, "dirLight.ambientIntensity");
-			glUniform1f(dirLightIntensity, light->ambientIntensity);
-
 			GLuint dirLightDir = glGetUniformLocation(programID, "dirLight.dir");
 			glUniform3fv(dirLightDir, 1, (GLfloat*)&light->dir);
 
+			GLuint dirLightAmbientIntens = glGetUniformLocation(programID, "dirLight.ambientIntensity");
+			glUniform1f(dirLightAmbientIntens, light->ambientIntensity);
+
 			GLuint dirLightDiffIntens = glGetUniformLocation(programID, "dirLight.diffuseIntensity");
 			glUniform1f(dirLightDiffIntens, light->diffuseIntensity);
+
+			GLuint dirLightSpecIntens = glGetUniformLocation(programID, "dirLight.specularIntensity");
+			glUniform1f(dirLightSpecIntens, light->specularIntensity);
 
 			GLuint cameraPosLoc = glGetUniformLocation(programID, "cameraPos");
 			glUniform3fv(cameraPosLoc, 1, (GLfloat*)&camera->position);

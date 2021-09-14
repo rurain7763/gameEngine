@@ -13,8 +13,9 @@ public:
 	iTransform();
 
 	iMatrix getTransMatrix();
-	iMatrix getRotateMatrix();
-	iMatrix getScaleMatrix();
+	//TODO
+	//iMatrix getRotateMatrix();
+	//iMatrix getScaleMatrix();
 
 	void translate(float x, float y, float z);
 	void rotate(float xAxis, float yAxis, float zAxis);

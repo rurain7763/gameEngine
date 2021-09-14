@@ -292,6 +292,7 @@
     <ClInclude Include="std\iStack.h" />
     <ClInclude Include="std\iStd.h" />
     <ClInclude Include="std\iSharedPtr.h" />
+    <ClInclude Include="std\iString.h" />
     <ClInclude Include="std\iTime.h" />
     <ClInclude Include="std\iTransform.h" />
     <ClInclude Include="std\iTree.h" />
@@ -320,6 +321,7 @@
     <ClCompile Include="std\iSceneManager.cpp" />
     <ClCompile Include="std\iStack.cpp" />
     <ClCompile Include="std\iStd.cpp" />
+    <ClCompile Include="std\iString.cpp" />
     <ClCompile Include="std\iTime.cpp" />
     <ClCompile Include="std\iTransform.cpp" />
     <ClCompile Include="std\iTree.cpp" />

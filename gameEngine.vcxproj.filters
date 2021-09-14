@@ -444,6 +444,9 @@
     <ClInclude Include="std\iOpenGL\iGLTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="std\iString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gameEngine.cpp">
@@ -519,6 +522,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="std\iOpenGL\iGLTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="std\iString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

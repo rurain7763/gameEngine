@@ -26,6 +26,7 @@
 #include "iHashTable.h"
 #include "iQueue.h"
 #include "iStack.h"
+#include "iString.h"
 
 #include "iImageReader.h"
 #include "iAssetReader.h"

@@ -7,9 +7,11 @@ precision mediump float;
 struct iDirectionLight
 {
 	vec3 color;
-	float ambientIntensity;
 	vec3 dir;
+
+	float ambientIntensity;
 	float diffuseIntensity;
+	float specularIntensity;
 };
 
 struct iMaterial
@@ -47,17 +49,14 @@ vec4 calcDiffuseColor()
 
 vec4 calcSpecularColor()
 {
-	vec3 normal = normalize(-normalV);
-	vec3 dir = normalize(dirLight.dir);
-	float halfDist = dot(normal, dir);
-	vec3 reflectLight = dir + (-normal * 2 * halfDist);
-
-	//vec3 reflectLight = reflect(dirLight.dir, normalV);
+	vec3 reflectLight = reflect(normalize(dirLight.dir), normalize(normalV));
 	vec3 toCamera = cameraPos - worldPos;
-	float specular = dot(normalize(toCamera), normalize(reflectLight));
-	specular = pow(specular, 32);
 
-	return vec4(dirLight.color * material.specular * specular , 1.0);
+	float specular = dot(normalize(toCamera), normalize(reflectLight));
+	specular = pow(max(specular, 0), 256);
+
+	return vec4(dirLight.color * dirLight.specularIntensity *
+				material.specular * specular, floor(specular));
 }
 
 void main()
@@ -66,7 +65,7 @@ void main()
 	
 	vec4 ambient = calcAmbientColor();
 	vec4 diffuse = calcDiffuseColor();
-	vec4 specular = calcSpecularColor() * diffuse.a;
+	vec4 specular = calcSpecularColor();
 
 	throwColor = color * (ambient + diffuse + specular);
 }
