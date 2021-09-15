@@ -1,28 +1,38 @@
 #pragma once
 
-#define DEFAULT_STR_SIZE 100
+#define DEFAULT_STR_SIZE 20
+
+#include "iType.h"
 
 class iString
 {
 public:
 	iString();
-	iString(int size);
+	iString(uint32 size);
 	iString(const iString& istr);
-	iString(const char* str);
-	iString(char* str);
+	iString(const char* str, ...);
+	iString(char c);
 	virtual ~iString();
 
 	iString& operator=(const iString& istr);
 	iString& operator=(const char* str);
-	iString& operator=(char* str);
+	iString& operator=(char c);
 
-	void resize(int size);
+	iString& operator+=(const iString& istr);
+	iString& operator+=(const char* str);
+	iString& operator+=(char c);
 
-private:
-	int size;
+	char& operator[](int idx);
+
+	void resize(uint32 size);
+	void clear();
+	bool empty();
+	void shrink_to_fit();
+	char& at(int idx);
 
 public:
 	char* str;
+	int size;
 	int len;
 };
 

@@ -9,22 +9,14 @@ iString::iString()
 	size = DEFAULT_STR_SIZE;
 }
 
-iString::iString(int s)
+iString::iString(uint32 s)
 {
-	if (s == 0)
-	{
-		str = new char[DEFAULT_STR_SIZE];
-		str[0] = 0;
-		len = 0;
-		size = DEFAULT_STR_SIZE;
-	}
-	else
-	{
-		str = new char[s];
-		str[0] = 0;
-		len = 0;
-		size = s;
-	}
+	if (s == 0) s = DEFAULT_STR_SIZE;
+
+	str = new char[s];
+	str[0] = 0;
+	len = 0;
+	size = s;
 }
 
 iString::iString(const iString& istr)
@@ -37,24 +29,74 @@ iString::iString(const iString& istr)
 	str[len] = 0;
 }
 
-iString::iString(const char* s)
+iString::iString(const char* s, ...)
 {
-	len = strlen(s);
-	size = len * 2 + 1;
+	va_list ap;
+	va_start(ap, s);
+
+	iString test;
+	int idx = 0;
+	int l = strlen(s);
+
+	for (int i = 1; i < l; i++)
+	{
+		if (s[i - 1] == '%')
+		{
+			switch (s[i])
+			{
+			case 'd':
+			{
+				break;
+			}
+			case 's':
+			{
+				char* t = va_arg(ap, char*);
+				int tLen = strlen(t);
+				memcpy(&test[idx], t, sizeof(char) * tLen);
+				idx += tLen;
+				i++;
+				break;
+			}
+			default:
+				break;
+			}
+		}
+		else
+		{
+			test[idx] = s[i - 1];
+			idx++;
+		}
+
+		test[idx] = 0;
+	}
+
+	test[idx] = 0;
+
+	va_end(ap);
+
+	if (!s)
+	{
+		len = 0;
+		size = DEFAULT_STR_SIZE;
+	}
+	else
+	{
+		len = strlen(s);
+		size = len * 2 + 1;
+	}
 
 	str = new char[size];
 	memcpy(str, s, sizeof(char) * len);
 	str[len] = 0;
 }
 
-iString::iString(char* s)
+iString::iString(char c)
 {
-	len = strlen(s);
-	size = len * 2 + 1;
-
+	len = 1;
+	size = 2;
 	str = new char[size];
-	memcpy(str, s, sizeof(char) * len);
-	str[len] = 0;
+	str[0] = c;
+	str[1] = 0;
 }
 
 iString::~iString()
@@ -96,34 +138,156 @@ iString& iString::operator=(const char* s)
 	return *this;
 }
 
-iString& iString::operator=(char* s)
+iString& iString::operator=(char c)
 {
-	len = strlen(s);
-
-	if (len >= size)
+	if (size < 2)
 	{
+		size = 2 * 2 + 1;
 		delete[] str;
-		size = len * 2 + 1;
 		str = new char[size];
 	}
 
-	memcpy(str, s, sizeof(char) * len);
-	str[len] = 0;
+	str[0] = c;
+	str[1] = 0;
+	len = 1;
+	
+	return *this;
+}
+
+iString& iString::operator+=(const iString& istr)
+{
+	int newLen = len + istr.len;
+
+	if (newLen >= size)
+	{
+		size = newLen * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		delete[] str;
+		str = copy;
+	}
+
+	memcpy(&str[len], istr.str, sizeof(char) * istr.len);
+	str[newLen] = 0;
+	len = newLen;
 
 	return *this;
 }
 
-void iString::resize(int s)
+iString& iString::operator+=(const char* s)
 {
-	if (s == 0) return;
+	int sLen = strlen(s);
+	int newLen = len + sLen;
 
-	if (len >= s) len = s - 1;
+	if (newLen >= size)
+	{
+		size = newLen * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		delete[] str;
+		str = copy;
+	}
 
-	char* copy = new char[s];
+	memcpy(&str[len], s, sizeof(char) * sLen);
+	str[newLen] = 0;
+	len = newLen;
+
+	return *this;
+}
+
+iString& iString::operator+=(char c)
+{
+	int newLen = len + 1;
+
+	if (newLen >= size)
+	{
+		size = newLen * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		delete[] str;
+		str = copy;
+	}
+
+	str[len] = c;
+	str[newLen] = 0;
+	len = newLen;
+
+	return *this;
+}
+
+char& iString::operator[](int idx)
+{
+	if (idx >= size)
+	{
+		size = size * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		copy[len] = 0;
+		delete[] str;
+		str = copy;
+		len = idx + 1;
+	}
+	else if (idx >= len)
+	{
+		len = idx + 1;
+	}
+
+	return str[idx];
+}
+
+void iString::resize(uint32 s)
+{
+	if (s)
+	{
+		if (len >= s) len = s - 1;
+
+		char* copy = new char[s];
+		memcpy(copy, str, sizeof(char) * len);
+		copy[len] = 0;
+		delete[] str;
+		str = copy;
+
+		size = s;
+	}
+}
+
+void iString::clear()
+{
+	memset(str, 0, sizeof(char) * len);
+	len = 0;
+}
+
+bool iString::empty()
+{
+	return !len;
+}
+
+void iString::shrink_to_fit()
+{
+	size = len + 1;
+	char* copy = new char[size];
 	memcpy(copy, str, sizeof(char) * len);
 	copy[len] = 0;
 	delete[] str;
 	str = copy;
+}
 
-	size = s;
+char& iString::at(int idx)
+{
+	if (idx >= size)
+	{
+		size = size * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		copy[len] = 0;
+		delete[] str;
+		str = copy;
+		len = idx + 1;
+	}
+	else if (idx >= len)
+	{
+		len = idx + 1;
+	}
+
+	return str[idx];
 }

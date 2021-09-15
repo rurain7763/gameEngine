@@ -62,6 +62,11 @@ void loadGame()
 	dirLight = new iDirectionLight();
 	dirLight->color = { 1.f, 1.f, 1.f };
 	dirLight->ambientIntensity = .1f;
+
+	iString s1("hello %s %s %s", "world", "my", "name");
+	iString s = "hello";
+	s.shrink_to_fit();
+	s += " world";
 }
 
 void drawGame()
