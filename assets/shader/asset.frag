@@ -1,4 +1,5 @@
 #version 150
+#define SPECULAR_POW_VALUE 32
 
 #ifdef GL_ES
 precision mediump float;
@@ -53,7 +54,7 @@ vec4 calcSpecularColor()
 	vec3 toCamera = cameraPos - worldPos;
 
 	float specular = dot(normalize(toCamera), normalize(reflectLight));
-	specular = pow(max(specular, 0), 256);
+	specular = pow(max(specular, 0), SPECULAR_POW_VALUE);
 
 	return vec4(dirLight.color * dirLight.specularIntensity *
 				material.specular * specular, floor(specular));

@@ -116,23 +116,25 @@ void iGLMesh::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLight* li
 		{
 		case DIRECTIONLIGHT:
 		{
+			iDirectionLight* dirLight = (iDirectionLight*)light;
+
 			GLuint transMat = glGetUniformLocation(programID, "transMat");
 			glUniformMatrix4fv(transMat, 1, GL_TRUE, trans->getTransMatrix().getData());
 
 			GLuint dirLightColor = glGetUniformLocation(programID, "dirLight.color");
-			glUniform3fv(dirLightColor, 1, (GLfloat*)&light->color);
+			glUniform3fv(dirLightColor, 1, (GLfloat*)&dirLight->color);
 
 			GLuint dirLightDir = glGetUniformLocation(programID, "dirLight.dir");
-			glUniform3fv(dirLightDir, 1, (GLfloat*)&light->dir);
+			glUniform3fv(dirLightDir, 1, (GLfloat*)&dirLight->dir);
 
 			GLuint dirLightAmbientIntens = glGetUniformLocation(programID, "dirLight.ambientIntensity");
-			glUniform1f(dirLightAmbientIntens, light->ambientIntensity);
+			glUniform1f(dirLightAmbientIntens, dirLight->ambientIntensity);
 
 			GLuint dirLightDiffIntens = glGetUniformLocation(programID, "dirLight.diffuseIntensity");
-			glUniform1f(dirLightDiffIntens, light->diffuseIntensity);
+			glUniform1f(dirLightDiffIntens, dirLight->diffuseIntensity);
 
 			GLuint dirLightSpecIntens = glGetUniformLocation(programID, "dirLight.specularIntensity");
-			glUniform1f(dirLightSpecIntens, light->specularIntensity);
+			glUniform1f(dirLightSpecIntens, dirLight->specularIntensity);
 
 			GLuint cameraPosLoc = glGetUniformLocation(programID, "cameraPos");
 			glUniform3fv(cameraPosLoc, 1, (GLfloat*)&camera->position);
@@ -187,6 +189,8 @@ void iGLMesh::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLight* li
 		case iGLTexMapTypeHeight:
 			break;
 		case iGLTexMapTypeNormals:
+			loc = glGetUniformLocation(programID, "normal");
+			glUniform1i(loc, i);
 			break;
 		case iGLTexMapTypeShininess:
 			break;

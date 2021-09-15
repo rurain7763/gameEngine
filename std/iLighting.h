@@ -2,7 +2,6 @@
 
 #include "iType.h"
 #include "iVector.h"
-#include "iTransform.h"
 
 #define DIRECTIONLIGHT	0
 #define SPOTLIGHT		1	
@@ -12,8 +11,6 @@ struct iLight
 	uint8 flag;
 
 	iVector3f color;
-	iVector3f dir;
-	iVector3f position;
 
 	float ambientIntensity;
 	float diffuseIntensity;
@@ -22,7 +19,19 @@ struct iLight
 
 struct iDirectionLight : public iLight
 {
-	//...?
+	iVector3f dir;
+};
+
+struct iPointLight : public iLight
+{
+	iVector3f position;
+
+	struct 
+	{ 
+		float constant; 
+		float linear; 
+		float exponential; 
+	} attenuation;
 };
 
 struct iSpotLight : public iLight

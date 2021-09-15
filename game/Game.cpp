@@ -16,7 +16,7 @@ iMatrix projMat;
 iGLTexturePTR tex;
 iGLShader* shader;
 iGLModel* model;
-iLight* dirLight;
+iDirectionLight* dirLight;
 
 void loadGame()
 {
@@ -72,7 +72,6 @@ void drawGame()
 
 	static float lightInten = 1.f;
 	dirLight->dir = origin - boxPos;
-	dirLight->position = boxPos;
 	dirLight->diffuseIntensity = 1.f;
 	dirLight->specularIntensity = 1.f;
 
@@ -120,7 +119,7 @@ void drawGame()
 	//transMat.scale(isin(degree), 1, 1);
 	//transMat1.rotate(0, degree, 0);
 	//transMat1.translate(5 + isin(degree), 0, 5.f);
-	boxPos = { 0.f, icos(degree) * 5.f, isin(degree) * 5.f };
+	boxPos = { icos(degree) * 5.f, 0.f, isin(degree) * 5.f };
 	transMat1.translate(boxPos.x, boxPos.y, boxPos.z);
 
 	iMatrix tvpMat = projMat * viewMat * transMat1.getMatrix();
