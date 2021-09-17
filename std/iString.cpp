@@ -231,9 +231,10 @@ char& iString::at(int idx)
 	return str[idx];
 }
 
-iString& iString::append(const iString& istr, uint32 subPos = 0, uint32 subLen = 0)
+iString& iString::append(const iString& istr, uint32 subPos, uint32 subLen)
 {
-	int newLen = len + istr.len;
+	int appendLen = subLen ? subLen : istr.len;
+	int newLen = len + appendLen;
 
 	if (newLen >= size)
 	{
@@ -244,17 +245,18 @@ iString& iString::append(const iString& istr, uint32 subPos = 0, uint32 subLen =
 		str = copy;
 	}
 
-	memcpy(&str[len], istr.str, sizeof(char) * istr.len);
+	memcpy(&str[len], &istr.str[subPos], sizeof(char) * appendLen);
 	str[newLen] = 0;
 	len = newLen;
 
 	return *this;
 }
 
-iString& iString::append(const char* s, uint32 num = 1)
+iString& iString::append(const char* s, uint32 num)
 {
 	int sLen = strlen(s);
-	int newLen = len + sLen;
+	int appendLen = sLen * num;
+	int newLen = len + appendLen;
 
 	if (newLen >= size)
 	{
@@ -265,7 +267,8 @@ iString& iString::append(const char* s, uint32 num = 1)
 		str = copy;
 	}
 
-	memcpy(&str[len], s, sizeof(char) * sLen);
+	for(int i = 0 ; i < num; i++) 
+		memcpy(&str[len + sLen * i], s, sizeof(char) * sLen);
 	str[newLen] = 0;
 	len = newLen;
 

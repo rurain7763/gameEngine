@@ -42,7 +42,7 @@ vec4 calcAmbientColor()
 
 vec4 calcDiffuseColor()
 {
-	float diff = dot(normalize(normalV), normalize(-dirLight.dir));
+	float diff = dot(normalV, normalize(-dirLight.dir));
 	diff = max(diff, 0.0);
 
 	return vec4(dirLight.color * dirLight.diffuseIntensity * diff, floor(diff));
@@ -50,7 +50,7 @@ vec4 calcDiffuseColor()
 
 vec4 calcSpecularColor()
 {
-	vec3 reflectLight = reflect(normalize(dirLight.dir), normalize(normalV));
+	vec3 reflectLight = reflect(dirLight.dir, normalV);
 	vec3 toCamera = cameraPos - worldPos;
 
 	float specular = dot(normalize(toCamera), normalize(reflectLight));
@@ -63,6 +63,7 @@ vec4 calcSpecularColor()
 void main()
 { 
 	vec4 color = texture(diffuse, uvV);
+	vec3 normalV = normalize(normalV);
 	
 	vec4 ambient = calcAmbientColor();
 	vec4 diffuse = calcDiffuseColor();

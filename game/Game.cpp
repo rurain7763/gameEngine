@@ -73,12 +73,17 @@ void loadGame()
 
 	test("hello %s %d", "lee dong heon", -123);
 
-	iString s1("hello");
+	iString s1("world");
 	iString s = "hello";
 
 	s.shrink_to_fit();
 	s += " world";
 	s.append('c', 5);
+	s.append("hello");
+	s.append("hello", 5);
+
+	s.append(s1);
+	s.append(s1, 2, 3);
 
 	int x = 10;
 }
