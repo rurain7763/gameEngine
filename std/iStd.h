@@ -41,6 +41,10 @@
 
 #define ToRadian(degree) degree * M_PI / 180
 #define ToDegree(radian) radian * 180 / M_PI
+#define formattedText(buffer, formmat) va_list ap; \
+									   va_start(ap, formmat); \
+									   ivsprintf(buffer, formmat, ap); \
+									   va_end(ap)
 
 float isin(float degree);
 float icos(float degree);
@@ -57,3 +61,6 @@ void bubbleSort(CompareMethod method, void* data, int elementSize, int num);
 void swap(void* left, void* right, int argSize);
 
 void printBit(unsigned int v);
+char* toString(int v);
+char* toString(float v);
+void ivsprintf(char* buffer, const char* str, va_list ap);

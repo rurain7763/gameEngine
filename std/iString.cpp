@@ -29,51 +29,8 @@ iString::iString(const iString& istr)
 	str[len] = 0;
 }
 
-iString::iString(const char* s, ...)
+iString::iString(const char* s)
 {
-	va_list ap;
-	va_start(ap, s);
-
-	iString test;
-	int idx = 0;
-	int l = strlen(s);
-
-	for (int i = 1; i < l; i++)
-	{
-		if (s[i - 1] == '%')
-		{
-			switch (s[i])
-			{
-			case 'd':
-			{
-				break;
-			}
-			case 's':
-			{
-				char* t = va_arg(ap, char*);
-				int tLen = strlen(t);
-				memcpy(&test[idx], t, sizeof(char) * tLen);
-				idx += tLen;
-				i++;
-				break;
-			}
-			default:
-				break;
-			}
-		}
-		else
-		{
-			test[idx] = s[i - 1];
-			idx++;
-		}
-
-		test[idx] = 0;
-	}
-
-	test[idx] = 0;
-
-	va_end(ap);
-
 	if (!s)
 	{
 		len = 0;
@@ -217,19 +174,10 @@ iString& iString::operator+=(char c)
 
 char& iString::operator[](int idx)
 {
-	if (idx >= size)
+	if (idx >= len)
 	{
-		size = size * 2 + 1;
-		char* copy = new char[size];
-		memcpy(copy, str, sizeof(char) * len);
-		copy[len] = 0;
-		delete[] str;
-		str = copy;
-		len = idx + 1;
-	}
-	else if (idx >= len)
-	{
-		len = idx + 1;
+		char* dummy = NULL;
+		return *dummy;
 	}
 
 	return str[idx];
@@ -274,20 +222,73 @@ void iString::shrink_to_fit()
 
 char& iString::at(int idx)
 {
-	if (idx >= size)
+	if (idx >= len)
 	{
-		size = size * 2 + 1;
-		char* copy = new char[size];
-		memcpy(copy, str, sizeof(char) * len);
-		copy[len] = 0;
-		delete[] str;
-		str = copy;
-		len = idx + 1;
+		char* dummy = NULL;
+		return *dummy;
 	}
-	else if (idx >= len)
-	{
-		len = idx + 1;
-	}
-
+	
 	return str[idx];
 }
+
+iString& iString::append(const iString& istr, uint32 subPos = 0, uint32 subLen = 0)
+{
+	int newLen = len + istr.len;
+
+	if (newLen >= size)
+	{
+		size = newLen * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		delete[] str;
+		str = copy;
+	}
+
+	memcpy(&str[len], istr.str, sizeof(char) * istr.len);
+	str[newLen] = 0;
+	len = newLen;
+
+	return *this;
+}
+
+iString& iString::append(const char* s, uint32 num = 1)
+{
+	int sLen = strlen(s);
+	int newLen = len + sLen;
+
+	if (newLen >= size)
+	{
+		size = newLen * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		delete[] str;
+		str = copy;
+	}
+
+	memcpy(&str[len], s, sizeof(char) * sLen);
+	str[newLen] = 0;
+	len = newLen;
+
+	return *this;
+}
+
+iString& iString::append(char c, uint32 num)
+{
+	int newLen = len + num;
+
+	if (newLen >= size)
+	{
+		size = newLen * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		delete[] str;
+		str = copy;
+	}
+
+	for (int i = 0; i < num; i++) str[len + i] = c;
+	str[newLen] = 0;
+	len = newLen;
+
+	return *this;
+}
+

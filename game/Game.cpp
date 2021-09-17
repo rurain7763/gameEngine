@@ -18,6 +18,14 @@ iGLShader* shader;
 iGLModel* model;
 iDirectionLight* dirLight;
 
+void test(const char* str, ...)
+{
+	char buff[1024];
+	formattedText(buff, str);
+
+	printf("%s", buff);
+}
+
 void loadGame()
 {
 	srand(time(NULL));
@@ -63,10 +71,16 @@ void loadGame()
 	dirLight->color = { 1.f, 1.f, 1.f };
 	dirLight->ambientIntensity = .1f;
 
-	iString s1("hello %s %s %s", "world", "my", "name");
+	test("hello %s %d", "lee dong heon", -123);
+
+	iString s1("hello");
 	iString s = "hello";
+
 	s.shrink_to_fit();
 	s += " world";
+	s.append('c', 5);
+
+	int x = 10;
 }
 
 void drawGame()

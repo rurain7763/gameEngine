@@ -119,3 +119,97 @@ void printBit(unsigned int v)
 	printf("\n");
 }
 
+char* toString(int v)
+{
+	bool negative = v < 0;
+
+	v = abs(v);
+	int digit = log10(v) + 1;
+	char* r = new char[digit + 1];
+	int place = pow(10, digit - 1);
+
+	for (int i = 0; i < digit; i++)
+	{
+		char c = (v / place) + '0';
+		r[i] = c;
+
+		v %= place;
+		place /= 10;
+	}
+
+	r[digit] = 0;
+
+	if (negative)
+	{
+		char* copy = new char[digit + 2];
+		copy[0] = '-';
+		memcpy(&copy[1], r, sizeof(char) * digit);
+		copy[digit + 1] = 0;
+		delete[] r;
+		r = copy;
+	}
+
+	return r;
+}
+
+char* toString(float v)
+{
+	return NULL;
+}
+
+void ivsprintf(char* buff, const char* s, va_list ap)
+{
+	int idx = 0;
+	int len = strlen(s);
+
+	for (int i = 1; i < len; i++)
+	{
+		if (s[i - 1] == '%')
+		{
+			switch (s[i])
+			{
+			case 'd':
+			{
+				int v = va_arg(ap, int);
+				char* vStr = toString(v);
+				int l = strlen(vStr);
+				memcpy(&buff[idx], vStr, sizeof(char) * l);
+				delete[] vStr;
+				idx += l;
+				i++;
+				break;
+			}
+			case 's':
+			{
+				char* v = va_arg(ap, char*);
+				int l = strlen(v);
+				memcpy(&buff[idx], v, sizeof(char) * l);
+				idx += l;
+				i++;
+				break;
+			}
+			case 'f':
+			{
+				break;
+			}
+			case '%':
+			{
+				//TODO
+				int exception = 0;
+				break;
+			}
+			default:
+				//TODO
+				int exception = 0;
+				break;
+			}
+		}
+		else
+		{
+			buff[idx] = s[i - 1];
+			idx++;
+		}
+	}
+
+	buff[idx] = 0;
+}
