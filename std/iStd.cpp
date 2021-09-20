@@ -121,14 +121,24 @@ void printBit(unsigned int v)
 
 char* toString(int v)
 {
-	bool negative = v < 0;
+	if (v == 0)
+	{
+		char* r = new char[2];
+		r[0] = '0';
+		r[1] = 0;
+
+		return r;
+	}
+
+	int negative = v < 0 ? 1 : 0;
 
 	v = abs(v);
 	int digit = log10(v) + 1;
-	char* r = new char[digit + 1];
+	char* r = new char[digit + negative + 1];
 	int place = pow(10, digit - 1);
 
-	for (int i = 0; i < digit; i++)
+	digit += negative;
+	for (int i = 0 + negative; i < digit; i++)
 	{
 		char c = (v / place) + '0';
 		r[i] = c;
@@ -137,24 +147,38 @@ char* toString(int v)
 		place /= 10;
 	}
 
+	if (negative) r[0] = '-';
 	r[digit] = 0;
-
-	if (negative)
-	{
-		char* copy = new char[digit + 2];
-		copy[0] = '-';
-		memcpy(&copy[1], r, sizeof(char) * digit);
-		copy[digit + 1] = 0;
-		delete[] r;
-		r = copy;
-	}
 
 	return r;
 }
 
 char* toString(float v)
 {
-	return NULL;
+	int off = v < 0 ? 1 : 0;
+
+	v = abs(v);
+	int decimalPart = (int)v;
+	int floatPart = (v - decimalPart) * pow(10, 9);
+
+	char* decimalStr = toString(decimalPart);
+	char* floatStr = toString(floatPart);
+
+	int decimalStrLen = strlen(decimalStr);
+	int floatStrLen = strlen(floatStr);
+	int totalLen = decimalStrLen + floatStrLen;
+
+	char* r = new char[totalLen + off + 2];
+	if (off) r[0] = '-';
+	memcpy(&r[off], decimalStr, sizeof(char) * decimalStrLen);
+	r[off += decimalStrLen] = '.';
+	memcpy(&r[++off], floatStr, sizeof(char) * floatStrLen);
+	r[off + floatStrLen] = 0;
+
+	delete[] decimalStr;
+	delete[] floatStr;
+
+	return r;
 }
 
 void ivsprintf(char* buff, const char* s, va_list ap)
@@ -190,6 +214,13 @@ void ivsprintf(char* buff, const char* s, va_list ap)
 			}
 			case 'f':
 			{
+				double v = va_arg(ap, double);
+				char* vStr = toString((float)v);
+				int l = strlen(vStr);
+				memcpy(&buff[idx], vStr, sizeof(char) * l);
+				delete[] vStr;
+				idx += l;
+				i++;
 				break;
 			}
 			case '%':
@@ -212,4 +243,32 @@ void ivsprintf(char* buff, const char* s, va_list ap)
 	}
 
 	buff[idx] = 0;
+}
+
+bool isSystemLittleEndian()
+{
+	int testValue = 0x12345678;
+	char* byte = (char*)&testValue;
+	int checkValue = 0x00000000;
+
+	for (int i = 0; i < 4; i++)
+	{
+		checkValue |= byte[i] << (i * 8);
+	}
+
+	return checkValue == testValue;
+}
+
+void IEEE754(float v, int& exponent, float& fraction)
+{
+	int* casting = reinterpret_cast<int*>(&v);
+	uint8 bias = 127;
+	uint32 exponentMask = 0xff << 23;
+	uint32 fractionMask = 0x7fffff;
+	exponent = ((*casting) & exponentMask) >> 23;
+	fraction = 1.f + (float)((*casting) & fractionMask) / (float)(1 << 23);
+	
+	float result = fraction * (float)(1 << (exponent - bias));
+
+	printf("%f\n", result);
 }

@@ -64,3 +64,6 @@ void printBit(unsigned int v);
 char* toString(int v);
 char* toString(float v);
 void ivsprintf(char* buffer, const char* str, va_list ap);
+
+bool isSystemLittleEndian();
+void IEEE754(float v, int& exponent, float& fraction);

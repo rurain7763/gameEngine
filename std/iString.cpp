@@ -233,7 +233,11 @@ char& iString::at(int idx)
 
 iString& iString::append(const iString& istr, uint32 subPos, uint32 subLen)
 {
-	int appendLen = subLen ? subLen : istr.len;
+	if (subPos >= istr.len || 
+		subPos + subLen > istr.len) 
+		return *this;
+
+	int appendLen = subLen ? subLen : istr.len - subPos;
 	int newLen = len + appendLen;
 
 	if (newLen >= size)
@@ -293,5 +297,302 @@ iString& iString::append(char c, uint32 num)
 	len = newLen;
 
 	return *this;
+}
+
+iString& iString::insert(uint32 pos, const iString& istr, uint32 subPos, uint32 subLen)
+{
+	if (pos >= len ||
+		subPos >= istr.len ||
+		subPos + subLen > istr.len)
+		return *this;
+
+	int insertLen = subLen ? subLen : istr.len - subPos;
+	int newLen = len + insertLen;
+
+	if (newLen >= size)
+	{
+		size = newLen * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		delete[] str;
+		str = copy;
+	}
+	
+	int backBufLen = len - pos;
+	char* backBuf = new char[backBufLen];
+	memcpy(backBuf, &str[pos], sizeof(char) * backBufLen);
+
+	memcpy(&str[pos], &istr.str[subPos], sizeof(char) * insertLen);
+	memcpy(&str[pos + insertLen], backBuf, sizeof(char) * backBufLen);
+	str[newLen] = 0;
+	len = newLen;
+
+	delete[] backBuf;
+
+	return *this;
+}
+
+iString& iString::insert(uint32 pos, const char* s, uint32 num)
+{
+	if (pos >= len) return *this;
+
+	int sLen = strlen(s);
+	int insertLen = sLen * num;
+	int newLen = len + insertLen;
+
+	if (newLen >= size)
+	{
+		size = newLen * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		delete[] str;
+		str = copy;
+	}
+
+	int backBufLen = len - pos;
+	char* backBuf = new char[backBufLen];
+	memcpy(backBuf, &str[pos], sizeof(char) * backBufLen);
+
+	for (int i = 0; i < num; i++)
+		memcpy(&str[pos + sLen * i], s, sizeof(char) * sLen);
+	memcpy(&str[pos + insertLen], backBuf, sizeof(char) * backBufLen);
+	str[newLen] = 0;
+	len = newLen;
+
+	delete[] backBuf;
+
+	return *this;
+}
+
+iString& iString::insert(uint32 pos, char c, uint32 num)
+{
+	if (pos >= len) return *this;
+
+	int newLen = len + num;
+
+	if (newLen >= size)
+	{
+		size = newLen * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		delete[] str;
+		str = copy;
+	}
+
+	int backBufLen = len - pos;
+	char* backBuf = new char[backBufLen];
+	memcpy(backBuf, &str[pos], sizeof(char) * backBufLen);
+
+	for (int i = 0; i < num; i++) str[pos + i] = c;
+	memcpy(&str[pos + num], backBuf, sizeof(char) * backBufLen);
+	str[newLen] = 0;
+	len = newLen;
+
+	delete[] backBuf;
+
+	return *this;
+}
+
+iString& iString::erase(uint32 pos, uint32 l)
+{
+	l = l ? l : len;
+
+	if (pos >= len || pos + l > len) return *this;
+
+	int newLen = len - l;
+	int copyPos = pos + l;
+	memcpy(&str[pos], &str[copyPos], sizeof(char) * (len - copyPos));
+	str[newLen] = 0;
+	len = newLen;
+
+	return *this;
+}
+
+iString& iString::replace(uint32 pos, uint32 l, const iString& istr, uint32 subPos, uint32 subLen)
+{
+	if (pos >= len ||
+		subPos >= istr.len ||
+		subPos + subLen > istr.len)
+		return *this;
+
+	subLen = subLen ? subLen : istr.len - subPos;
+	int newLen = (len - l) + subLen;
+
+	if (newLen >= size)
+	{
+		size = newLen * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		delete[] str;
+		str = copy;
+	}
+
+	int copyPos = pos + l;
+	int backBufLen = len - copyPos;
+	char* backBuf = new char[backBufLen];
+	memcpy(backBuf, &str[copyPos], sizeof(char) * backBufLen);
+
+	memcpy(&str[pos], &istr.str[subPos], sizeof(char) * subLen);
+	copyPos = pos + subLen;
+	memcpy(&str[copyPos], backBuf, sizeof(char) * backBufLen);
+	str[newLen] = 0;
+	len = newLen;
+
+	delete[] backBuf;
+
+	return *this;
+}
+
+iString& iString::replace(uint32 pos, uint32 l, const char* s, uint32 strLen)
+{
+	if (pos >= len) return *this;
+
+	strLen = strLen ? strLen : strlen(s);
+	int newLen = (len - l) + strLen;
+
+	if (newLen >= size)
+	{
+		size = newLen * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		delete[] str;
+		str = copy;
+	}
+
+	int copyPos = pos + l;
+	int backBufLen = len - copyPos;
+	char* backBuf = new char[backBufLen];
+	memcpy(backBuf, &str[copyPos], sizeof(char) * backBufLen);
+
+	memcpy(&str[pos], s, sizeof(char) * strLen);
+	copyPos = pos + strLen;
+	memcpy(&str[copyPos], backBuf, sizeof(char) * backBufLen);
+	str[newLen] = 0;
+	len = newLen;
+
+	delete[] backBuf;
+
+	return *this;
+}
+
+iString& iString::replace(uint32 pos, uint32 l, char c, uint32 num)
+{
+	if (pos >= len) return *this;
+
+	int newLen = (len - l) + num;
+
+	if (newLen >= size)
+	{
+		size = newLen * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		delete[] str;
+		str = copy;
+	}
+
+	int copyPos = pos + l;
+	int backBufLen = len - copyPos;
+	char* backBuf = new char[backBufLen];
+	memcpy(backBuf, &str[copyPos], sizeof(char) * backBufLen);
+
+	for (int i = 0; i < num; i++) str[pos + i] = c;
+	copyPos = pos + num;
+	memcpy(&str[copyPos], backBuf, sizeof(char) * backBufLen);
+	str[newLen] = 0;
+	len = newLen;
+
+	delete[] backBuf;
+
+	return *this;
+}
+
+uint32 iString::find(const iString& istr, uint32 pos) const
+{
+	if (pos >= istr.len ||
+		istr.len == 0)
+		return -1;
+
+	for (int i = pos; i + istr.len <= len; i++)
+	{
+		if (str[i] == istr.str[0])
+		{
+			if (!memcmp(&str[i], istr.str, sizeof(char) * istr.len)) return i;
+		}
+	}
+
+	return -1;
+}
+
+uint32 iString::find(const char* s, uint32 pos) const
+{
+	int l = strlen(s);
+
+	if (pos >= len) return -1;
+
+	for (int i = pos; i + l <= len; i++)
+	{
+		if (str[i] == s[0])
+		{
+			if (!memcmp(&str[i], s, sizeof(char) * l)) return i;
+		}
+	}
+
+	return -1;
+}
+
+uint32 iString::find(const char* s, uint32 pos, uint32 strLen) const
+{
+	if (pos >= len) return -1;
+
+	for (int i = pos; i + strLen <= len; i++)
+	{
+		if (str[i] == s[0])
+		{
+			if (!memcmp(&str[i], s, sizeof(char) * strLen)) return i;
+		}
+	}
+
+	return -1;
+}
+
+iString iString::substr(uint32 pos, uint32 l) const
+{
+	if (pos >= len ||
+		pos + l > len) 
+		return iString();
+
+	l = l ? l : len - pos;
+
+	iString r;
+
+	char* subStr = new char[l + 1];
+	int end = pos + l;
+
+	for (int i = pos; i < end; i++)
+	{
+		subStr[i - pos] = str[i];
+	}
+
+	subStr[l] = 0;
+	r = subStr;
+	delete[] subStr;
+
+	return r;
+}
+
+iString operator+(const iString& str1, const iString& str2)
+{
+	iString r;
+
+	int len = str1.len + str2.len;
+	char* str = new char[len + 1];
+	memcpy(str, str1.str, sizeof(char) * str1.len);
+	memcpy(&str[str1.len], str2.str, sizeof(char) * str2.len);
+	str[len] = 0;
+
+	r = str;
+	delete[] str;
+
+	return r;
 }
 
