@@ -16,7 +16,7 @@ iMatrix projMat;
 iGLTexturePTR tex;
 iGLShader* shader;
 iGLModel* model;
-iDirectionLight* dirLight;
+iLighting* lighting;
 
 void loadGame()
 {
@@ -60,10 +60,7 @@ void loadGame()
 	tex.get()->load(GL_TEXTURE_2D, "assets/test/2.jfif");
 
 	model = assetReader->loadGLAsset("assets/test/back/backpack.obj");
-
-	dirLight = new iDirectionLight();
-	dirLight->color = { 1.f, 1.f, 1.f };
-	dirLight->ambientIntensity = .1f;
+	lighting = new iLighting();
 }
 
 void drawGame()
@@ -72,13 +69,13 @@ void drawGame()
 	static iVector3f testModelPos;
 	static iVector3f origin = { 0.f, 0.f, 0.f };
 
-	static float lightInten = 1.f;
-	dirLight->dir = origin - boxPos;
-	dirLight->diffuseIntensity = 1.f;
-	dirLight->specularIntensity = 1.f;
-
 	static float degree = 0.f;
 	degree += timeMgt->deltaTime * 50.f;
+
+	//lighting->setDirectionalLight({	.1f, .1f, .1f }, origin - boxPos, 0.1f);
+	//lighting->setPointLight(0, { 1.f, 1.f, 1.f }, boxPos, 1.f, 1.f, 1.f);
+	//lighting->setPointLight(1, { 1.f, 1.f, 1.f }, { isin(degree) * 3.f, icos(degree) * 3.f, 0.f}, 1.f, 1.f, 1.f);
+	lighting->setSpotLight(0, { 1.f, 1.f, 1.f }, camera->position, camera->lookAt, 30.f, 1.f, 1.f, 1.f);
 
 	iMatrix viewMat = camera->getMatrix();
 
@@ -90,7 +87,7 @@ void drawGame()
 
 	for (int i = 0; i < 1; i++)
 	{
-		model->draw(&projMat, camera, &transMat, dirLight);
+		model->draw(&projMat, camera, &transMat, lighting);
 	}
 
 	GLuint program = shader->useProgram("test", "test");
@@ -121,19 +118,14 @@ void drawGame()
 	//transMat.scale(isin(degree), 1, 1);
 	//transMat1.rotate(0, degree, 0);
 	//transMat1.translate(5 + isin(degree), 0, 5.f);
-	boxPos = { icos(degree) * 5.f, 0.f, isin(degree) * 5.f };
+	//boxPos = { icos(degree) * 5.f, 0.f, isin(degree) * 5.f };
+	boxPos = { 0.f, 0.f, isin(degree) * 5.f };
 	transMat1.translate(boxPos.x, boxPos.y, boxPos.z);
 
 	iMatrix tvpMat = projMat * viewMat * transMat1.getMatrix();
 
 	GLuint loc = glGetUniformLocation(program, "tvpMat");
 	glUniformMatrix4fv(loc, 1, GL_TRUE, tvpMat.getData());
-
-	loc = glGetUniformLocation(program, "dirLight.color");
-	glUniform3fv(loc, 1, (float*)&dirLight->color);
-	
-	loc = glGetUniformLocation(program, "dirLight.intensity");
-	glUniform1f(loc, lightInten);
 
 	GLuint posAttr = glGetAttribLocation(program, "position");
 	glEnableVertexAttribArray(posAttr);
@@ -153,6 +145,11 @@ void drawGame()
 	glUniform1i(sampler0, 0);
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, NULL);
 
+	transMat1.translate(isin(degree) * 3.f, icos(degree) * 3.f, 0.f);
+	tvpMat = projMat* viewMat* transMat1.getMatrix();
+	glUniformMatrix4fv(loc, 1, GL_TRUE, tvpMat.getData());
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, NULL);
+
 	glDisableVertexAttribArray(posAttr);
 	glDisableVertexAttribArray(colAttr);
 	glDisableVertexAttribArray(uvAttr);
@@ -163,17 +160,18 @@ void drawGame()
 
 	if (inputMgt->keyOnce & KEY_P)
 	{
-		showCursor(false);
-		wrapCursor(true);
-		cameraMode = true;
-	}
-
-	if (inputMgt->keyOnce & KEY_ESCAPE)
-	{
-		showCursor(true);
-		wrapCursor(false);
-		cameraMode = false;
-		lightInten -= .1f;
+		if (!cameraMode)
+		{
+			showCursor(false);
+			wrapCursor(true);
+			cameraMode = true;
+		}
+		else
+		{
+			showCursor(true);
+			wrapCursor(false);
+			cameraMode = false;
+		}
 	}
 
 	if (cameraMode)
@@ -199,5 +197,7 @@ void endGame()
 	delete shader;
 	delete assetReader;
 	delete model;
+
+	delete lighting;
 }
 

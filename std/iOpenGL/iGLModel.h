@@ -7,9 +7,9 @@
 #include "iMatrix.h"
 #include "iCamera.h"
 #include "iArray.h"
+#include "iLighting.h"
 
 class iGLMesh;
-class iLight;
 class iHashTable;
 
 struct iGLMaterial
@@ -26,7 +26,7 @@ public:
 	virtual ~iGLModel();
 
 	void addMesh(iGLMesh* mesh);
-	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLight* light = NULL);
+	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLighting* lighting = NULL);
 
 public:
 	iTransform transform;
@@ -41,7 +41,7 @@ public:
 	virtual ~iGLMesh();
 
 	void sendToBuffer();
-	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLight* light = NULL);
+	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iLighting* lighting = NULL);
 
 public:
 	iVertexPNU* vertices;
