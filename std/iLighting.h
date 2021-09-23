@@ -59,6 +59,7 @@ public:
 	void setDirectionalLight(iVector3f color, iVector3f dir,
 							 float ambientIntensity = 1.f, float diffuseIntensity = 1.f,
 							 float specularIntensity = 1.f);
+
 	void setPointLight(int idx, iVector3f color, iVector3f pos, float constant, float linear, float exponential,
 					   float ambientIntensity = 1.f, float diffuseIntensity = 1.f, float specularIntensity = 1.f);
 

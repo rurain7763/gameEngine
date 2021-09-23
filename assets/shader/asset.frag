@@ -77,7 +77,6 @@ vec4 calcSpotLights();
 void main()
 { 
 	vec4 color = texture(diffuse, uvV);
-	vec3 normalV = normalize(normalV);
 	
 	vec4 dirLight = calcDirectionalLight();
 	vec4 totalPointLights = calcPointLights();
@@ -186,12 +185,11 @@ vec4 calcPointLights()
 vec4 calcSpotLight(iSpotLight light)
 { 
 	vec3 lightToPixel = worldPos - light.position;
+	float dist = length(lightToPixel);
+	vec3 dir = normalize(lightToPixel);
 	float spot = dot(normalize(lightToPixel), normalize(light.dir));
 	
 	spot = 1.0 - ((1.0 - spot) * (1.0 / (1.0 - light.maximum)));
-
-	float dist = length(lightToPixel);
-	vec3 dir = normalize(lightToPixel);
 
 	vec4 ambient = calcAmbientColor(light.color, light.ambientIntensity);
 	vec4 diffuse = calcDiffuseColor(light.color, dir, light.diffuseIntensity);
@@ -203,7 +201,7 @@ vec4 calcSpotLight(iSpotLight light)
 
 	vec4 color =  (ambient + diffuse + specular) / max(attenuation, 1);
 
-	return color * max(spot,0);
+	return color * max(spot, 0);
 }
 
 vec4 calcSpotLights()

@@ -73,9 +73,9 @@ void drawGame()
 	degree += timeMgt->deltaTime * 50.f;
 
 	//lighting->setDirectionalLight({	.1f, .1f, .1f }, origin - boxPos, 0.1f);
-	//lighting->setPointLight(0, { 1.f, 1.f, 1.f }, boxPos, 1.f, 1.f, 1.f);
-	//lighting->setPointLight(1, { 1.f, 1.f, 1.f }, { isin(degree) * 3.f, icos(degree) * 3.f, 0.f}, 1.f, 1.f, 1.f);
-	lighting->setSpotLight(0, { 1.f, 1.f, 1.f }, camera->position, camera->lookAt, 30.f, 1.f, 1.f, 1.f);
+	lighting->setPointLight(0, { 1.f, 1.f, 1.f }, boxPos, 1.f, 1.f, 1.f);
+	lighting->setPointLight(1, { 1.f, 1.f, 1.f }, { isin(degree) * 3.f, icos(degree) * 3.f, 0.f}, 1.f, 1.f, 1.f);
+	lighting->setSpotLight(0, { 1.f, 1.f, 1.f }, camera->position, camera->lookAt, 10.f, 1.f, 1.f, 1.f);
 
 	iMatrix viewMat = camera->getMatrix();
 
@@ -119,7 +119,7 @@ void drawGame()
 	//transMat1.rotate(0, degree, 0);
 	//transMat1.translate(5 + isin(degree), 0, 5.f);
 	//boxPos = { icos(degree) * 5.f, 0.f, isin(degree) * 5.f };
-	boxPos = { 0.f, 0.f, isin(degree) * 5.f };
+	boxPos = { 0.f, icos(degree) * 3.f, isin(degree) * 3.f };
 	transMat1.translate(boxPos.x, boxPos.y, boxPos.z);
 
 	iMatrix tvpMat = projMat * viewMat * transMat1.getMatrix();
