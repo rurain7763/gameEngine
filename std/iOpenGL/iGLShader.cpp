@@ -78,20 +78,22 @@ void iGLShader::addProgram(const char* vs, const char* fs)
 	}
 }
 
-GLuint iGLShader::useProgram(const char* vs, const char* fs) const
+GLuint iGLShader::useProgram(const char* vs, const char* fs)
 {
 	char str[50];
 	sprintf(str, "%s/%s", vs, fs);
 
 	GLuint* programID = (GLuint*)program->at(str);
 
-	if (programID)
+	if (!programID)
 	{
-		glUseProgram(*programID);
-		return *programID;
+		addProgram(vs, fs);
+		programID = (GLuint*)program->at(str);
 	}
 
-	return 0;
+	glUseProgram(*programID);
+
+	return *programID;
 }
 
 GLuint iGLShader::createShader(const char* path, Flag flag)

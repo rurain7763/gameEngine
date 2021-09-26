@@ -1,8 +1,10 @@
 #pragma once
 
+#include "gl/glew.h"
+
 #include "iType.h"
 #include "iVector.h"
-#include "iArray.h"
+#include "iMatrix.h"
 
 #define DIRECTIONLIGHT	1
 #define POINTLIGHT		2
@@ -50,11 +52,11 @@ struct iSpotLight : public iLight
 	Attenuation attenuation;
 };
 
-class iLighting
+class iGLLighting
 {
 public:
-	iLighting();
-	virtual ~iLighting();
+	iGLLighting();
+	virtual ~iGLLighting();
 
 	void setDirectionalLight(iVector3f color, iVector3f dir,
 							 float ambientIntensity = 1.f, float diffuseIntensity = 1.f,
@@ -67,12 +69,52 @@ public:
 					  float constant, float linear, float exponential,
 					  float ambientIntensity = 1.f, float diffuseIntensity = 1.f, float specularIntensity = 1.f);
 
-private:
-	iPointLight* pointLights;
-	iSpotLight* spotLights;
-	iDirectionLight* dirLight;
+	void sendToShader(const char* vertexShader, const char* fragmentShader, iMatrix* objTransform, iVector3f lookPos);
 
-public:
-	iArray activeLights;
+private:
+	GLuint programID;
+	GLuint transMatLoc;
+	GLuint cameraPosLoc;
+
+	iPointLight* pointLights;
+	struct PointLightLocInfo
+	{
+		GLuint color;
+		GLuint pos;
+		GLuint ambientIntens;
+		GLuint diffuseIntens;
+		GLuint specularIntens;
+		GLuint constant;
+		GLuint linear;
+		GLuint exponential;
+	};
+	PointLightLocInfo* pointLightLocInfo;
+
+	iSpotLight* spotLights;
+	struct SpotLightLocInfo
+	{
+		GLuint color;
+		GLuint pos;
+		GLuint dir;
+		GLuint maximum;
+		GLuint ambientIntens;
+		GLuint diffuseIntens;
+		GLuint specularIntens;
+		GLuint constant;
+		GLuint linear;
+		GLuint exponential;
+	};
+	SpotLightLocInfo* spotLightLocInfo;
+
+	iDirectionLight* dirLight;
+	struct DirectionLightLocInfo
+	{
+		GLuint color;
+		GLuint dir;
+		GLuint ambientIntens;
+		GLuint diffuseIntens;
+		GLuint specularIntens;
+	};
+	DirectionLightLocInfo* dirLightLocInfo;
 };
 

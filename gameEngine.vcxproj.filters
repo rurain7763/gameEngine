@@ -426,9 +426,6 @@
     <ClInclude Include="reference\jpglib\include\jmorecfg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="std\iLighting.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="std\iOpenGL\iOpenGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -445,6 +442,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="std\iString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="std\iOpenGL\iGLLighting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -506,9 +506,6 @@
     <ClCompile Include="std\iAssetReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="std\iLighting.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="std\iOpenGL\iOpenGL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -525,6 +522,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="std\iString.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="std\iOpenGL\iGLLighting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

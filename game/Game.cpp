@@ -16,7 +16,7 @@ iMatrix projMat;
 iGLTexturePTR tex;
 iGLShader* shader;
 iGLModel* model;
-iLighting* lighting;
+iGLLighting* lighting;
 
 void loadGame()
 {
@@ -60,7 +60,7 @@ void loadGame()
 	tex.get()->load(GL_TEXTURE_2D, "assets/test/2.jfif");
 
 	model = assetReader->loadGLAsset("assets/test/back/backpack.obj");
-	lighting = new iLighting();
+	lighting = new iGLLighting();
 }
 
 void drawGame()
@@ -73,9 +73,9 @@ void drawGame()
 	degree += timeMgt->deltaTime * 50.f;
 
 	//lighting->setDirectionalLight({	.1f, .1f, .1f }, origin - boxPos, 0.1f);
-	lighting->setPointLight(0, { 1.f, 1.f, 1.f }, boxPos, 1.f, 1.f, 1.f);
-	lighting->setPointLight(1, { 1.f, 1.f, 1.f }, { isin(degree) * 3.f, icos(degree) * 3.f, 0.f}, 1.f, 1.f, 1.f);
-	lighting->setSpotLight(0, { 1.f, 1.f, 1.f }, camera->position, camera->lookAt, 10.f, 1.f, 1.f, 1.f);
+	//lighting->setPointLight(0, { 1.f, 1.f, 1.f }, boxPos, 1.f, 1.f, 1.f);
+	//lighting->setPointLight(1, { 1.f, 1.f, 1.f }, { isin(degree) * 3.f, icos(degree) * 3.f, 0.f}, 1.f, 1.f, 1.f);
+	lighting->setSpotLight(0, { 1.f, 1.f, 1.f }, camera->position, camera->lookAt, 30.f, .3f, .5f, .2f);
 
 	iMatrix viewMat = camera->getMatrix();
 

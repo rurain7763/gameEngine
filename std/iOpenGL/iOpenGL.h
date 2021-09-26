@@ -11,6 +11,7 @@
 #include "iGLModel.h"
 #include "iGLShader.h"
 #include "iGLTexture.h"
+#include "iGLLighting.h"
 
 void loadGL(HWND& hwnd);
 void endGL();

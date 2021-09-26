@@ -21,7 +21,7 @@ public:
 	static iGLShader* share();
 
 	void addProgram(const char* vertexShader, const char* fragmentShader);
-	GLuint useProgram(const char* vertexShader, const char* fragmentShader) const;
+	GLuint useProgram(const char* vertexShader, const char* fragmentShader);
 
 	//TODO
 	//GLuint setUniformMatrix4x(const char* uniformName) const;

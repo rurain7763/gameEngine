@@ -279,9 +279,9 @@
     <ClInclude Include="std\iCamera.h" />
     <ClInclude Include="std\iHashTable.h" />
     <ClInclude Include="std\iInputManager.h" />
-    <ClInclude Include="std\iLighting.h" />
     <ClInclude Include="std\iMatrix.h" />
     <ClInclude Include="std\iImageReader.h" />
+    <ClInclude Include="std\iOpenGL\iGLLighting.h" />
     <ClInclude Include="std\iOpenGL\iGLModel.h" />
     <ClInclude Include="std\iOpenGL\iGLShader.h" />
     <ClInclude Include="std\iOpenGL\iGLTexture.h" />
@@ -309,9 +309,9 @@
     <ClCompile Include="std\iCamera.cpp" />
     <ClCompile Include="std\iHashTable.cpp" />
     <ClCompile Include="std\iInputManager.cpp" />
-    <ClCompile Include="std\iLighting.cpp" />
     <ClCompile Include="std\iMatrix.cpp" />
     <ClCompile Include="std\iImageReader.cpp" />
+    <ClCompile Include="std\iOpenGL\iGLLighting.cpp" />
     <ClCompile Include="std\iOpenGL\iGLModel.cpp" />
     <ClCompile Include="std\iOpenGL\iGLShader.cpp" />
     <ClCompile Include="std\iOpenGL\iGLTexture.cpp" />
