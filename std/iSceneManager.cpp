@@ -5,7 +5,8 @@ iSceneManager* iSceneManager::S = NULL;
 
 iSceneManager::iSceneManager()
 {
-
+	currScene = NULL;
+	sceneStep = -1;
 }
 
 iSceneManager::~iSceneManager()
@@ -19,6 +20,20 @@ iSceneManager* iSceneManager::share()
 
 void iSceneManager::addScene(iScene* scene)
 {
+	scenes.push_back(scene);
+}
+
+void iSceneManager::changeScene(iScene* scene, iArray* sendInfo)
+{
+}
+
+void iSceneManager::changeScene(uint32 sceneIdx, iArray* sendInfo)
+{
+}
+
+void iSceneManager::updateScene(float dt)
+{
+	
 }
 
 

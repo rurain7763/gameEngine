@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#include <thread>
 
 #include "iType.h"
 #include "iVector.h"
@@ -31,6 +32,7 @@
 #include "iImageReader.h"
 #include "iAssetReader.h"
 #include "iInputManager.h"
+#include "iSceneManager.h"
 #include "iTime.h"
 #include "iTransform.h"
 #include "iCamera.h"

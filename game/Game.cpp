@@ -60,6 +60,7 @@ void loadGame()
 	tex.get()->load(GL_TEXTURE_2D, "assets/test/2.jfif");
 
 	model = assetReader->loadGLAsset("assets/test/back/backpack.obj");
+
 	lighting = new iGLLighting();
 }
 
@@ -72,9 +73,9 @@ void drawGame()
 	static float degree = 0.f;
 	degree += timeMgt->deltaTime * 50.f;
 
-	//lighting->setDirectionalLight({	.1f, .1f, .1f }, origin - boxPos, 0.1f);
-	//lighting->setPointLight(0, { 1.f, 1.f, 1.f }, boxPos, 1.f, 1.f, 1.f);
-	//lighting->setPointLight(1, { 1.f, 1.f, 1.f }, { isin(degree) * 3.f, icos(degree) * 3.f, 0.f}, 1.f, 1.f, 1.f);
+	lighting->setDirectionalLight({	.1f, .1f, .1f }, origin - boxPos, 0.1f);
+	lighting->setPointLight(0, { 1.f, 1.f, 1.f }, boxPos, 1.f, 1.f, 1.f);
+	lighting->setPointLight(1, { 1.f, 1.f, 1.f }, { isin(degree) * 3.f, icos(degree) * 3.f, 0.f}, 1.f, 1.f, 1.f);
 	lighting->setSpotLight(0, { 1.f, 1.f, 1.f }, camera->position, camera->lookAt, 30.f, .3f, .5f, .2f);
 
 	iMatrix viewMat = camera->getMatrix();
@@ -87,7 +88,8 @@ void drawGame()
 
 	for (int i = 0; i < 1; i++)
 	{
-		model->draw(&projMat, camera, &transMat, lighting);
+		if(model)
+			model->draw(&projMat, camera, &transMat, lighting);
 	}
 
 	GLuint program = shader->useProgram("test", "test");

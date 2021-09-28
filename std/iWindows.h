@@ -7,6 +7,10 @@
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
+#define HAVE_STRUCT_TIMESPEC
+#include "pthread.h"
+#pragma comment(lib, "pthreadVC2.lib")
+
 #include "iType.h"
 
 void loadGdi();

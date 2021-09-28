@@ -28,6 +28,16 @@ void iGLModel::addMesh(iGLMesh* mesh)
 	meshs.push_back(mesh);
 }
 
+void iGLModel::removeMesh(iGLMesh* mesh)
+{
+	
+}
+
+void iGLModel::removeMesh(int idx)
+{
+	meshs.erase(idx);
+}
+
 void iGLModel::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLighting* lighting)
 {
 	for (int i = 0; i < meshs.dataNum; i++)

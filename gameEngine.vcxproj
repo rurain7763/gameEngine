@@ -89,12 +89,12 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)reference/jpglib/include;$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std/iOpenGL;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)reference/pthread/include;$(ProjectDir)reference/jpglib/include;$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std/iOpenGL;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)reference/jpglib/lib/x86_;$(ProjectDir)reference/assimp/lib/x86_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)reference/pthread/lib/x86_;$(ProjectDir)reference/jpglib/lib/x86_;$(ProjectDir)reference/assimp/lib/x86_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp-vc141-mt.lib;zlib.lib;pnglib.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -262,6 +262,9 @@
     <ClInclude Include="reference\pnglib\include\pnglibconf.h" />
     <ClInclude Include="reference\pnglib\include\pngpriv.h" />
     <ClInclude Include="reference\pnglib\include\pngstruct.h" />
+    <ClInclude Include="reference\pthread\include\pthread.h" />
+    <ClInclude Include="reference\pthread\include\sched.h" />
+    <ClInclude Include="reference\pthread\include\semaphore.h" />
     <ClInclude Include="reference\zlib\include\crc32.h" />
     <ClInclude Include="reference\zlib\include\deflate.h" />
     <ClInclude Include="reference\zlib\include\gzguts.h" />

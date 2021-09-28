@@ -23,7 +23,6 @@ public:
 	iMatrix getMatrix();
 
 private:
-	iMatrix finalMat;
 	iVector3f positionV;
 	iVector3f rotationV;
 	iVector3f scaleV;

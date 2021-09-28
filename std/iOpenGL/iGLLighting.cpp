@@ -110,10 +110,12 @@ void iGLLighting::setSpotLight(int idx, iVector3f color, iVector3f pos, iVector3
 
 void iGLLighting::sendToShader(const char* vertex, const char* frag, iMatrix* trans, iVector3f lookPos)
 {
-	if (!programID)
+	iGLShader* shader = iGLShader::share();
+	GLuint newProgramID = shader->useProgram(vertex, frag);
+
+	if (programID != newProgramID)
 	{
-		iGLShader* shader = iGLShader::share();
-		programID = shader->useProgram(vertex, frag);
+		programID = newProgramID;
 
 		transMatLoc = glGetUniformLocation(programID, "transMat");
 		cameraPosLoc = glGetUniformLocation(programID, "cameraPos");

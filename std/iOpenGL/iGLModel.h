@@ -26,10 +26,12 @@ public:
 	virtual ~iGLModel();
 
 	void addMesh(iGLMesh* mesh);
+	void removeMesh(iGLMesh* mesh);
+	void removeMesh(int idx);
+
 	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLighting* lighting = NULL);
 
 public:
-	iTransform transform;
 	iHashTable* textures;
 	iArray meshs;
 };

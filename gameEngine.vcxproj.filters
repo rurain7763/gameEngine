@@ -447,6 +447,15 @@
     <ClInclude Include="std\iOpenGL\iGLLighting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="reference\pthread\include\pthread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="reference\pthread\include\sched.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="reference\pthread\include\semaphore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gameEngine.cpp">

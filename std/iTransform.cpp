@@ -3,7 +3,6 @@
 
 iTransform::iTransform()
 {
-	finalMat.loadIdentity();
 	memset(&positionV, 0, sizeof(iVector3f));
 	memset(&rotationV, 0, sizeof(iVector3f));
 	scaleV.x = 1.f;
