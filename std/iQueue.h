@@ -12,13 +12,13 @@ public:
 	void* pop();
 	bool empty();
 
-public:
+private:
 	iQueueData* data;
-	int num;
 	int front;
 	int back;
 
 public:
+	int num;
 	int size;
 };
 

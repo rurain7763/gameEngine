@@ -43,7 +43,7 @@ struct iBinaryTreeNode
 class iBinarySearchTree
 {
 public:
-	iBinarySearchTree(CompareMethod equal, CompareMethod min);
+	iBinarySearchTree(CompareMethod equal, MinMethod min);
 	virtual ~iBinarySearchTree();
 
 	void insert(void* v);
@@ -55,7 +55,7 @@ private:
 
 	iBinaryTreeNode* root;
 	CompareMethod equalFunc;
-	CompareMethod minFunc;
+	MinMethod minFunc;
 	
 public:
 	int num;

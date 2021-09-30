@@ -7,6 +7,7 @@ iCamera* camera;
 bool cameraMode;
 iSize* devSize;
 iAssetReader* assetReader;
+iThreadPool* threadPool;
 
 GLuint vao;
 GLuint vbo;
@@ -17,6 +18,21 @@ iGLTexturePTR tex;
 iGLShader* shader;
 iGLModel* model;
 iGLLighting* lighting;
+
+void threadTest1()
+{
+	printf("threadTest1\n");
+}
+
+void threadTest2(void* arg)
+{
+	printf("threadTest2 %s\n", (const char*)arg);
+}
+
+void threadTest3(void* arg1, void* arg2)
+{
+	printf("threadTest3 %s %s\n", (const char*)arg1, (const char*)arg2);
+}
 
 void loadGame()
 {
@@ -31,6 +47,7 @@ void loadGame()
 	devSize->height = DEV_HEIGHT;
 
 	assetReader = iAssetReader::share();
+	threadPool = iThreadPool::share();
 
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
@@ -72,6 +89,17 @@ void drawGame()
 
 	static float degree = 0.f;
 	degree += timeMgt->deltaTime * 50.f;
+
+	static float time = 0;
+	time += timeMgt->deltaTime;
+
+	if (time >= 3.f)
+	{
+		time = 0.f;
+		threadPool->addJob(threadTest1);
+		threadPool->addJob(threadTest2, (void*)"say");
+		threadPool->addJob(threadTest3, (void*)"hello", (void*)"world");
+	}
 
 	lighting->setDirectionalLight({	.1f, .1f, .1f }, origin - boxPos, 0.1f);
 	lighting->setPointLight(0, { 1.f, 1.f, 1.f }, boxPos, 1.f, 1.f, 1.f);
@@ -184,6 +212,7 @@ void drawGame()
 
 	timeMgt->update();
 	inputMgt->update();
+	threadPool->update();
 }
 
 void endGame()
@@ -201,5 +230,5 @@ void endGame()
 	delete model;
 
 	delete lighting;
+	delete threadPool;
 }
-

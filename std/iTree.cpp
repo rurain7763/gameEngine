@@ -107,7 +107,7 @@ void* iHeap::pop()
 	return r;
 }
 
-iBinarySearchTree::iBinarySearchTree(CompareMethod e, CompareMethod m)
+iBinarySearchTree::iBinarySearchTree(CompareMethod e, MinMethod m)
 {
 	root = NULL;
 	equalFunc = e;
@@ -141,7 +141,7 @@ void iBinarySearchTree::insert(void* v)
 	{
 		if (equalFunc(n->data, v)) return;
 
-		if (minFunc(n->data, v)) //right
+		if (minFunc(n->data, v) == n->data) //right
 		{
 			if (!n->right)
 			{
@@ -202,7 +202,7 @@ void iBinarySearchTree::remove(void* v)
 
 		parent = curr;
 		
-		if (minFunc(curr->data, v)) curr = curr->right;	
+		if (minFunc(curr->data, v) == curr->data) curr = curr->right;	
 		else curr = curr->left;
 	}
 
@@ -269,7 +269,7 @@ bool iBinarySearchTree::find(void* v)
 	{
 		if (equalFunc(curr->data, v)) return true;
 		
-		if (minFunc(curr->data, v)) curr = curr->right;
+		if (minFunc(curr->data, v) == curr->data) curr = curr->right;
 		else curr = curr->left;
 	}
 

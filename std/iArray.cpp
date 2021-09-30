@@ -17,9 +17,31 @@ iArray::iArray(int s)
 	dumy = DUMY_DATA;
 }
 
+iArray::iArray(const iArray& arr)
+{
+	size = arr.size;
+	data = new iArrayData[size];
+	dataNum = arr.dataNum;
+	memcpy(data, arr.data, sizeof(iArrayData) * dataNum);
+	dumy = DUMY_DATA;
+}
+
 iArray::~iArray()
 {
 	delete[] data;
+}
+
+iArray& iArray::operator=(const iArray& arr)
+{
+	if (data) delete[] data;
+
+	size = arr.size;
+	data = new iArrayData[size];
+	dataNum = arr.dataNum;
+	memcpy(data, arr.data, sizeof(iArrayData) * dataNum);
+	dumy = DUMY_DATA;
+
+	return *this;
 }
 
 void iArray::insert(int idx, void* d)

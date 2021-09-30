@@ -23,6 +23,7 @@ typedef unsigned long		uint64;
 #endif
 
 typedef bool (*CompareMethod)(void* left, void* right);
+typedef void* (*MinMethod)(void* left, void* right);
 typedef void (*DeleteDataMethod)(void* data);
 
 struct iSize

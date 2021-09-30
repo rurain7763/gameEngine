@@ -456,6 +456,9 @@
     <ClInclude Include="reference\pthread\include\semaphore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="std\iThreadPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gameEngine.cpp">
@@ -534,6 +537,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="std\iOpenGL\iGLLighting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="std\iThreadPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

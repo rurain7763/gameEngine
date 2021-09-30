@@ -36,6 +36,7 @@
 #include "iTime.h"
 #include "iTransform.h"
 #include "iCamera.h"
+#include "iThreadPool.h"
 
 #include "iOpenGL.h"
 #include "iWindows.h"
