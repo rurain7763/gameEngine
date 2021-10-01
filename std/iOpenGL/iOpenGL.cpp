@@ -3,7 +3,6 @@
 
 HGLRC hGlrc;
 iRect* viewPort;
-iGLShader* iGLShader::S = NULL;
 
 void loadGL(HWND& hwnd)
 {

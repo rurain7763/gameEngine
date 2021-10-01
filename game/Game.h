@@ -7,20 +7,27 @@
 
 #include "iType.h"
 
+struct iSize;
 class iInputManager;
 class iTime;
+class iCamera;
 class iAssetReader;
 class iGLShader;
-class iMatrix;
-class iCamera;
+class iThreadPool;
+class iSceneManager;
+
+extern iSize* devSize;
+extern iInputManager* inputMg;
+extern iTime* timeMg;
+extern iCamera* camera;
+extern iAssetReader* assetReader;
+extern iGLShader* shader;
+extern iThreadPool* threadPool;
+extern iSceneManager* sceneMg;
 
 void loadGame();
 void drawGame();
 void endGame();
 
-class iInputManager;
-extern iInputManager* inputMgt;
-
-extern iSize* devSize;
 
 

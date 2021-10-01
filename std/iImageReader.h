@@ -15,18 +15,24 @@ enum iImageType
 	iImageTypeUnknown
 };
 
-struct iImage
+class iImage
 {
+public:
+	virtual ~iImage();
+
+public:
 	iImageType type;
 	uint32 width, height;
 	uint32 stride;
 };
 
-struct iPng : public iImage
+class iPng : public iImage
 {
+public:
 	iPng();
 	virtual ~iPng();
 
+public:
 	uint8* rgba;
 	uint8 colorType;
 	uint8 channels;
@@ -35,11 +41,13 @@ struct iPng : public iImage
 
 iPng* readPng(const char* path);
 
-struct iJpg : public iImage
+class iJpg : public iImage
 {
+public:
 	iJpg();
 	virtual ~iJpg();
 
+public:
 	uint8* rgb;
 	uint8 pixelSize;
 };
@@ -48,6 +56,7 @@ iJpg* readJpg(const char* path);
 
 char* getImageType(const char* path);
 
+#if 0
 struct iChunk;
 struct iZlibBlock;
 struct iHuffCode;
@@ -112,5 +121,6 @@ struct iHuffCode
 	uint8 bitCount = -1;
 	uint32 c = -1;
 };
+#endif
 
 

@@ -1,17 +1,23 @@
 #pragma once
 
-#include"iVector.h"
+#include "iType.h"
+#include "iVector.h"
 
-#define KEY_W				1 
-#define KEY_S				2 
-#define KEY_A				4 
-#define KEY_D				8 
-#define KEY_ESCAPE			16 
-#define KEY_P				32 
-#define KEY_PAGEUP			64 
-#define KEY_PAGEDOWN		128 
+#define KEY_W				0x1 
+#define KEY_S				0x2 
+#define KEY_A				0x4 
+#define KEY_D				0x8 
+#define KEY_ESCAPE			0x10 
+#define KEY_P				0x20 
+#define KEY_PAGEUP			0x40 
+#define KEY_PAGEDOWN		0x80 
+#define KEY_1				0x100 
+#define KEY_2				0x200 
+#define KEY_3				0x400 
+#define KEY_4				0x800 
 
 typedef unsigned int iKey;
+
 class iInputManager
 {
 private:
@@ -27,11 +33,11 @@ public:
 	void update();
 
 private:
-	int keyBuffer;
+	uint32 keyBuffer;
 
 public:
-	int keyOnce;
-	int keyDown;
+	uint32 keyOnce;
+	uint32 keyDown;
 	iVector2f mousePos;
 }; 
 

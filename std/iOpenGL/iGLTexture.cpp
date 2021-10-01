@@ -3,6 +3,8 @@
 
 iGLTexture::iGLTexture()
 {
+	path = "";
+	path.shrink_to_fit();
 	texType = 0;
 	texID = 0;
 	width = 0;
@@ -16,13 +18,16 @@ iGLTexture::~iGLTexture()
 	if (texID != 0) glDeleteTextures(1, &texID);
 }
 
-void iGLTexture::load(GLenum tt, const char* path, iGLTexMapType mt)
+void iGLTexture::load(GLenum tt, const char* p, iGLTexMapType mt)
 {
-	char* t = getImageType(path);
+	path = p;
+	path.shrink_to_fit();
+
+	char* t = getImageType(p);
 
 	if (!strcmp(t, "png"))
 	{
-		iPng* png = readPng(path);
+		iPng* png = readPng(p);
 		if (!png)
 		{
 			delete[] t;
@@ -78,10 +83,10 @@ void iGLTexture::load(GLenum tt, const char* path, iGLTexMapType mt)
 		delete png;
 	}
 	else if (!strcmp(t, "jpg") ||
-		!strcmp(t, "jfif") ||
-		!strcmp(t, "jpeg"))
+			 !strcmp(t, "jfif") ||
+			 !strcmp(t, "jpeg"))
 	{
-		iJpg* jpg = readJpg(path);
+		iJpg* jpg = readJpg(p);
 		if (!jpg)
 		{
 			delete[] t;
@@ -116,9 +121,12 @@ void iGLTexture::load(GLenum tt, const char* path, iGLTexMapType mt)
 }
 
 void iGLTexture::load(GLenum tt, GLint format,
-	uint8* pixels, int w, int h, iGLTexMapType mt)
+					  uint8* pixels, int w, int h, iGLTexMapType mt)
 {
 	if (!pixels) return;
+
+	path = "Unknown";
+	path.shrink_to_fit();
 
 	texType = tt;
 	mapType = mt;

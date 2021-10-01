@@ -20,6 +20,7 @@ public:
 	void push_back(void* data);
 	void* pop_back();
 	void resize(int size);
+	void*& at(int idx);
 
 	void*& operator[](int idx);
 

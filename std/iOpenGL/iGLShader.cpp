@@ -1,28 +1,32 @@
 #include "iGLShader.h"
 #include "iStd.h"
 
+iGLShader* iGLShader::S = NULL;
+
 iGLShader::iGLShader()
 {
-	program = new iHashTable
-	(
-		[](void* data)
-		{
-			GLuint* id = (GLuint*)data;
-			deleteProgram(*id);
-		}
-	);
-	shader = new iHashTable
-	(
-		[](void* data)
-		{
-			GLuint* id = (GLuint*)data;
-			deleteShader(*id);
-		}
-	);
+	program = new iHashTable();
+	shader = new iHashTable();
 }
 
 iGLShader::~iGLShader()
 {
+	for (iHashTable::iIterator itr = program->begin();
+		itr != program->end(); itr++)
+	{
+		GLuint* id = (GLuint*)itr->data;
+		deleteProgram(*id);
+		delete id;
+	}
+
+	for (iHashTable::iIterator itr = shader->begin();
+		itr != shader->end(); itr++)
+	{
+		GLuint* id = (GLuint*)itr->data;
+		deleteShader(*id);
+		delete id;
+	}
+
 	delete shader;
 	delete program;
 }
@@ -117,9 +121,10 @@ GLuint iGLShader::createShader(const char* path, Flag flag)
 		char* error = new char[errLen + 1];
 		glGetShaderInfoLog(id, errLen, NULL, error);
 		printf("Error compiling shader type: '%s'\n", error);
-		delete[] error;
 
+		delete[] error;
 		delete[] str;
+
 		return -1;
 	}
 
@@ -151,6 +156,7 @@ GLuint iGLShader::createProgram(GLuint vert, GLuint frag)
 		char* error = new char[errLen + 1];
 		glGetProgramInfoLog(id, errLen, NULL, error);
 		printf("Error linking shader program: '%s'\n", error);
+
 		delete[] error;
 
 		return -1;

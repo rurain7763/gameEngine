@@ -15,7 +15,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-#include <thread>
 
 #include "iType.h"
 #include "iVector.h"
@@ -57,6 +56,8 @@ unsigned int nextPrime(unsigned int v);
 bool isPrime(unsigned int v);
 
 char* readFile(const char* path);
+char* getDirectoryInPath(const char* path);
+char* getFileNameInPath(const char* path);
 
 void bubbleSort(CompareMethod method, void* data, int elementSize, int num);
 

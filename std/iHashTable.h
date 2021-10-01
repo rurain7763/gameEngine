@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEFAULT_HASHTABLE_SIZE	500
+#define DEFAULT_HASHTABLE_SIZE	200
 
 #define LINEAR_PROBING		0
 #define QUADRATIC_PROBING	1
@@ -14,8 +14,8 @@ struct iBucket;
 class iHashTable
 {
 public:
-	iHashTable(DeleteDataMethod delMethod = NULL);
-	iHashTable(int size, DeleteDataMethod delMethod = NULL);
+	iHashTable();
+	iHashTable(int size);
 	virtual ~iHashTable();
 
 	void insert(const char* key, void* data);
@@ -23,6 +23,24 @@ public:
 	void remove(const char* key);
 
 	void*& operator[](const char* key);
+
+	class iIterator
+	{
+	public:
+		iIterator();
+		iBucket operator*() const;
+		iBucket* operator->();
+		iHashTable::iIterator& operator++(int n);
+		iHashTable::iIterator& operator=(iHashTable::iIterator itr);
+
+	public:
+		uint32 currPos;
+		uint32 size;
+		iBucket* ptr;
+	};
+
+	iHashTable::iIterator begin();
+	iHashTable::iIterator end();
 
 private:
 	void resize();
@@ -35,9 +53,8 @@ private:
 	iBucket* doubleHashing(uint64 hash);
 
 private:
-	DeleteDataMethod delMethod;
+	static char dummy[6];
 	iBucket* data;
-	char dummy[6];
 	int dummyNum;
 
 public:
@@ -50,3 +67,6 @@ struct iBucket
 	uint64 hash;
 	void* data;
 };
+
+bool operator!=(const iHashTable::iIterator& itr1, const iHashTable::iIterator& itr2);
+bool operator==(const iHashTable::iIterator& itr1, const iHashTable::iIterator& itr2);

@@ -10,23 +10,17 @@
 #include "iQueue.h"
 #include "iArray.h"
 
-#define MAX_THREAD_NUM _POSIX_THREAD_THREADS_MAX / 8
-#define MAX_JOB_QUEUE_SIZE 50
+#define MAX_THREAD_NUM _POSIX_THREAD_THREADS_MAX / 64
+#define JOB_QUEUE_SIZE 50
 
-#define WORKER_STATUS_WAIT	  0
-#define WORKER_STATUS_WORKING 1
+#define WORKER_STATUS_WAIT		0
+#define WORKER_STATUS_WORKING	1
 
-enum iThreadJobFlag
-{
-	iThreadJobFlagNoArg = 0,
-	iThreadJobFlagOneArg,
-	iThreadJobFlagTwoArg,
-	iThreadJobFlagMax
-};
+typedef void* (*ThreadJobMethodNoArg)();
+typedef void* (*ThreadJobMethodOneArg)(void*);
+typedef void* (*ThreadJobMethodTwoArg)(void*, void*);
 
-typedef void (*ThreadJobMethodNoArg)();
-typedef void (*ThreadJobMethodOneArg)(void*);
-typedef void (*ThreadJobMethodTwoArg)(void*, void*);
+typedef void (*ThreadJobMethodCallBack)(void* result);
 
 struct iThreadInfo;
 
@@ -40,9 +34,12 @@ public:
 	~iThreadPool();
 	static iThreadPool* share();
 
-	void addJob(ThreadJobMethodNoArg method);
-	void addJob(ThreadJobMethodOneArg method, void* arg);
-	void addJob(ThreadJobMethodTwoArg method, void* arg1, void* arg2);
+	void addJob(ThreadJobMethodNoArg method, 
+				ThreadJobMethodCallBack callBack = NULL);
+	void addJob(ThreadJobMethodOneArg method, void* arg, 
+				ThreadJobMethodCallBack callBack = NULL);
+	void addJob(ThreadJobMethodTwoArg method, void* arg1, void* arg2, 
+				ThreadJobMethodCallBack callBack = NULL);
 
 	void update();
 
@@ -52,11 +49,25 @@ private:
 	iQueue job;
 };
 
+enum iThreadJobFlag
+{
+	iThreadJobFlagNoArg = 0,
+	iThreadJobFlagOneArg,
+	iThreadJobFlagTwoArg,
+	iThreadJobFlagMax
+};
+
 struct iJobInfo
 {
 	iThreadJobFlag flag;
 	void* job;
-	iArray args;
+	void* callBack;
+	iArray* args;
+	bool completeJob;
+	void* jobResult;
+
+	iJobInfo();
+	~iJobInfo();
 };
 
 struct iThreadInfo
@@ -64,12 +75,12 @@ struct iThreadInfo
 	uint32 status;
 
 	uint32 threadID;
+	iJobInfo* jobInfo;
+
 	pthread_t thread;
 
 	pthread_mutex_t condMutex;
 	pthread_cond_t cond;
-
-	iJobInfo jobInfo;
 };
 
 

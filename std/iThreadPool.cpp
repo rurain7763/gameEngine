@@ -5,37 +5,49 @@ iThreadPool* iThreadPool::S = NULL;
 
 void* work(void* info)
 {
+	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+	pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
+
 	iThreadInfo* threadInfo = (iThreadInfo*)info;
 
 	while (1)
 	{
+		pthread_testcancel();
+
 		pthread_mutex_lock(&threadInfo->condMutex);
 		threadInfo->status = WORKER_STATUS_WAIT;
 		pthread_cond_wait(&threadInfo->cond, &threadInfo->condMutex);
 		pthread_mutex_unlock(&threadInfo->condMutex);
+		
+		pthread_testcancel();
 
 		threadInfo->status = WORKER_STATUS_WORKING;
-		iJobInfo* jobInfo = &threadInfo->jobInfo;
+		iJobInfo* jobInfo = threadInfo->jobInfo;
+
+		void* result = NULL;
 
 		if (jobInfo->flag == iThreadJobFlagNoArg)
 		{
-			((ThreadJobMethodNoArg)jobInfo->job)();
+			result = ((ThreadJobMethodNoArg)jobInfo->job)();
 		}
 		else if (jobInfo->flag == iThreadJobFlagOneArg)
 		{
-			((ThreadJobMethodOneArg)jobInfo->job)(jobInfo->args[0]);
+			result = ((ThreadJobMethodOneArg)jobInfo->job)(jobInfo->args->at(0));
 		}
 		else if (jobInfo->flag == iThreadJobFlagTwoArg)
 		{
-			((ThreadJobMethodTwoArg)jobInfo->job)(jobInfo->args[0], jobInfo->args[1]);
+			result = ((ThreadJobMethodTwoArg)jobInfo->job)(jobInfo->args->at(0), jobInfo->args->at(1));
 		}
+
+		jobInfo->completeJob = true;
+		jobInfo->jobResult = result;
 	}
 
 	return NULL;
 }
 
 iThreadPool::iThreadPool()
-	:job(MAX_JOB_QUEUE_SIZE)
+	:job(JOB_QUEUE_SIZE)
 {
 	workerNum = MAX_THREAD_NUM;
 	worker = new iThreadInfo[workerNum];
@@ -44,9 +56,10 @@ iThreadPool::iThreadPool()
 	{
 		iThreadInfo* info = &worker[i];
 
+		info->status = WORKER_STATUS_WAIT;
 		info->threadID = i;
-		info->jobInfo.args.resize(iThreadJobFlagMax - 1);
-
+		info->jobInfo = NULL;
+		
 		pthread_mutex_init(&info->condMutex, NULL);
 		pthread_cond_init(&info->cond, NULL);
 
@@ -58,12 +71,32 @@ iThreadPool::~iThreadPool()
 {
 	for (int i = 0; i < workerNum; i++)
 	{
-		pthread_mutex_destroy(&worker[i].condMutex);
-		pthread_cond_destroy(&worker[i].cond);
-		pthread_kill(worker[i].thread, 0);
+		iThreadInfo* info = &worker[i];
+
+		int err = -1;
+		while (err)
+		{
+			printf("thread %d will be destroy\n", info->threadID);
+			err = pthread_cancel(info->thread);
+		}
+
+		pthread_join(info->thread, NULL);
+		printf("thread %d was destroyed\n", info->threadID);
+
+		pthread_mutex_destroy(&info->condMutex);
+		pthread_cond_destroy(&info->cond);
+
+		if (info->jobInfo) delete info->jobInfo;
 	}
 
 	delete[] worker;
+
+	while(!job.empty())
+	{
+		iJobInfo* info = (iJobInfo*)job.pop();
+		delete info->args;
+		delete info;
+	}
 }
 
 iThreadPool* iThreadPool::share()
@@ -72,7 +105,7 @@ iThreadPool* iThreadPool::share()
 	return S;
 }
 
-void iThreadPool::addJob(ThreadJobMethodNoArg method)
+void iThreadPool::addJob(ThreadJobMethodNoArg method, ThreadJobMethodCallBack callBack)
 {
 	if (job.num == job.size)
 	{
@@ -82,12 +115,17 @@ void iThreadPool::addJob(ThreadJobMethodNoArg method)
 
 	iJobInfo* info = new iJobInfo;
 	info->flag = iThreadJobFlagNoArg;
+	info->args = NULL;
 	info->job = method;
+	info->callBack = callBack;
+	info->completeJob = false;
+	info->jobResult = NULL;
 
 	job.push(info);
 }
 
-void iThreadPool::addJob(ThreadJobMethodOneArg method, void* arg)
+void iThreadPool::addJob(ThreadJobMethodOneArg method, void* arg,
+						 ThreadJobMethodCallBack callBack)
 {
 	if (job.num == job.size)
 	{
@@ -98,13 +136,17 @@ void iThreadPool::addJob(ThreadJobMethodOneArg method, void* arg)
 	iJobInfo* info = new iJobInfo;
 	info->flag = iThreadJobFlagOneArg;
 	info->job = method;
-	info->args.resize(1);
-	info->args.push_back(arg);
+	info->args = new iArray(1);
+	info->args->push_back(arg);
+	info->callBack = callBack;
+	info->completeJob = false;
+	info->jobResult = NULL;
 
 	job.push(info);
 }
 
-void iThreadPool::addJob(ThreadJobMethodTwoArg method, void* arg1, void* arg2)
+void iThreadPool::addJob(ThreadJobMethodTwoArg method, void* arg1, void* arg2,
+						 ThreadJobMethodCallBack callBack)
 {
 	if (job.num == job.size)
 	{
@@ -115,35 +157,57 @@ void iThreadPool::addJob(ThreadJobMethodTwoArg method, void* arg1, void* arg2)
 	iJobInfo* info = new iJobInfo;
 	info->flag = iThreadJobFlagTwoArg;
 	info->job = method;
-	info->args.resize(2);
-	info->args.push_back(arg1);
-	info->args.push_back(arg2);
+	info->args = new iArray(2);
+	info->args->push_back(arg1);
+	info->args->push_back(arg2);
+	info->callBack = callBack;
+	info->completeJob = false;
+	info->jobResult = NULL;
 
 	job.push(info);
 }
 
 void iThreadPool::update()
 {
-	if (job.empty()) return;
-
 	for (int i = 0; i < workerNum; i++)
 	{
 		iThreadInfo* info = &worker[i];
+		iJobInfo* jobInfo = info->jobInfo;
 
-		if (info->status == WORKER_STATUS_WAIT)
+		if (jobInfo && jobInfo->completeJob)
 		{
-			iJobInfo* jobInfo = (iJobInfo*)job.pop();
+			if(jobInfo->callBack)
+			{
+				((ThreadJobMethodCallBack)jobInfo->callBack)(jobInfo->jobResult);
+			}
 
-			info->jobInfo = *jobInfo;
-			delete jobInfo;
+			delete info->jobInfo;
+			info->jobInfo = NULL;
+		}
+
+		if (!job.empty() && info->status == WORKER_STATUS_WAIT)
+		{
+			info->jobInfo = (iJobInfo*)job.pop();
 
 			pthread_mutex_lock(&info->condMutex);
 			pthread_cond_signal(&info->cond);
 			pthread_mutex_unlock(&info->condMutex);
-			return;
 		}
 	}
+}
 
-	printf("thread count are small than your orders. recommend to increase your thread count.\n");
+iJobInfo::iJobInfo()
+{
+	flag = iThreadJobFlagMax;
+	job = NULL;
+	callBack = NULL;
+	args = NULL;
+	completeJob = false;
+	jobResult = NULL;
+}
+
+iJobInfo::~iJobInfo()
+{
+	if (args) delete args;
 }
 

@@ -6,6 +6,7 @@ iGLLighting::iGLLighting()
 	programID = 0;
 
 	pointLights = new iPointLight[MAX_POINT_LIGHT_NUM];
+	pointLightLocInfo = new PointLightLocInfo[MAX_POINT_LIGHT_NUM];
 	for (int i = 0; i < MAX_POINT_LIGHT_NUM; i++)
 	{
 		iPointLight* light = &pointLights[i];
@@ -23,6 +24,7 @@ iGLLighting::iGLLighting()
 	}
 
 	spotLights = new iSpotLight[MAX_SPOT_LIGHT_NUM];
+	spotLightLocInfo = new SpotLightLocInfo[MAX_SPOT_LIGHT_NUM];
 	for (int i = 0; i < MAX_SPOT_LIGHT_NUM; i++)
 	{
 		iSpotLight* light = &spotLights[i];
@@ -42,6 +44,7 @@ iGLLighting::iGLLighting()
 	}
 
 	dirLight = new iDirectionLight();
+	dirLightLocInfo = new DirectionLightLocInfo;
 	memset(dirLight, 0, sizeof(iDirectionLight));
 	dirLight->flag = DIRECTIONLIGHT;
 }
@@ -49,13 +52,13 @@ iGLLighting::iGLLighting()
 iGLLighting::~iGLLighting()
 {
 	delete[] pointLights;
-	if (pointLightLocInfo) delete pointLightLocInfo;
+	delete[] pointLightLocInfo;
 
 	delete[] spotLights;
-	if (spotLightLocInfo) delete[] spotLightLocInfo;
+	delete[] spotLightLocInfo;
 
 	delete dirLight;
-	if (dirLightLocInfo) delete[] dirLightLocInfo;
+	delete dirLightLocInfo;
 }
 
 void iGLLighting::setDirectionalLight(iVector3f color, iVector3f dir,
@@ -120,7 +123,6 @@ void iGLLighting::sendToShader(const char* vertex, const char* frag, iMatrix* tr
 		transMatLoc = glGetUniformLocation(programID, "transMat");
 		cameraPosLoc = glGetUniformLocation(programID, "cameraPos");
 
-		pointLightLocInfo = new PointLightLocInfo[MAX_POINT_LIGHT_NUM];
 		for (int i = 0; i < MAX_POINT_LIGHT_NUM; i++)
 		{
 			iString pointLightStr = "pointLights[?].?";
@@ -153,7 +155,6 @@ void iGLLighting::sendToShader(const char* vertex, const char* frag, iMatrix* tr
 			pointLightLocInfo[i].exponential = glGetUniformLocation(programID, pointLightStr.str);
 		}
 
-		spotLightLocInfo = new SpotLightLocInfo[MAX_SPOT_LIGHT_NUM];
 		for (int i = 0; i < MAX_SPOT_LIGHT_NUM; i++)
 		{
 			iString spotLightStr = "spotLights[?].?";
@@ -192,7 +193,6 @@ void iGLLighting::sendToShader(const char* vertex, const char* frag, iMatrix* tr
 			spotLightLocInfo[i].exponential = glGetUniformLocation(programID, spotLightStr.str);
 		}
 
-		dirLightLocInfo = new DirectionLightLocInfo;
 		dirLightLocInfo->color = glGetUniformLocation(programID, "dirLight.color");
 		dirLightLocInfo->dir = glGetUniformLocation(programID, "dirLight.dir");
 		dirLightLocInfo->ambientIntens = glGetUniformLocation(programID, "dirLight.ambientIntensity");

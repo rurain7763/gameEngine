@@ -4,23 +4,22 @@
 iGLModel::iGLModel()
 {
 	meshs.resize(10);
-
-	textures = new iHashTable
-	(10,
-		[](void* tex)
-		{
-			iGLTexture* t = (iGLTexture*)tex;
-			delete t;
-		}
-	);
+	textures = new iHashTable(10);
 }
 
 iGLModel::~iGLModel()
 {
-	for (int i = 0; i < meshs.dataNum; i++)
-		delete (iGLMesh*)meshs[i];
+	for (iHashTable::iIterator itr = textures->begin();
+		 itr != textures->end(); itr++)
+	{
+		iGLTexture* t = (iGLTexture*)itr->data;
+		delete t;
+	}
 
 	delete textures;
+
+	for (int i = 0; i < meshs.dataNum; i++)
+		delete (iGLMesh*)meshs[i];
 }
 
 void iGLModel::addMesh(iGLMesh* mesh)
@@ -30,7 +29,7 @@ void iGLModel::addMesh(iGLMesh* mesh)
 
 void iGLModel::removeMesh(iGLMesh* mesh)
 {
-	
+	//TODO
 }
 
 void iGLModel::removeMesh(int idx)

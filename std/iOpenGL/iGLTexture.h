@@ -4,6 +4,7 @@
 
 #include "iType.h"
 #include "iSharedPtr.h"
+#include "iString.h"
 
 class iGLTexture;
 
@@ -34,12 +35,13 @@ public:
 
 	void load(GLenum texType, const char* path, iGLTexMapType mapType = iGLTexMapTypeNone);
 	void load(GLenum texType, GLint format,
-		uint8* pixels, int width, int height, iGLTexMapType mapType = iGLTexMapTypeNone);
+			  uint8* pixels, int width, int height, iGLTexMapType mapType = iGLTexMapTypeNone);
 	void bind(GLenum texUnit);
 
 	void setTexParmi(GLenum name, GLint parm);
 
 public:
+	iString path;
 	GLenum texType;
 	GLuint texID;
 

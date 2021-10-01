@@ -8,16 +8,14 @@
 #include "iCamera.h"
 #include "iArray.h"
 #include "iGLLighting.h"
+#include "iSharedPtr.h"
 
 class iGLMesh;
 class iHashTable;
+class iGLModel;
 
-struct iGLMaterial
-{
-	iVector3f ambient;
-	iVector3f specular;
-	//...
-};
+typedef iSharedPtr<iGLModel>   iGLModelPTR;
+typedef iSharedPtr<iGLModel[]> iGLModelARR;
 
 class iGLModel
 {
@@ -34,6 +32,13 @@ public:
 public:
 	iHashTable* textures;
 	iArray meshs;
+};
+
+struct iGLMaterial
+{
+	iVector3f ambient;
+	iVector3f specular;
+	//...
 };
 
 class iGLMesh

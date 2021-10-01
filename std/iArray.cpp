@@ -33,7 +33,7 @@ iArray::~iArray()
 
 iArray& iArray::operator=(const iArray& arr)
 {
-	if (data) delete[] data;
+	delete[] data;
 
 	size = arr.size;
 	data = new iArrayData[size];
@@ -113,6 +113,21 @@ void iArray::resize(int s)
 
 	size = s;
 	dataNum = num;
+}
+
+void*& iArray::at(int idx)
+{
+	if (idx >= size)
+	{
+		resize(idx * 2);
+
+		for (int i = dataNum; i <= idx; i++)
+			data[i].data = &dumy;
+
+		dataNum += idx - dataNum + 1;
+	}
+
+	return data[idx].data;
 }
 
 void*& iArray::operator[](int idx)

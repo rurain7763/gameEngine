@@ -1,6 +1,7 @@
 #include "gameEngine.h"
 #include "iStd.h"
 #include "Game.h"
+#include "TestScene.h"
 
 #define MAX_LOADSTRING 100
 
@@ -87,6 +88,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     MSG msg;
 
     loadGame();
+    TestScene scene1;
+    TestScene scene2;
+    TestScene scene3;
+    sceneMg->addScene(&scene1);
+    sceneMg->addScene(&scene2);
+    sceneMg->addScene(&scene3);
+
     while (isContinueApp())
     {
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -101,6 +109,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             swapBuffer(hdc);
         }
     }
+
     endGame();
 
     endGL();
@@ -113,6 +122,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+    case WM_SHOWWINDOW:
+    {
+        return 0;
+    }
     case WM_SIZE:
     {
         RECT rt;
@@ -166,14 +179,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         char key = (char)wParam;
 
-        if (key == 'W') inputMgt->setKeyDown(KEY_W);
-        if (key == 'S') inputMgt->setKeyDown(KEY_S);
-        if (key == 'A') inputMgt->setKeyDown(KEY_A);
-        if (key == 'D') inputMgt->setKeyDown(KEY_D);
-        if (key == 'P') inputMgt->setKeyDown(KEY_P);
-        if (key == VK_ESCAPE) inputMgt->setKeyDown(KEY_ESCAPE);
-        if (key == VK_PRIOR) inputMgt->setKeyDown(KEY_PAGEUP);
-        if (key == VK_NEXT) inputMgt->setKeyDown(KEY_PAGEDOWN);
+        if (key == '1') inputMg->setKeyDown(KEY_1);
+        if (key == '2') inputMg->setKeyDown(KEY_2);
+        if (key == '3') inputMg->setKeyDown(KEY_3);
+        if (key == '4') inputMg->setKeyDown(KEY_4);
+        if (key == 'W') inputMg->setKeyDown(KEY_W);
+        if (key == 'S') inputMg->setKeyDown(KEY_S);
+        if (key == 'A') inputMg->setKeyDown(KEY_A);
+        if (key == 'D') inputMg->setKeyDown(KEY_D);
+        if (key == 'P') inputMg->setKeyDown(KEY_P);
+        if (key == VK_ESCAPE) inputMg->setKeyDown(KEY_ESCAPE);
+        if (key == VK_PRIOR) inputMg->setKeyDown(KEY_PAGEUP);
+        if (key == VK_NEXT) inputMg->setKeyDown(KEY_PAGEDOWN);
 
         return 0;
     }
@@ -181,14 +198,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         char key = (char)wParam;
 
-        if (key == 'W') inputMgt->setKeyUp(KEY_W);
-        if (key == 'S') inputMgt->setKeyUp(KEY_S);
-        if (key == 'A') inputMgt->setKeyUp(KEY_A);
-        if (key == 'D') inputMgt->setKeyUp(KEY_D);
-        if (key == 'P') inputMgt->setKeyUp(KEY_P);
-        if (key == VK_ESCAPE) inputMgt->setKeyUp(KEY_ESCAPE);
-        if (key == VK_PRIOR) inputMgt->setKeyUp(KEY_PAGEUP);
-        if (key == VK_NEXT) inputMgt->setKeyUp(KEY_PAGEDOWN);
+        if (key == '1') inputMg->setKeyUp(KEY_1);
+        if (key == '2') inputMg->setKeyUp(KEY_2);
+        if (key == '3') inputMg->setKeyUp(KEY_3);
+        if (key == '4') inputMg->setKeyUp(KEY_4);
+        if (key == 'W') inputMg->setKeyUp(KEY_W);
+        if (key == 'S') inputMg->setKeyUp(KEY_S);
+        if (key == 'A') inputMg->setKeyUp(KEY_A);
+        if (key == 'D') inputMg->setKeyUp(KEY_D);
+        if (key == 'P') inputMg->setKeyUp(KEY_P);
+        if (key == VK_ESCAPE) inputMg->setKeyUp(KEY_ESCAPE);
+        if (key == VK_PRIOR) inputMg->setKeyUp(KEY_PAGEUP);
+        if (key == VK_NEXT) inputMg->setKeyUp(KEY_PAGEDOWN);
 
         return 0;
     }
@@ -200,7 +221,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         wrappingCursor(x, y);
         coordMousePosToViewPort({ DEV_WIDTH, DEV_HEIGHT }, x, y);
 
-        inputMgt->setMousePos(x, y);
+        inputMg->setMousePos(x, y);
 
         return 0;
     }

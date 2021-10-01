@@ -1,26 +1,26 @@
 #include "iHashTable.h"
 #include "iStd.h"
 
-iHashTable::iHashTable(DeleteDataMethod dm)
+char iHashTable::dummy[6];
+
+iHashTable::iHashTable()
 {
 	uint32 prime = nextPrime(DEFAULT_HASHTABLE_SIZE);
 
-	delMethod = dm;
-	data = new iBucket[prime];
 	strcpy(dummy, "DUMMY");
+	data = new iBucket[prime];
 	dummyNum = 0;
 	memset(data, 0, sizeof(iBucket) * prime);
 	size = prime;
 	num = 0;
 }
 
-iHashTable::iHashTable(int s, DeleteDataMethod dm)
+iHashTable::iHashTable(int s)
 {
 	uint32 prime = nextPrime(s);
 
-	delMethod = dm;
-	data = new iBucket[prime];
 	strcpy(dummy, "DUMMY");
+	data = new iBucket[prime];
 	dummyNum = 0;
 	memset(data, 0, sizeof(iBucket) * prime);
 	size = prime;
@@ -29,18 +29,6 @@ iHashTable::iHashTable(int s, DeleteDataMethod dm)
 
 iHashTable::~iHashTable()
 {
-	if (delMethod)
-	{
-		for (int i = 0; i < size; i++)
-		{
-			if (data[i].data != dummy &&
-				data[i].data)
-			{
-				delMethod(data[i].data);
-			}
-		}
-	}
-
 	delete[] data;
 }
 
@@ -119,6 +107,78 @@ void*& iHashTable::operator[](const char* key)
 	iBucket* b = doubleHashing(hash);
 	return b->data;
 #endif
+}
+
+iHashTable::iIterator::iIterator()
+{
+	size = 0;
+	currPos = -1;
+	ptr = NULL;
+}
+
+iBucket iHashTable::iIterator::operator*() const
+{
+	return ptr[currPos];
+}
+
+iBucket* iHashTable::iIterator::operator->()
+{
+	return &ptr[currPos];
+}
+
+iHashTable::iIterator& iHashTable::iIterator::operator++(int n)
+{
+	uint32 start = currPos + 1;
+	currPos = -1;
+
+	for (uint32 i = start; i < size; i++)
+	{
+		if (ptr[i].data && ptr[i].data != dummy)
+		{
+			currPos = i;
+			break;
+		}		
+	}
+
+	return *this;
+}
+
+iHashTable::iIterator& iHashTable::iIterator::operator=(iHashTable::iIterator itr)
+{
+	size = itr.size;
+	currPos = itr.currPos;
+	ptr = itr.ptr;
+
+	return *this;
+}
+
+iHashTable::iIterator iHashTable::begin()
+{
+	iHashTable::iIterator r;
+	r.size = size;
+	r.ptr = data;
+	r.currPos = -1;
+
+	for (int i = 0; i < size; i++)
+	{
+		if (data[i].data && data[i].data != dummy)
+		{
+			r.currPos = i;
+			break;
+		}
+	}
+
+	return r;
+}
+
+iHashTable::iIterator iHashTable::end()
+{
+	iHashTable::iIterator r;
+	r.size = size;
+	r.ptr = data;
+	r.currPos = -1;
+
+	return r;
 }
 
 void iHashTable::resize()
@@ -222,3 +282,36 @@ iBucket* iHashTable::doubleHashing(uint64 hash)
 	return NULL;
 }
 
+bool operator!=(const iHashTable::iIterator& itr1, 
+				const iHashTable::iIterator& itr2)
+{
+	iBucket* left = itr1.ptr;
+	int leftIdx = itr1.currPos;
+
+	iBucket* right = itr2.ptr;
+	int rightIdx = itr2.currPos;
+
+	if (leftIdx == -1 || rightIdx == -1)
+	{
+		return (left != right) || (leftIdx != rightIdx);
+	}
+
+	return &left[leftIdx] != &right[rightIdx];
+}
+
+bool operator==(const iHashTable::iIterator& itr1, 
+				const iHashTable::iIterator& itr2)
+{
+	iBucket* left = itr1.ptr;
+	int leftIdx = itr1.currPos;
+
+	iBucket* right = itr2.ptr;
+	int rightIdx = itr2.currPos;
+
+	if (leftIdx == -1 || rightIdx == -1)
+	{
+		return (left == right) && (leftIdx == rightIdx);
+	}
+
+	return &left[leftIdx] == &right[rightIdx];
+}

@@ -7,6 +7,8 @@
 #define ISCENESTEP_UPDATE	1
 #define ISCENESTEP_FREE		2
 
+#define ISCENE_FREE_DELAY	1.f
+
 class iScene;
 
 class iSceneManager
@@ -23,20 +25,22 @@ public:
 	void changeScene(iScene* scene, iArray* sendInfo = NULL);
 	void changeScene(uint32 sceneIdx, iArray* sendInfo = NULL);
 
-	void updateScene(float dt);
+	void update(float dt);
 
 private:
 	iArray scenes;
-	int sceneStep;
 
-public:
+	int sceneStep;
 	iScene* currScene;
+	iScene* next;
+	float delay;
+	iArray* sendInfo;
 };
 
 class iScene
 {
 public:
-	virtual void load(iArray* recvInfo = NULL) = 0;
+	virtual void load(iArray* recvInfo) = 0;
 	virtual void update(float dt) = 0;
 	virtual void free() = 0;
 };

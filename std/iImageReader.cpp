@@ -1,6 +1,10 @@
 #include"iImageReader.h"
 #include"iStd.h"
 
+iImage::~iImage()
+{
+}
+
 iPng::iPng()
 {
 	type = iImageTypePng;
@@ -28,6 +32,7 @@ iPng* readPng(const char* path)
 	}
 
 	iPng* r = new iPng();
+	uint8** row = NULL;
 
 	uint8 header[8];
 	fread(header, 1, 8, file);
@@ -39,6 +44,13 @@ iPng* readPng(const char* path)
 
 	if (setjmp(png_jmpbuf(png)))
 	{
+		if (row)
+		{
+			for (int i = 0; i < r->height; i++)
+				delete[] row[i];
+			delete[] row;
+		}
+
 		delete r;
 		png_destroy_read_struct(&png, &info, NULL);
 		printf("readPng() : error occured when png read\n");
@@ -99,7 +111,7 @@ iPng* readPng(const char* path)
 
 	r->stride = r->width * r->bitDepth * r->channels / 8;
 
-	uint8** row = new uint8 * [r->height];
+	row = new uint8 * [r->height];
 	for (int i = 0; i < r->height; i++)
 		row[i] = new uint8[png_get_rowbytes(png, info)];
 
@@ -193,16 +205,15 @@ iJpg* readJpg(const char* path)
 	r->pixelSize = jpg.output_components;
 
 	r->stride = r->width * r->pixelSize;
-	uint8* rgb = new uint8[r->stride * r->height];
+	r->rgb = new uint8[r->stride * r->height];
 
 	int off = 0;
 	while (jpg.output_scanline < jpg.output_height)
 	{
-		uint8* row = &rgb[r->stride * off];
+		uint8* row = &r->rgb[r->stride * off];
 		jpeg_read_scanlines(&jpg, &row, 1);
 		off++;
 	}
-	r->rgb = rgb;
 
 	jpeg_finish_decompress(&jpg);
 	jpeg_destroy_decompress(&jpg);
@@ -249,6 +260,7 @@ char* getImageType(const char* path)
 	return r;
 }
 
+#if 0 //TODO make to complete
 iPngReader* iPngReader::S = NULL;
 
 iPngReader::iPngReader()
@@ -689,4 +701,6 @@ uint32 iZlibBlock::reverseBit(uint32 v, int bitNum)
 
 	return v >> (32 - bitNum);
 }
+#endif
+
 

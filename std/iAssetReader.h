@@ -1,13 +1,16 @@
 #pragma once
 
-#include "iType.h"
-#include "iArray.h"
-#include "iVector.h"
-
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 using namespace Assimp;
+
+#include "iType.h"
+#include "iArray.h"
+#include "iVector.h"
+#include "iString.h"
+#include "iGLTexture.h"
+#include "iImageReader.h"
 
 //aiProcess_FlipUVs
 #define ASSIMP_LOAD_FLAGS aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
@@ -27,11 +30,9 @@ public:
 
 	static iAssetReader* share();
 	iGLModel* loadGLAsset(const char* path);
+	void asyncLoadGLAsset(const char* path, iGLModel** recieve);
 
 private:
-	char* getDirectoryInPath(const char* path);
-	char* getFileNameInPath(const char* path);
-
 	void getGLVertices(aiMesh* src, iGLMesh* dst);
 	void getGLIndices(aiMesh* src, iGLMesh* dst);
 	void getGLMaterial(const char* directory, iGLModel* model, 
@@ -41,3 +42,14 @@ private:
 	Importer* imp;
 };
 
+struct iAsyncLoadGLAssetInfo
+{
+	iString path;
+	iGLTexMapType type;
+
+	iGLTexture* tex;
+	iImage* img;
+};
+
+void _asyncLoadGLAssetCallBack(void* model);
+void* _asyncLoadGLAsset(void* path, void* recieve);

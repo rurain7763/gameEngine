@@ -1,5 +1,10 @@
 #pragma once
 
+#include <chrono>
+using namespace std::chrono;
+
+#include "iType.h"
+
 class iTime
 {
 private:
@@ -8,15 +13,17 @@ private:
 
 public:
 	static iTime* share();
+
+	long long getPlayTime();
 	void update();
 
 private:
+	long long programStartTime;
 	int count;
 	float _fps;
+	uint64 prev;
 
 public:
-	unsigned long long now;
-	unsigned long long playTime;
 	int fps;
 	float deltaTime;
 };

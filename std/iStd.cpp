@@ -73,6 +73,41 @@ char* readFile(const char* path)
 	return buffer;
 }
 
+char* getDirectoryInPath(const char* path)
+{
+	int len = strlen(path);
+	int endPos = len;
+	while (endPos > 0)
+	{
+		endPos--;
+		if (path[endPos] == '/') break;
+	}
+
+	char* r = new char[endPos + 1];
+	memcpy(r, path, sizeof(char) * endPos);
+	r[endPos] = 0;
+
+	return r;
+}
+
+char* getFileNameInPath(const char* path)
+{
+	int len = strlen(path);
+	int startPos = len;
+	while (startPos > 0)
+	{
+		startPos--;
+		if (path[startPos] == '\\' || path[startPos] == '/') break;
+	}
+
+	int rLen = len - startPos;
+	char* r = new char[rLen + 1];
+	memcpy(r, &path[startPos], sizeof(char) * rLen);
+	r[rLen] = 0;
+
+	return r;
+}
+
 void bubbleSort(CompareMethod m, void* data, int elementSize, int num)
 {
 	char* d = (char*)data;
