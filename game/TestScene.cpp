@@ -43,10 +43,10 @@ void TestScene::update(float dt)
 	static float time = 0;
 	time += timeMg->deltaTime;
 
-	lighting->setDirectionalLight({ .1f, .1f, .1f }, origin - boxPos, 0.1f);
+	//lighting->setDirectionalLight({ .1f, .1f, .1f }, origin - boxPos, 0.1f);
 	lighting->setPointLight(0, { 1.f, 1.f, 1.f }, boxPos, 1.f, 1.f, 1.f);
 	lighting->setPointLight(1, { 1.f, 1.f, 1.f }, { isin(degree) * 3.f, icos(degree) * 3.f, 0.f }, 1.f, 1.f, 1.f);
-	lighting->setSpotLight(0, { 1.f, 1.f, 1.f }, camera->position, camera->lookAt, 30.f, .3f, .5f, .2f);
+	//lighting->setSpotLight(0, { 1.f, 1.f, 1.f }, camera->position, camera->lookAt, 30.f, .3f, .5f, .2f);
 
 	iMatrix viewMat = camera->getMatrix();
 
@@ -54,7 +54,7 @@ void TestScene::update(float dt)
 	testModelPos = { isin(degree) * 3.f, 0.f, 0.f };
 	//transMat.translate(testModelPos.x, testModelPos.y, testModelPos.z);
 	//transMat.scale(isin(degree) < 0 ? isin(degree) * - 1 : isin(degree), 0.4f, 1.6f);
-	//transMat.rotate(0, degree, 0);
+	transMat.rotate(0, degree, 0);
 
 	for (int i = 0; i < 1; i++)
 	{

@@ -231,7 +231,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         float y = HIWORD(lParam);
 
         setWndPosInfo(x, y);
-
         return 0;
     }
     case WM_CLOSE:

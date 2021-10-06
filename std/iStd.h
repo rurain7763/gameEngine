@@ -27,6 +27,7 @@
 #include "iQueue.h"
 #include "iStack.h"
 #include "iString.h"
+#include "iList.h"
 
 #include "iImageReader.h"
 #include "iAssetReader.h"
