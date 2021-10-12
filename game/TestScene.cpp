@@ -15,6 +15,8 @@ void TestScene::load(iArray* recvInfo)
 
 	lighting = new iGLLighting();
 
+	iGLFbo test(*devSize, DEPTH_FBO, GL_FLOAT);
+
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 	glGenBuffers(1, &ebo);

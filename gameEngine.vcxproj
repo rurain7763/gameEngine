@@ -286,6 +286,7 @@
     <ClInclude Include="std\iList.h" />
     <ClInclude Include="std\iMatrix.h" />
     <ClInclude Include="std\iImageReader.h" />
+    <ClInclude Include="std\iOpenGL\iGLFbo.h" />
     <ClInclude Include="std\iOpenGL\iGLLighting.h" />
     <ClInclude Include="std\iOpenGL\iGLModel.h" />
     <ClInclude Include="std\iOpenGL\iGLShader.h" />
@@ -319,6 +320,7 @@
     <ClCompile Include="std\iList.cpp" />
     <ClCompile Include="std\iMatrix.cpp" />
     <ClCompile Include="std\iImageReader.cpp" />
+    <ClCompile Include="std\iOpenGL\iGLFbo.cpp" />
     <ClCompile Include="std\iOpenGL\iGLLighting.cpp" />
     <ClCompile Include="std\iOpenGL\iGLModel.cpp" />
     <ClCompile Include="std\iOpenGL\iGLShader.cpp" />

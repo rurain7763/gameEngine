@@ -465,6 +465,9 @@
     <ClInclude Include="std\iList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="std\iOpenGL\iGLFbo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gameEngine.cpp">
@@ -552,6 +555,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="std\iList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="std\iOpenGL\iGLFbo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

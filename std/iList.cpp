@@ -38,27 +38,7 @@ void iList::insert(int idx, void* data)
 {
 	if (idx > num - 1)
 	{
-		if (head)
-		{
-			iListNode* node = head;
-
-			while (node->next)
-			{
-				node = node->next;
-			}
-
-			iListNode* newNode = new iListNode;
-			newNode->data = data;
-			newNode->next = NULL;
-			node->next = newNode;
-		}
-		else
-		{
-			iListNode* newNode = new iListNode;
-			newNode->data = data;
-			newNode->next = NULL;
-			head = newNode;
-		}
+		push_back(data);
 	}
 	else
 	{

@@ -41,10 +41,10 @@ public:
 	void setTexParmi(GLenum name, GLint parm);
 
 public:
-	iString path;
 	GLenum texType;
 	GLuint texID;
 
+	iString path;
 	iGLTexMapType mapType;
 	int width;
 	int height;
