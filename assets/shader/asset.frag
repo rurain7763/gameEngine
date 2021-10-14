@@ -10,6 +10,8 @@ precision mediump float;
 struct iDirectionLight
 {
 	vec3 color;
+	vec3 position;
+
 	vec3 dir;
 
 	float ambientIntensity;

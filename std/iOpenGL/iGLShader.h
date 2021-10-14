@@ -34,5 +34,7 @@ public:
 public:
 	iHashTable* shader;
 	iHashTable* program;
+
+	GLuint currUseProgram;
 };
 

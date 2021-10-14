@@ -7,12 +7,13 @@
 #include "iMatrix.h"
 #include "iCamera.h"
 #include "iArray.h"
-#include "iGLLighting.h"
 #include "iSharedPtr.h"
 
 class iGLMesh;
 class iHashTable;
 class iGLModel;
+class iGLShadow;
+class iGLLighting;
 
 typedef iSharedPtr<iGLModel>   iGLModelPTR;
 typedef iSharedPtr<iGLModel[]> iGLModelARR;
@@ -27,7 +28,7 @@ public:
 	void removeMesh(iGLMesh* mesh);
 	void removeMesh(int idx);
 
-	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLighting* lighting = NULL);
+	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLighting* lighting = NULL, iGLShadow* shadow = NULL);
 
 public:
 	iHashTable* textures;
@@ -48,7 +49,7 @@ public:
 	virtual ~iGLMesh();
 
 	void sendToBuffer();
-	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLighting* lighting = NULL);
+	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLighting* lighting = NULL, iGLShadow* shadow = NULL);
 
 public:
 	iVertexPNU* vertices;

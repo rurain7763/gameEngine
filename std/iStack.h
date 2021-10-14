@@ -9,10 +9,11 @@ public:
 	virtual ~iStack();
 
 	void push(void* v);
+	void* topData();
 	void* pop();
 	bool empty();
 
-public:
+private:
 	iStackData* data;
 	int top;
 

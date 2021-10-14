@@ -51,7 +51,7 @@ struct iVertexPNU
 	iVector2f uv;
 };
 
-
+float dot(const iVector3f& v1, const iVector3f& v2);
 
 
 

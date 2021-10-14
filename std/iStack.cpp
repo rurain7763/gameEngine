@@ -21,6 +21,13 @@ void iStack::push(void* v)
 	top++;
 }
 
+void* iStack::topData()
+{
+	if (top == 0) return NULL;
+
+	return data[top - 1].data;
+}
+
 void* iStack::pop()
 {
 	if (top == 0) return NULL;

@@ -61,9 +61,10 @@ iGLLighting::~iGLLighting()
 	delete dirLightLocInfo;
 }
 
-void iGLLighting::setDirectionalLight(iVector3f color, iVector3f dir,
+void iGLLighting::setDirectionalLight(iVector3f color, iVector3f dir, iVector3f pos,
 									float ambientIntensity, float diffuseIntensity, float specularIntensity)
 {
+	dirLight->position = pos;
 	dirLight->color = color;
 	dirLight->dir = dir;
 	dirLight->ambientIntensity = ambientIntensity;
@@ -78,32 +79,32 @@ void iGLLighting::setPointLight(int idx, iVector3f color, iVector3f pos, float c
 
 	iPointLight* light = &pointLights[idx];
 
+	light->position = pos;
 	light->color = color;
 	light->ambientIntensity = ambientIntensity;
 	light->diffuseIntensity = diffuseIntensity;
 	light->specularIntensity = specularIntensity;
 
-	light->position = pos;
 	light->attenuation.constant = constant;
 	light->attenuation.linear = linear;
 	light->attenuation.exponential = exponential;
 }
 
 void iGLLighting::setSpotLight(int idx, iVector3f color, iVector3f pos, iVector3f dir, float degree,
-							 float constant, float linear, float exponential, 
-							 float ambientIntensity, float diffuseIntensity, float specularIntensity)
+							   float constant, float linear, float exponential, 
+							   float ambientIntensity, float diffuseIntensity, float specularIntensity)
 {
 	if (idx >= MAX_SPOT_LIGHT_NUM ||
 		degree <= 0.f ) return;
 
 	iSpotLight* light = &spotLights[idx];
 
+	light->position = pos;
 	light->color = color;
 	light->ambientIntensity = ambientIntensity;
 	light->diffuseIntensity = diffuseIntensity;
 	light->specularIntensity = specularIntensity;
 
-	light->position = pos;
 	light->dir = dir;
 	light->degree = degree;
 	light->attenuation.constant = constant;
@@ -114,6 +115,8 @@ void iGLLighting::setSpotLight(int idx, iVector3f color, iVector3f pos, iVector3
 void iGLLighting::sendToShader(const char* vertex, const char* frag, iMatrix* trans, iVector3f lookPos)
 {
 	iGLShader* shader = iGLShader::share();
+
+	GLuint backUpProgramID = shader->currUseProgram;
 	GLuint newProgramID = shader->useProgram(vertex, frag);
 
 	if (programID != newProgramID)
@@ -193,6 +196,7 @@ void iGLLighting::sendToShader(const char* vertex, const char* frag, iMatrix* tr
 			spotLightLocInfo[i].exponential = glGetUniformLocation(programID, spotLightStr.str);
 		}
 
+		dirLightLocInfo->pos = glGetUniformLocation(programID, "dirLight.position");
 		dirLightLocInfo->color = glGetUniformLocation(programID, "dirLight.color");
 		dirLightLocInfo->dir = glGetUniformLocation(programID, "dirLight.dir");
 		dirLightLocInfo->ambientIntens = glGetUniformLocation(programID, "dirLight.ambientIntensity");
@@ -203,6 +207,7 @@ void iGLLighting::sendToShader(const char* vertex, const char* frag, iMatrix* tr
 	glUniformMatrix4fv(transMatLoc, 1, GL_TRUE, trans->getData());
 	glUniform3f(cameraPosLoc, lookPos.x, lookPos.y, lookPos.z);
 
+	glUniform3fv(dirLightLocInfo->pos, 1, (GLfloat*)&dirLight->position);
 	glUniform3fv(dirLightLocInfo->color, 1, (GLfloat*)&dirLight->color);
 	glUniform3fv(dirLightLocInfo->dir, 1, (GLfloat*)&dirLight->dir);
 	glUniform1f(dirLightLocInfo->ambientIntens, dirLight->ambientIntensity);
@@ -236,6 +241,8 @@ void iGLLighting::sendToShader(const char* vertex, const char* frag, iMatrix* tr
 		glUniform1f(spotLightLocInfo[i].linear, spotLight->attenuation.linear);
 		glUniform1f(spotLightLocInfo[i].exponential, spotLight->attenuation.exponential);
 	}
+
+	glUseProgram(backUpProgramID);
 }
 
 

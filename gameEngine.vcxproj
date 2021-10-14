@@ -290,6 +290,7 @@
     <ClInclude Include="std\iOpenGL\iGLLighting.h" />
     <ClInclude Include="std\iOpenGL\iGLModel.h" />
     <ClInclude Include="std\iOpenGL\iGLShader.h" />
+    <ClInclude Include="std\iOpenGL\iGLShadow.h" />
     <ClInclude Include="std\iOpenGL\iGLTexture.h" />
     <ClInclude Include="std\iOpenGL\iOpenGL.h" />
     <ClInclude Include="std\iQuaternion.h" />
@@ -324,6 +325,7 @@
     <ClCompile Include="std\iOpenGL\iGLLighting.cpp" />
     <ClCompile Include="std\iOpenGL\iGLModel.cpp" />
     <ClCompile Include="std\iOpenGL\iGLShader.cpp" />
+    <ClCompile Include="std\iOpenGL\iGLShadow.cpp" />
     <ClCompile Include="std\iOpenGL\iGLTexture.cpp" />
     <ClCompile Include="std\iOpenGL\iOpenGL.cpp" />
     <ClCompile Include="std\iQuaternion.cpp" />

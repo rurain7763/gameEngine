@@ -22,7 +22,7 @@ public:
 	void scale(float x, float y, float z);
 	iMatrix getMatrix();
 
-private:
+public:
 	iVector3f positionV;
 	iVector3f rotationV;
 	iVector3f scaleV;

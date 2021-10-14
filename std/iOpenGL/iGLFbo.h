@@ -3,9 +3,16 @@
 #include "gl/glew.h"
 
 #include "iType.h"
+#include "iStack.h"
+
+#define BINDINGFBO_MAX_STACK_SIZE 30
 
 #define COLOR_FBO  0
 #define DEPTH_FBO  1
+
+#define TEMPTEXS_MAX_STACK_SIZE 30
+
+class iGLTexture;
 
 class iGLFbo
 {
@@ -21,6 +28,16 @@ public:
 	virtual ~iGLFbo();
 
 	void bind();
+	void unbind();
+
+	void pushTempTexture(iGLTexture* tex);
+	void popTempTexture();
+
+	void bindTexture(GLenum texUnit);
+
+private:
+	static iStack bindingFbo;
+	iStack tempTexs;
 
 public:
 	uint32 fboFormat;

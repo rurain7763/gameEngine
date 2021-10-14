@@ -16,6 +16,8 @@ public:
 
 	bool onKey(int key, float dt);
 	void onMouse(iVector2f mousePos, float dt);
+	void setLookAt(iVector3f lookPos);
+
 	iMatrix getMatrix();
 
 private:
@@ -23,10 +25,11 @@ private:
 	float hAngle;
 	float vAngle;
 
+	iVector3f up;
+
 public:
 	iVector3f position;
 	iVector3f lookAt;
-	iVector3f up;
 
 	float speed;
 	float sensitive;

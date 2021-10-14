@@ -96,6 +96,7 @@ GLuint iGLShader::useProgram(const char* vs, const char* fs)
 	}
 
 	glUseProgram(*programID);
+	currUseProgram = *programID;
 
 	return *programID;
 }

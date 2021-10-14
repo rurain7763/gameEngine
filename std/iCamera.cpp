@@ -106,6 +106,49 @@ void iCamera::onMouse(iVector2f mousePos, float dt)
 	prevMp = mousePos;
 }
 
+void iCamera::setLookAt(iVector3f lookPos)
+{
+	iVector3f up = { 0.f, 1.f, 0.f };
+	iVector3f look = { 1.f, 0.f, 0.f };
+
+	iVector3f dir = lookPos - position;
+	dir = dir.normalized();
+
+	hAngle = ToDegree(asin(dir.z));
+	vAngle = -ToDegree(asin(dir.y));
+
+	if (dir.z >= 0.f)
+	{
+		if (dir.x >= 0.f)
+		{
+			hAngle = 360.f - hAngle;
+		}
+		else
+		{
+			hAngle = 180.f + hAngle;
+		}
+	}
+	else
+	{
+		if (dir.x >= 0.f)
+		{
+			hAngle *= -1;
+		}
+		else
+		{
+			hAngle = 180.f + hAngle;
+		}
+	}
+
+	look.rotate(up, hAngle);
+
+	iVector3f right = up.cross(look);
+	look.rotate(right, vAngle);
+
+	lookAt = look;
+	this->up = look.cross(right);
+}
+
 iMatrix iCamera::getMatrix()
 {
 	iMatrix rot;

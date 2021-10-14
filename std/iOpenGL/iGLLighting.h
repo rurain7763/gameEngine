@@ -24,6 +24,7 @@ struct iLight
 {
 	uint8 flag;
 
+	iVector3f position;
 	iVector3f color;
 
 	float ambientIntensity;
@@ -38,14 +39,11 @@ struct iDirectionLight : public iLight
 
 struct iPointLight : public iLight
 {
-	iVector3f position;
-
 	Attenuation attenuation;
 };
 
 struct iSpotLight : public iLight
 {
-	iVector3f position;
 	iVector3f dir;
 	float degree;
 
@@ -58,7 +56,7 @@ public:
 	iGLLighting();
 	virtual ~iGLLighting();
 
-	void setDirectionalLight(iVector3f color, iVector3f dir,
+	void setDirectionalLight(iVector3f color, iVector3f dir, iVector3f pos,
 							 float ambientIntensity = 1.f, float diffuseIntensity = 1.f,
 							 float specularIntensity = 1.f);
 
@@ -76,11 +74,10 @@ private:
 	GLuint transMatLoc;
 	GLuint cameraPosLoc;
 
-	iPointLight* pointLights;
 	struct PointLightLocInfo
 	{
-		GLuint color;
 		GLuint pos;
+		GLuint color;
 		GLuint ambientIntens;
 		GLuint diffuseIntens;
 		GLuint specularIntens;
@@ -90,11 +87,10 @@ private:
 	};
 	PointLightLocInfo* pointLightLocInfo;
 
-	iSpotLight* spotLights;
 	struct SpotLightLocInfo
 	{
-		GLuint color;
 		GLuint pos;
+		GLuint color;
 		GLuint dir;
 		GLuint maximum;
 		GLuint ambientIntens;
@@ -106,15 +102,20 @@ private:
 	};
 	SpotLightLocInfo* spotLightLocInfo;
 
-	iDirectionLight* dirLight;
 	struct DirectionLightLocInfo
 	{
+		GLuint pos;
 		GLuint color;
 		GLuint dir;
 		GLuint ambientIntens;
 		GLuint diffuseIntens;
 		GLuint specularIntens;
 	};
-	DirectionLightLocInfo* dirLightLocInfo;
+	DirectionLightLocInfo* dirLightLocInfo;	
+
+public:
+	iPointLight* pointLights;
+	iSpotLight* spotLights;
+	iDirectionLight* dirLight;
 };
 
