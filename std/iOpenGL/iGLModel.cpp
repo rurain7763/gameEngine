@@ -37,12 +37,12 @@ void iGLModel::removeMesh(int idx)
 	meshs.erase(idx);
 }
 
-void iGLModel::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLighting* lighting, iGLShadow* shadow)
+void iGLModel::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLighting* lighting)
 {
 	for (int i = 0; i < meshs.dataNum; i++)
 	{
 		iGLMesh* mesh = (iGLMesh*)meshs[i];
-		mesh->draw(proj, camera, trans, lighting, shadow);
+		mesh->draw(proj, camera, trans, lighting);
 	}
 }
 
@@ -98,7 +98,7 @@ void iGLMesh::sendToBuffer()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void iGLMesh::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLighting* lighting, iGLShadow* shadow)
+void iGLMesh::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLighting* lighting)
 {
 	if (vao == 0) return;
 
@@ -114,11 +114,6 @@ void iGLMesh::draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLightin
 		iMatrix objTrans = trans->getTransMatrix();
 		lighting->sendToShader("asset", "asset", &objTrans, camera->position);
 
-		if (shadow)
-		{
-			
-			//shadow->updateDepthBuffer(proj, camera, trans, this, )
-		}
 	}
 
 	iMatrix tvpMat = (*proj) * camera->getMatrix() * trans->getMatrix();

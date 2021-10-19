@@ -13,6 +13,10 @@ void TestScene::load(iArray* recvInfo)
 	//model = assetReader->loadGLAsset("assets/test/back/backpack.obj");
 	assetReader->asyncLoadGLAsset("assets/test/back/backpack.obj", &model);
 
+	iGLFbo fbo;
+	fbo.addColorBuffer(100, 100);
+	fbo.addDepthBuffer(100, 100);
+
 	lighting = new iGLLighting();
 
 	glGenVertexArrays(1, &vao);
@@ -36,6 +40,7 @@ void TestScene::update(float dt)
 	static iVector3f boxPos;
 	static iVector3f testModelPos;
 	static iVector3f origin = { 0.f, 0.f, 0.f };
+	static iVector3f dirLightPos = { 0.f, 1000.f, 0.f };
 
 	static float degree = 0.f;
 	degree += timeMg->deltaTime * 50.f;
@@ -43,7 +48,7 @@ void TestScene::update(float dt)
 	static float time = 0;
 	time += timeMg->deltaTime;
 
-	lighting->setDirectionalLight({ .1f, .1f, .1f }, origin - boxPos, {0, 1000, 0}, 0.1f);
+	lighting->setDirectionalLight({ .1f, .1f, .1f }, origin - dirLightPos, dirLightPos, 0.1f);
 	lighting->setPointLight(0, { 1.f, 1.f, 1.f }, boxPos, 1.f, 1.f, 1.f);
 	lighting->setPointLight(1, { 1.f, 1.f, 1.f }, { isin(degree) * 3.f, icos(degree) * 3.f, 0.f }, 1.f, 1.f, 1.f);
 	lighting->setSpotLight(0, { 1.f, 1.f, 1.f }, camera->position, camera->lookAt, 30.f, .3f, .5f, .2f);

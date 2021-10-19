@@ -2,13 +2,22 @@
 #include"iStd.h"
 
 iGLShadow::iGLShadow(iSize devSize)
-	:shadowFbo(devSize, DEPTH_FBO, GL_FLOAT)
 {
+	shadowFbo.addDepthBuffer(devSize.width, devSize.height);
+	
+	shadowFbo.bind();
+
+	glDrawBuffer(GL_NONE);
+	glDrawBuffer(GL_NONE);
+
+	shadowFbo.unbind();
+
 	shadowTexture.resize(1 + MAX_POINT_LIGHT_NUM + MAX_SPOT_LIGHT_NUM);
 }
 
 iGLShadow::~iGLShadow()
 {
+
 }
 
 void iGLShadow::updateDepthBuffer(iMatrix* proj, iCamera* camera, iTransform* trans, iGLMesh* mesh, iLight* light)
@@ -19,10 +28,26 @@ void iGLShadow::updateDepthBuffer(iMatrix* proj, iCamera* camera, iTransform* tr
 	iVector3f backUpLookAt = camera->lookAt;
 	iVector3f backUpCameraPos = camera->position;
 
-	shadowFbo.bind();
+	shadowFbo.bindForDraw();
+	glClear(GL_DEPTH_BUFFER_BIT);
+
 	GLuint programID = shader->useProgram("shadow", "shadow");
 
-	camera->setLookAt(trans->positionV);
+	if (light->flag == DIRECTIONLIGHT)
+	{
+		iDirectionLight* dirLight = (iDirectionLight*)light;
+		camera->setLookAt(dirLight->dir);
+	}
+	else if (light->flag == SPOTLIGHT)
+	{
+		iSpotLight* spotLight = (iSpotLight*)light;
+		camera->setLookAt(spotLight->dir);
+	}
+	else if(light->flag == POINTLIGHT)
+	{
+		camera->setLookAt(trans->positionV);
+	}
+
 	camera->position = light->position;
 	iMatrix tvp = (*proj) * camera->getMatrix() * trans->getMatrix();
 
@@ -40,7 +65,9 @@ void iGLShadow::updateDepthBuffer(iMatrix* proj, iCamera* camera, iTransform* tr
 	glDisableVertexAttribArray(pos);
 	glDisableVertexAttribArray(uv);
 
-	glDrawBuffer(GL_NONE);
+	GLuint tex = glGetUniformLocation(programID, "tex");
+	shadowFbo.bindTexture(GL_TEXTURE0, iGLFboBufferTypeDepth);
+	glUniform1i(tex, 0);
 
 	shadowFbo.unbind();
 

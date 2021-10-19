@@ -28,7 +28,7 @@ public:
 	void removeMesh(iGLMesh* mesh);
 	void removeMesh(int idx);
 
-	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLighting* lighting = NULL, iGLShadow* shadow = NULL);
+	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLighting* lighting = NULL);
 
 public:
 	iHashTable* textures;
@@ -49,7 +49,7 @@ public:
 	virtual ~iGLMesh();
 
 	void sendToBuffer();
-	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLighting* lighting = NULL, iGLShadow* shadow = NULL);
+	void draw(iMatrix* proj, iCamera* camera, iTransform* trans, iGLLighting* lighting = NULL);
 
 public:
 	iVertexPNU* vertices;
