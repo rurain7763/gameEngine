@@ -19,6 +19,21 @@ void endGdi()
     GdiplusShutdown(gdiplusToken);
 }
 
+void loadWSA()
+{
+    WSADATA wsaData;
+
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+    {
+        printf("WSAStartup() failed!\n");
+    }
+}
+
+void endWSA()
+{
+    WSACleanup();
+}
+
 iRect getWndRectInfo()
 {
     return wndRtInfo;

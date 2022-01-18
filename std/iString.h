@@ -28,7 +28,7 @@ public:
 	void clear();
 	bool empty();
 	void shrink_to_fit();
-	char& at(int idx);
+	char at(int idx) const;
 
 	iString& append(const iString& istr, uint32 subPos = 0, uint32 subLen = 0);
 	iString& append(const char* str, uint32 num = 1);
@@ -57,3 +57,6 @@ public:
 };
 
 iString operator+(const iString& str1, const iString& str2);
+
+bool operator==(const iString& str1, const iString& str2);
+bool operator!=(const iString& str1, const iString& str2);

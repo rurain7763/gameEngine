@@ -1,16 +1,27 @@
 #pragma once
 
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#define USE_SOCKET true
+
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <windows.h>
 #include <Windowsx.h>
 #include <objidl.h>
 #include <gdiplus.h>
-using namespace Gdiplus;
-#pragma comment (lib,"Gdiplus.lib")
 
 #include "iType.h"
 
+#pragma comment(lib, "ws2_32.lib")
+#pragma comment (lib,"Gdiplus.lib")
+
+using namespace Gdiplus;
+
 void loadGdi();
 void endGdi();
+
+void loadWSA();
+void endWSA();
 
 iRect getWndRectInfo();
 

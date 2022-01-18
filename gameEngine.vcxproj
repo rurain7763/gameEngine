@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="gameEngine.h" />
     <ClInclude Include="game\Game.h" />
+    <ClInclude Include="game\ServerScene.h" />
     <ClInclude Include="game\TestScene.h" />
     <ClInclude Include="reference\assimp\include\assimp\aabb.h" />
     <ClInclude Include="reference\assimp\include\assimp\ai_assert.h" />
@@ -311,6 +312,7 @@
   <ItemGroup>
     <ClCompile Include="gameEngine.cpp" />
     <ClCompile Include="game\Game.cpp" />
+    <ClCompile Include="game\ServerScene.cpp" />
     <ClCompile Include="game\TestScene.cpp" />
     <ClCompile Include="std\glew.c" />
     <ClCompile Include="std\iArray.cpp" />

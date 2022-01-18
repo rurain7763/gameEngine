@@ -118,7 +118,9 @@ iBinarySearchTree::iBinarySearchTree(CompareMethod e, MinMethod m)
 
 iBinarySearchTree::~iBinarySearchTree()
 {
-	iQueue q(num == 0 ? num + 1 : num);
+	if (num == 0) return;
+
+	iQueue q(num);
 	q.push(root);
 
 	while (!q.empty())

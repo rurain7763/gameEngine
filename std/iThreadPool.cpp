@@ -13,7 +13,7 @@ void* work(void* info)
 	while (1)
 	{
 		pthread_testcancel();
-
+		
 		pthread_mutex_lock(&threadInfo->condMutex);
 		threadInfo->status = WORKER_STATUS_WAIT;
 		pthread_cond_wait(&threadInfo->cond, &threadInfo->condMutex);
@@ -80,7 +80,6 @@ iThreadPool::~iThreadPool()
 			err = pthread_cancel(info->thread);
 		}
 
-		pthread_join(info->thread, NULL);
 		printf("thread %d was destroyed\n", info->threadID);
 
 		pthread_mutex_destroy(&info->condMutex);

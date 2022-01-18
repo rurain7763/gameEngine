@@ -27,8 +27,8 @@ private:
 
 public:
 	virtual ~iAssetReader();
-
 	static iAssetReader* share();
+
 	iGLModel* loadGLAsset(const char* path);
 	void asyncLoadGLAsset(const char* path, iGLModel** recieve);
 

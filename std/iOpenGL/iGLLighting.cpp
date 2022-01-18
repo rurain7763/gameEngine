@@ -244,5 +244,3 @@ void iGLLighting::sendToShader(const char* vertex, const char* frag, iMatrix* tr
 
 	glUseProgram(backUpProgramID);
 }
-
-

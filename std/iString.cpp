@@ -220,12 +220,11 @@ void iString::shrink_to_fit()
 	str = copy;
 }
 
-char& iString::at(int idx)
+char iString::at(int idx) const
 {
 	if (idx >= len)
 	{
-		char* dummy = NULL;
-		return *dummy;
+		return 0;
 	}
 	
 	return str[idx];
@@ -594,5 +593,29 @@ iString operator+(const iString& str1, const iString& str2)
 	delete[] str;
 
 	return r;
+}
+
+bool operator==(const iString& str1, const iString& str2)
+{
+	if (str1.len != str2.len) return false;
+	
+	for (int i = 0; i < str1.len; i++)
+	{
+		if (str1.at(i) != str2.at(i)) return false;
+	}
+
+	return true;
+}
+
+bool operator!=(const iString& str1, const iString& str2)
+{
+	if (str1.len != str2.len) return true;
+
+	for (int i = 0; i < str1.len; i++)
+	{
+		if (str1.at(i) != str2.at(i)) return true;
+	}
+
+	return false;
 }
 

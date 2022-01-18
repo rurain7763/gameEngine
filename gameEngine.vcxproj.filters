@@ -471,6 +471,9 @@
     <ClInclude Include="std\iOpenGL\iGLShadow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="game\ServerScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gameEngine.cpp">
@@ -564,6 +567,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="std\iOpenGL\iGLShadow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\ServerScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
