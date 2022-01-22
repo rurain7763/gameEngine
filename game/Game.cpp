@@ -65,6 +65,7 @@ void drawGame()
 
 void endGame()
 {
+	delete sceneMg;
 	delete inputMg;
 	delete timeMg;
 	delete camera;
@@ -72,5 +73,4 @@ void endGame()
 	delete assetReader;
 	delete shader;
 	delete threadPool;
-	delete sceneMg;
 }

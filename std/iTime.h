@@ -14,6 +14,7 @@ private:
 public:
 	static iTime* share();
 
+	uint64 getMilliSec();
 	long long getPlayTime();
 	void update();
 

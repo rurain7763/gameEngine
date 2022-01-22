@@ -4,7 +4,9 @@
 
 void ServerScene::load(iArray* recvInfo)
 {
-	chatServer = new iChatServer();
+	//chatServer = new iChatServer();
+	serv = new iServer("192.168.50.84", 9600);
+	iThreadPool::share()->addJob(iServer::run, serv);
 }
 
 void ServerScene::update(float dt)
@@ -25,63 +27,26 @@ void ServerScene::update(float dt)
 
 void ServerScene::free()
 {
-	delete chatServer;
-}
-
-int clientSock[2];
-
-void* service(void* cs)
-{
-	int idx = *(int*)cs - 1;
-
-	char buffer[SERVER_BUFFER_SIZE];
-
-	int funcResult = 1;
-
-	while (funcResult > 0)
-	{
-		funcResult = recv(clientSock[idx], buffer, SERVER_BUFFER_SIZE, 0);
-
-		if (funcResult > 0)
-		{
-			buffer[funcResult] = 0;
-			printf("%s\n", buffer);
-		}
-		else if (funcResult == 0)
-		{
-			printf("Connection closing...\n");
-			closesocket(clientSock[idx]);
-			break;
-	}
-		else
-		{
-			printf("recv failed with error: %d\n", WSAGetLastError());
-			closesocket(clientSock[idx]);
-			break;
-		}
-
-		funcResult = 1;
-	}
+	//delete chatServer;
+	delete serv;
 }
 
 iChatServer::iChatServer()
 {
+	step = 0;
+
 	msg[0] = "Id Password";
 	msg[1] = "";
 
-	allUser = new iBinarySearchTree(userEqualMethod, userMinMethod);
+	memset(buff, 0, sizeof(char) * SERVER_BUFFER_SIZE);
 
-	servSock = createSocket("192.168.50.84", 9600, IPPROTO_TCP);
+	servSock = createSocket("192.168.50.84", 9600);
 
-	listen(servSock, SOMAXCONN);
-
-	iThreadPool::share()->addJob(service, this);
+	iThreadPool::share()->addJob(service, this, serviceEnd);
 }
 
 iChatServer::~iChatServer()
 {
-	closesocket(servSock);
-
 	for (int i = 0; i < _allUser.dataNum; i++)
 	{
 		iChatUser* user = (iChatUser*)_allUser[i];
@@ -90,13 +55,26 @@ iChatServer::~iChatServer()
 		delete user;
 	}
 
-	delete allUser;
+	closesocket(servSock);
 }
 
 void* iChatServer::service(void* server)
 {
 	iChatServer* serv = (iChatServer*)server;
-	int funcResult;
+	int* servResult = new int(0);
+
+	*servResult = listen(serv->servSock, SOMAXCONN);
+
+	if (servResult < 0)
+	{
+		*servResult = 1;
+
+		return servResult;
+	}
+
+	int allUser = 0;
+	iChatRoom room;
+	serv->allRooms.push_back(&room);
 
 	while (1)
 	{
@@ -109,249 +87,113 @@ void* iChatServer::service(void* server)
 
 		if (stranger < 0)
 		{
-			printf("accept failed with error: %d\n", WSAGetLastError());
-			continue;
+			*servResult = 2;
+
+			return servResult;
 		}
 		else
 		{
 			printf("hello %s\n", inet_ntoa(strangerAddr.sin_addr));
 		}
 
-		iChatUser user;
-		char* r;
-		int recvLen = 0;
-		
-		//id password
-		isend(stranger, serv->msg[serv->step]);
-		serv->step++;
+		iChatUser* user = new iChatUser;
+		user->currRoom = &room;
+		user->socket = stranger;
+		user->clientAddr = strangerAddr;
+		user->nickName = "Temp";
+		user->nickName += toString(allUser++);
+		user->passWord = "Temp";
 
-		r = irecv(stranger);
-		recvLen = strlen(r);
-		bool tick = true;
+		room.users.push_back(user);
 
-		for (int i = 0; i < recvLen; i++)
-		{
-			if (r[i] == ' ')
-			{
-				tick = false;
-				continue;
-			}
-
-			if (tick)
-			{
-				user.nickName += r[i];
-			}
-			else
-			{
-				user.passWord += r[i];
-			}
-		}
-
-		delete[] r;
-
-		if (!serv->allUser->find(&user))
-		{
-			//new
-			iChatUser* u = new iChatUser(user);
-			u->socket = stranger;
-			u->clientAddr = strangerAddr;
-
-			serv->allUser->insert(u);
-			serv->_allUser.push_back(u);
-		}
-		else
-		{
-
-		}
-
-		printf("current user population %d\n", serv->allUser->num);
-		closesocket(stranger);
+		iThreadPool::share()->addJob(recvUserMsg, user, answerToUser);
 	}
 
-	return nullptr;
+	*servResult = 0;
+
+	return servResult;
 }
 
-bool iChatServer::userEqualMethod(void* left, void* right)
+void iChatServer::serviceEnd(void* r)
 {
-	iChatUser* user1 = (iChatUser*)left;
-	iChatUser* user2 = (iChatUser*)right;
+	int* result = (int*)r;
 
-	if (user1->nickName == user2->nickName)
+	if (*result == 1)
 	{
-		if (user1->passWord == user2->passWord)
-		{
-			return true;
-		}
+		printf("listen() failed with error\n");
+	}
+	else if (*result == 2)
+	{
+		printf("accept() failed with error\n");
 	}
 
-	return false;
+	delete result;
 }
 
-void* iChatServer::userMinMethod(void* left, void* right)
+void* iChatServer::recvUserMsg(void* chatUser)
 {
-	iChatUser* user1 = (iChatUser*)left;
-	iChatUser* user2 = (iChatUser*)right;
+	iChatUser* user = (iChatUser*)chatUser;
 
-	int user1Len = user1->nickName.len + user1->passWord.len;
-	int user2Len = user2->nickName.len + user2->passWord.len;
+	char* msg = irecv(user->socket);
 
-	if (user1Len == user2Len)
+	if (msg)
 	{
-		int len = min(user1->nickName.len, user2->nickName.len);
-
-		for (int i = 0; i < len; i++)
-		{
-			char l = user1->nickName.at(i);
-			char r = user2->nickName.at(i);
-
-			if (l == r) continue;
-
-			return l < r ? left : right;
-		}
-
-		return len == user1->nickName.len ? left : right;
-	}
-
-	return user1Len > user2Len ? left : right;
-}
-
-int createSocket(const char* si, uint16 sp, IPPROTO prot)
-{
-	int servSock = socket(AF_INET,
-		prot == IPPROTO_TCP ? SOCK_STREAM : SOCK_DGRAM,
-		prot);
-
-	if (servSock < 0)
-	{
-		printf("socket() error\n");
-		return -1;
-	}
-
-	sockaddr_in servAddr;
-	memset(&servAddr, 0, sizeof(sockaddr_in));
-
-	servAddr.sin_family = AF_INET;
-	servAddr.sin_addr.s_addr = inet_addr(si);
-	servAddr.sin_port = htons(sp);
-
-	int funcResult;
-
-	funcResult = bind(servSock, (sockaddr*)&servAddr, sizeof(servAddr));
-
-	if (funcResult != 0)
-	{
-		printf("bind() error\n");
-
-#ifdef __unix__
-		close(servSock);
-#elif _WIN32
-		closesocket(servSock);
-#endif
-
-		return -1;
-	}
-
-	return servSock;
-}
-
-bool isend(uint64 socket, const char* m)
-{
-	uint16 len = strlen(m);
-
-	char* msg = new char[len + 3];
-
-	for (int i = 1; i > -1; i--)
-	{
-		uint8 c = ((uint8*)&len)[i];
-		msg[1 - i] = c;
-	}
-
-	memcpy(&msg[2], m, sizeof(char) * len);
-
-	msg[len + 2] = 0;
-
-	int funcResult = send(socket, msg, 2 + len, 0);
-
-	if (funcResult < 0)
-	{
-		printf("send failed with error: %d\n", WSAGetLastError());
+		int len = strlen(msg);
+		memcpy(user->buff, msg, sizeof(char) * len + 1);
 		delete[] msg;
-		return false;
 	}
 	else
 	{
-		printf("send %d byte to client\n", len);
-		delete[] msg;
-		return true;
+		user->buff[0] = 0;
 	}
+
+	return chatUser;
 }
 
-char* irecv(uint64 socket)
+void iChatServer::answerToUser(void* chatUser)
 {
-	char* result = NULL;
-	int off = 0;
+	iChatUser* user = (iChatUser*)chatUser;
 
-	char buffer[256];
+	char flag = user->buff[0];
 
-	int recvResult = 0;
-	uint16 msgLen = 0;
-
-	while (1)
+	if (flag != 0)
 	{
-		recvResult = recv(socket, buffer, 1024, 0);
-
-		if (recvResult > 0)
+		if (flag == CLIENT_REQUEST)
 		{
-			//must be modify... it may occur many error in future
-			if (!msgLen)
+			iArray* users = &user->currRoom->users;
+
+			for (int i = 0; i < users->dataNum; i++)
 			{
-				int len = recvResult - 2;
+				iChatUser* u = (iChatUser*)(*users)[i];
 
-				for (int i = 1; i > -1; i--)
-				{
-					uint8 c = buffer[i];
+				if (u->nickName == user->nickName) continue;
 
-					for (int j = 0; j < 8; j++)
-					{
-						msgLen |= (uint16)(c & (1 << j)) << (8 * (1 - i));
-					}
-				}
-
-				result = new char[msgLen + 1];
-
-				for (int i = 0; i < len; i++)
-				{
-					result[off] = buffer[i + 2];
-					off++;
-				}
+				isend(u->socket, &user->buff[1]);
 			}
-			else
-			{
-				for (int i = 0; i < recvResult; i++)
-				{
-					result[off] = buffer[i];
-					off++;
-				}
-			}
-
-			if (off == msgLen) break;
 		}
-		else if (recvResult == 0)
+		else if (flag == CLIENT_ANSWER)
 		{
-			printf("Connection closing...\n");
-			break;
+
+		}
+		else if (flag == CLIENT_CLOSINGSIGN)
+		{
+			printf("good bye %s\n", inet_ntoa(user->clientAddr.sin_addr));
+			closesocket(user->socket);
+			delete user;
+
+			return;
 		}
 		else
 		{
-			printf("recv failed with error: %d\n", WSAGetLastError());
-			break;
+			printf("answerToUser() message format error\n");
+			closesocket(user->socket);
+			delete user;
+
+			return;
 		}
 	}
 
-	result[off] = 0;
-
-	return result;
+	iThreadPool::share()->addJob(recvUserMsg, user, answerToUser);
 }
-
 
 

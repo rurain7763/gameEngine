@@ -6,22 +6,17 @@ iThreadPool* iThreadPool::S = NULL;
 void* work(void* info)
 {
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-	pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
-
+	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+	
 	iThreadInfo* threadInfo = (iThreadInfo*)info;
 
 	while (1)
 	{
-		pthread_testcancel();
-		
 		pthread_mutex_lock(&threadInfo->condMutex);
 		threadInfo->status = WORKER_STATUS_WAIT;
 		pthread_cond_wait(&threadInfo->cond, &threadInfo->condMutex);
 		pthread_mutex_unlock(&threadInfo->condMutex);
 		
-		pthread_testcancel();
-
-		threadInfo->status = WORKER_STATUS_WORKING;
 		iJobInfo* jobInfo = threadInfo->jobInfo;
 
 		void* result = NULL;
@@ -56,7 +51,7 @@ iThreadPool::iThreadPool()
 	{
 		iThreadInfo* info = &worker[i];
 
-		info->status = WORKER_STATUS_WAIT;
+		info->status = WORKER_STATUS_CREATING;
 		info->threadID = i;
 		info->jobInfo = NULL;
 		
@@ -64,7 +59,11 @@ iThreadPool::iThreadPool()
 		pthread_cond_init(&info->cond, NULL);
 
 		pthread_create(&info->thread, NULL, work, (void*)info);
+
+		while (info->status != WORKER_STATUS_WAIT);
 	}
+
+	pthread_mutex_init(&mutex, NULL);
 }
 
 iThreadPool::~iThreadPool()
@@ -96,6 +95,8 @@ iThreadPool::~iThreadPool()
 		delete info->args;
 		delete info;
 	}
+
+	pthread_mutex_destroy(&mutex);
 }
 
 iThreadPool* iThreadPool::share()
@@ -108,7 +109,10 @@ void iThreadPool::addJob(ThreadJobMethodNoArg method, ThreadJobMethodCallBack ca
 {
 	if (job.num == job.size)
 	{
-		printf("your order was skipped because job queue size is small than your orders. increase your queue size.\n");
+		printf("your order was skipped \
+				because job queue size is small than your orders. \
+				increase your queue size.\n");
+
 		return;
 	}
 
@@ -120,7 +124,9 @@ void iThreadPool::addJob(ThreadJobMethodNoArg method, ThreadJobMethodCallBack ca
 	info->completeJob = false;
 	info->jobResult = NULL;
 
+	pthread_mutex_lock(&mutex);
 	job.push(info);
+	pthread_mutex_unlock(&mutex);
 }
 
 void iThreadPool::addJob(ThreadJobMethodOneArg method, void* arg,
@@ -128,7 +134,10 @@ void iThreadPool::addJob(ThreadJobMethodOneArg method, void* arg,
 {
 	if (job.num == job.size)
 	{
-		printf("your order was skipped because job queue size is small than your orders. increase your queue size.\n");
+		printf("your order was skipped \
+				because job queue size is small than your orders. \
+				increase your queue size.\n");
+
 		return;
 	}
 
@@ -141,15 +150,21 @@ void iThreadPool::addJob(ThreadJobMethodOneArg method, void* arg,
 	info->completeJob = false;
 	info->jobResult = NULL;
 
+	pthread_mutex_lock(&mutex);
 	job.push(info);
+	pthread_mutex_unlock(&mutex);
 }
 
 void iThreadPool::addJob(ThreadJobMethodTwoArg method, void* arg1, void* arg2,
 						 ThreadJobMethodCallBack callBack)
 {
+
 	if (job.num == job.size)
 	{
-		printf("your order was skipped because job queue size is small than your orders. increase your queue size.\n");
+		printf("your order was skipped \
+				because job queue size is small than your orders. \
+				increase your queue size.\n");
+
 		return;
 	}
 
@@ -163,7 +178,21 @@ void iThreadPool::addJob(ThreadJobMethodTwoArg method, void* arg1, void* arg2,
 	info->completeJob = false;
 	info->jobResult = NULL;
 
+	pthread_mutex_lock(&mutex);
 	job.push(info);
+	pthread_mutex_unlock(&mutex);
+}
+
+bool iThreadPool::isAllWorkDone()
+{
+	for (int i = 0; i < workerNum; i++)
+	{
+		iThreadInfo* info = &worker[i];
+
+		if (info->status == WORKER_STATUS_WORKING) return false;
+	}
+
+	return true;
 }
 
 void iThreadPool::update()
@@ -186,6 +215,7 @@ void iThreadPool::update()
 
 		if (!job.empty() && info->status == WORKER_STATUS_WAIT)
 		{
+			info->status = WORKER_STATUS_WORKING;
 			info->jobInfo = (iJobInfo*)job.pop();
 
 			pthread_mutex_lock(&info->condMutex);

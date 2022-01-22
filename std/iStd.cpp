@@ -55,6 +55,21 @@ bool isPrime(unsigned int v)
 	return true;
 }
 
+unsigned int iabs(int v)
+{
+	return v > 0 ? v : v * -1;
+}
+
+float iabs(float v)
+{
+	return v > 0.f ? v : v * -1;
+}
+
+int imin(int v1, int v2)
+{
+	return v1 < v2 ? v1 : v2;
+}
+
 char* readFile(const char* path)
 {
 	FILE* file = fopen(path, "rb");
@@ -106,6 +121,143 @@ char* getFileNameInPath(const char* path)
 	r[rLen] = 0;
 
 	return r;
+}
+
+int createSocket(const char* si, uint16 sp)
+{
+	int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+	if (sock < 0)
+	{
+		printf("socket() error\n");
+		return -1;
+	}
+
+	sockaddr_in addr;
+	memset(&addr, 0, sizeof(sockaddr_in));
+
+	addr.sin_family = AF_INET;
+	addr.sin_addr.s_addr = inet_addr(si);
+	addr.sin_port = htons(sp);
+
+	int funcResult = bind(sock, (sockaddr*)&addr, sizeof(addr));
+
+	if (funcResult != 0)
+	{
+		printf("bind() error\n");
+		closeSocket(sock);
+
+		return -1;
+	}
+
+	return sock;
+}
+
+void closeSocket(uint64 socket)
+{
+#ifdef __unix__
+	close(servSock);
+#elif _WIN32
+	closesocket(socket);
+#endif
+}
+
+bool isend(uint64 socket, const char* m)
+{
+	uint16 len = strlen(m);
+
+	char* msg = new char[len + 2];
+
+	for (int i = 1; i > -1; i--)
+	{
+		uint8 c = ((uint8*)&len)[i];
+		msg[1 - i] = c;
+	}
+
+	memcpy(&msg[2], m, sizeof(char) * len);
+
+	int funcResult = send(socket, msg, 2 + len, 0);
+
+	if (funcResult < 0)
+	{
+		printf("send() failed with error\n");
+		delete[] msg;
+		return false;
+	}
+	else
+	{
+		printf("send %d bytes\n", len);
+		delete[] msg;
+		return true;
+	}
+}
+
+char* irecv(uint64 socket)
+{
+	int off = 0;
+	char* result = NULL;
+
+	int recvResult = -1;
+	char buff[2048];
+	uint16 msgLen = 0;
+
+	while (!result)
+	{
+		recvResult = recv(socket, buff, sizeof(buff), 0);
+
+		if (recvResult > 0)
+		{
+			for (int i = 0; i < recvResult; i++)
+			{
+				uint8* ml = (uint8*)&msgLen;
+				ml[1 - off] = buff[i];
+				off++;
+
+				if (off >= 2)
+				{
+					off = 0;
+					result = new char[msgLen + 1];
+
+					for (int j = i + 1; j < recvResult; j++)
+					{
+						result[off++] = buff[j];
+					}
+
+					break;
+				}
+			}
+		}
+		else
+		{
+			if (recvResult == 0) printf("irecv() : Connection closing...\n");
+			if (result) delete[] result;
+			return result;
+		}
+	}
+
+	while (off != msgLen)
+	{
+		recvResult = recv(socket, buff, sizeof(buff), 0);
+
+		if (recvResult > 0)
+		{
+			for (int i = 0; i < recvResult; i++)
+			{
+				result[off++] = buff[i];
+			}
+		}
+		else
+		{
+			if (recvResult == 0) printf("irecv() : Connection closing...\n");
+			if (result) delete[] result;
+			return result;
+		}
+	}
+
+	printf("irecv() : recv %d bytes\n", off);
+	result[off] = 0;
+
+	return result;
 }
 
 void bubbleSort(CompareMethod m, void* data, int elementSize, int num)
@@ -167,7 +319,7 @@ char* toString(int v)
 
 	int negative = v < 0 ? 1 : 0;
 
-	v = abs(v);
+	v = iabs(v);
 	int digit = log10(v) + 1;
 	char* r = new char[digit + negative + 1];
 	int place = pow(10, digit - 1);
@@ -192,7 +344,7 @@ char* toString(float v)
 {
 	int off = v < 0 ? 1 : 0;
 
-	v = abs(v);
+	v = iabs(v);
 	int decimalPart = (int)v;
 	int floatPart = (v - decimalPart) * pow(10, 9);
 

@@ -297,6 +297,7 @@
     <ClInclude Include="std\iQuaternion.h" />
     <ClInclude Include="std\iQueue.h" />
     <ClInclude Include="std\iSceneManager.h" />
+    <ClInclude Include="std\iServer.h" />
     <ClInclude Include="std\iStack.h" />
     <ClInclude Include="std\iStd.h" />
     <ClInclude Include="std\iSharedPtr.h" />
@@ -333,6 +334,7 @@
     <ClCompile Include="std\iQuaternion.cpp" />
     <ClCompile Include="std\iQueue.cpp" />
     <ClCompile Include="std\iSceneManager.cpp" />
+    <ClCompile Include="std\iServer.cpp" />
     <ClCompile Include="std\iStack.cpp" />
     <ClCompile Include="std\iStd.cpp" />
     <ClCompile Include="std\iString.cpp" />

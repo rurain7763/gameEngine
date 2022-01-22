@@ -21,6 +21,12 @@ iTime* iTime::share()
 	return S;
 }
 
+uint64 iTime::getMilliSec()
+{
+	return 
+	duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+}
+
 long long iTime::getPlayTime()
 {
 	long long now;

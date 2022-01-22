@@ -13,6 +13,7 @@
 #define MAX_THREAD_NUM 10 //_POSIX_THREAD_THREADS_MAX
 #define JOB_QUEUE_SIZE 50
 
+#define WORKER_STATUS_CREATING -1
 #define WORKER_STATUS_WAIT		0
 #define WORKER_STATUS_WORKING	1
 
@@ -41,12 +42,16 @@ public:
 	void addJob(ThreadJobMethodTwoArg method, void* arg1, void* arg2, 
 				ThreadJobMethodCallBack callBack = NULL);
 
+	bool isAllWorkDone();
+
 	void update();
 
 private:
 	iThreadInfo* worker;
 	int workerNum;
+
 	iQueue job;
+	pthread_mutex_t mutex;
 };
 
 enum iThreadJobFlag

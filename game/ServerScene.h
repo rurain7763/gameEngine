@@ -7,6 +7,7 @@
 #include "iString.h"
 
 class iChatServer;
+class iServer;
 
 class ServerScene : public iScene
 {
@@ -17,9 +18,15 @@ public:
 
 public:
 	iChatServer* chatServer;
+	iServer* serv;
 };
 
 #define SERVER_BUFFER_SIZE 1024
+#define CLIENT_BUFFER_SIZE 1024
+
+#define CLIENT_REQUEST		'0'
+#define CLIENT_ANSWER		'1'
+#define CLIENT_CLOSINGSIGN  'q'
 
 class iBinarySearchTree;
 
@@ -30,21 +37,22 @@ public:
 	virtual ~iChatServer();
 
 	static void* service(void* server);
+	static void serviceEnd(void* result);
 
-	static bool userEqualMethod(void* left, void* right);
-	static void* userMinMethod(void* left, void* right);
+private:
+	static void* recvUserMsg(void* chatUser);
+	static void answerToUser(void* chatUser);
 
 public:
 	int servSock;
 
 	int step;
 	const char* msg[10];
-	char buffer[SERVER_BUFFER_SIZE];
+	char buff[SERVER_BUFFER_SIZE];
 
 	iArray allRooms;
 
 	iArray _allUser;
-	iBinarySearchTree* allUser;
 };
 
 struct iChatRoom
@@ -58,17 +66,15 @@ struct iChatRoom
 
 struct iChatUser
 {
+	iChatRoom* currRoom;
+
 	iString nickName;
 	iString passWord;
 
 	uint64 socket;
 	sockaddr_in clientAddr;
+
+	char buff[CLIENT_BUFFER_SIZE];
 };
 
-void* serverWork();
-void* service(void* clientSock);
 
-int createSocket(const char* servIp, uint16 servPort, IPPROTO protocol);
-
-bool isend(uint64 socket, const char* msg);
-char* irecv(uint64 socket);

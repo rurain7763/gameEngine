@@ -474,6 +474,9 @@
     <ClInclude Include="game\ServerScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="std\iServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gameEngine.cpp">
@@ -570,6 +573,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="game\ServerScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="std\iServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
