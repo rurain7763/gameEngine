@@ -8,6 +8,7 @@ public:
 	iQueue(int size);
 	virtual ~iQueue();
 
+	void* frontData();
 	void push(void* v);
 	void* pop();
 	bool empty();

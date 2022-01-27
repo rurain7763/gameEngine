@@ -1,5 +1,8 @@
 #include "Game.h"
 #include "iStd.h"
+#include "TestScene.h"
+#include "ServerScene.h"
+#include "KoreanAutomataScene.h"
 
 iSize* devSize;
 iInputManager* inputMg;
@@ -10,11 +13,24 @@ iAssetReader* assetReader;
 iGLShader* shader;
 iThreadPool* threadPool;
 iSceneManager* sceneMg;
+iConnectionManager* connMg;
+
+ServerScene scene1;
+TestScene scene2;
+KoreanAutomataScene scene3;
 
 void loadGame()
 {
 	isSystemLittleEndian();
 	srand(time(NULL));
+
+#ifdef INCLUDE_INETWORK_HEADER
+	loadNetwork();
+#endif
+
+#ifdef _WIN32
+	loadGdi();
+#endif
 
 	devSize = new iSize;
 	devSize->width = DEV_WIDTH;
@@ -27,9 +43,14 @@ void loadGame()
 	cameraMode = false;
 
 	assetReader = iAssetReader::share();
+	shader = iGLShader::share();
 	threadPool = iThreadPool::share();
 	sceneMg = iSceneManager::share();
-	shader = iGLShader::share();
+	connMg = iConnectionManager::share();
+
+	sceneMg->addScene(&scene1);
+	sceneMg->addScene(&scene2);
+	sceneMg->addScene(&scene3);
 }
 
 void drawGame()
@@ -72,5 +93,14 @@ void endGame()
 	delete devSize;
 	delete assetReader;
 	delete shader;
+	delete connMg;
 	delete threadPool;
+
+#ifdef INCLUDE_INETWORK_HEADER
+	endNetwork();
+#endif
+
+#ifdef _WIN32
+	endGdi();
+#endif
 }

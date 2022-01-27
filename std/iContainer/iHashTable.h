@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEFAULT_HASHTABLE_SIZE	200
+#define DEFAULT_HASHTABLE_SIZE	64
 
 #define LINEAR_PROBING		0
 #define QUADRATIC_PROBING	1

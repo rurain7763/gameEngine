@@ -1,18 +1,13 @@
 #pragma once
 
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
-#define USE_SOCKET true
-
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
 
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
+#ifndef _WINSOCKAPI_
+#define _WINSOCKAPI_
 #endif
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -29,8 +24,8 @@
 #include <gdiplus.h>
 
 #include "iType.h"
+#include <assimp/types.h>
 
-#pragma comment(lib, "ws2_32.lib")
 #pragma comment (lib,"Gdiplus.lib")
 
 using namespace Gdiplus;
@@ -55,3 +50,7 @@ void wrapCursor(bool wrap);
 
 bool isContinueApp();
 void shutDownApp();
+
+wchar_t* multiByteToWideChar(const char* str, ...);
+
+Font* getFont(const char* fontName);

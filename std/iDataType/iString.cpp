@@ -298,6 +298,26 @@ iString& iString::append(char c, uint32 num)
 	return *this;
 }
 
+iString& iString::forcingAppend(const char* s, uint32 l)
+{
+	int newLen = len + l;
+
+	if (newLen >= size)
+	{
+		size = newLen * 2 + 1;
+		char* copy = new char[size];
+		memcpy(copy, str, sizeof(char) * len);
+		delete[] str;
+		str = copy;
+	}
+
+	memcpy(&str[len], s, sizeof(char) * l);
+	str[newLen] = 0;
+	len = newLen;
+
+	return *this;
+}
+
 iString& iString::insert(uint32 pos, const iString& istr, uint32 subPos, uint32 subLen)
 {
 	if (pos >= len ||

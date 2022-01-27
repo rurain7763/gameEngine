@@ -131,3 +131,50 @@ void shutDownApp()
     run = false;
 }
 
+wchar_t* multiByteToWideChar(const char* str, ...)
+{
+    char buff[1024];
+    formattedText(buff, str);
+
+    int buffLen = strlen(buff);
+
+    int len = MultiByteToWideChar(CP_UTF8, 0, buff, -1, NULL, 0);
+
+    if (len <= 0) return NULL;
+    
+    wchar_t* r = new wchar_t[len + 1];
+    MultiByteToWideChar(CP_UTF8, 0, buff, buffLen + 1, r, len);
+
+    return r;
+}
+
+Font* getFont(const char* fontName)
+{
+    Font* r;
+
+    wchar_t* path = multiByteToWideChar(fontName);
+
+    FontFamily fontF(path);
+    
+    if (fontF.IsAvailable())
+    {
+        r = new Font(&fontF, 16);
+    }
+    else
+    {
+        PrivateFontCollection collection;
+        collection.AddFontFile(path);
+
+        FontFamily families[1];
+        int found = 0;
+        int numFamilies = collection.GetFamilyCount();
+        collection.GetFamilies(numFamilies, families, &found);
+        
+        if (found) r = new Font(families, 16);
+        else r = NULL;
+    }
+
+    delete path;
+
+    return r;
+}

@@ -33,6 +33,7 @@ public:
 	iString& append(const iString& istr, uint32 subPos = 0, uint32 subLen = 0);
 	iString& append(const char* str, uint32 num = 1);
 	iString& append(char c, uint32 num = 1);
+	iString& forcingAppend(const char* str, uint32 len);
 
 	iString& insert(uint32 pos, const iString& istr, uint32 subPos = 0, uint32 subLen = 0);
 	iString& insert(uint32 pos, const char* str, uint32 num = 1);

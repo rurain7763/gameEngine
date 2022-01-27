@@ -3,11 +3,11 @@
 #include "iType.h"
 
 #include "iSceneManager.h"
-#include "iWindows.h"
-#include "iString.h"
+
+#include "iHashTable.h"
+#include "iServer.h"
 
 class iChatServer;
-class iServer;
 
 class ServerScene : public iScene
 {
@@ -21,38 +21,35 @@ public:
 	iServer* serv;
 };
 
-#define SERVER_BUFFER_SIZE 1024
-#define CLIENT_BUFFER_SIZE 1024
-
 #define CLIENT_REQUEST		'0'
 #define CLIENT_ANSWER		'1'
-#define CLIENT_CLOSINGSIGN  'q'
+#define CHATROOM_HISTORY_SIZE 10
 
-class iBinarySearchTree;
+struct iChatRoom;
+struct iChatUser;
 
-struct iChatServer
+class iChatServer : public iServer
 {
 public:
-	iChatServer();
+	iChatServer(const char* ip, uint16 port);
 	virtual ~iChatServer();
 
-	static void* service(void* server);
-	static void serviceEnd(void* result);
+	virtual void eventServStart();
+	virtual void eventUserIn(iServerUser* user);
+	virtual void eventUserOut(iServerUser* user);
+	virtual void eventUserRequest(iServerUser* user, const char* msg, int len);
+	virtual void eventServExit();
+
+	virtual void eventError(iServErrCode code);
 
 private:
-	static void* recvUserMsg(void* chatUser);
-	static void answerToUser(void* chatUser);
+	char* getSerialNumber(iServerUser* user);
+	void userToRoom(iString roomName, iChatUser* user);
+	void userToRoom(uint64 roomNumber, iChatUser* user);
 
 public:
-	int servSock;
-
-	int step;
-	const char* msg[10];
-	char buff[SERVER_BUFFER_SIZE];
-
-	iArray allRooms;
-
-	iArray _allUser;
+	iList rooms;
+	iHashTable users;
 };
 
 struct iChatRoom
@@ -61,20 +58,16 @@ struct iChatRoom
 	uint64 roomNumber;
 
 	iArray users;
-	char* chatHistory[10];
 };
 
 struct iChatUser
 {
-	iChatRoom* currRoom;
+	iServerUser* info;
 
 	iString nickName;
 	iString passWord;
 
-	uint64 socket;
-	sockaddr_in clientAddr;
-
-	char buff[CLIENT_BUFFER_SIZE];
+	iChatRoom* currRoom;
 };
 
 

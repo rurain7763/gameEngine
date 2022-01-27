@@ -1,8 +1,6 @@
 #include "gameEngine.h"
 #include "iStd.h"
 #include "Game.h"
-#include "TestScene.h"
-#include "ServerScene.h"
 
 #define MAX_LOADSTRING 100
 
@@ -71,10 +69,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return 0;
     }
 
-#if USE_SOCKET
-    loadWSA();
-#endif
-    loadGdi();
     loadGL(hWnd);
     SetMenu(hWnd, NULL);
 
@@ -92,16 +86,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     MSG msg;
 
     loadGame();
-    TestScene scene1;
-    TestScene scene2;
-    TestScene scene3;
-    ServerScene scene4;
-    
-    sceneMg->addScene(&scene4);
-    sceneMg->addScene(&scene1);
-    sceneMg->addScene(&scene2);
-    sceneMg->addScene(&scene3);
-    
+
     while (isContinueApp())
     {
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -118,12 +103,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     endGame();
-
-#if USE_SOCKET
-    endWSA();
-#endif
     endGL();
-    endGdi();
 
     return (int)msg.wParam;
 }

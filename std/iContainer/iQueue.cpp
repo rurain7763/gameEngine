@@ -15,6 +15,13 @@ iQueue::~iQueue()
 	delete[] data;
 }
 
+void* iQueue::frontData()
+{
+	if (num == 0) return NULL;
+
+	return data[front].data;
+}
+
 void iQueue::push(void* v)
 {
 	if (num == size) return;

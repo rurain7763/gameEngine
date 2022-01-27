@@ -89,12 +89,12 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)reference/pthread/include;$(ProjectDir)reference/jpglib/include;$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std/iOpenGL;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)std/iWindows;$(ProjectDir);$(ProjectDir)game;$(ProjectDir)std;$(ProjectDir)std/iOpenGL;$(ProjectDir)reference;$(ProjectDir)reference/zlib/include;$(ProjectDir)std/iDataType;$(ProjectDir)std/iContainer;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/jpglib/include;$(ProjectDri)std/iNetwork;$(ProjectDir)reference/pthread/include;$(ProjectDri)std/iNetwork;$(ProjectDir)reference/pthread/include;$(ProjectDir)reference/jpglib/include;$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std/iOpenGL;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)reference/pthread/lib/x86_;$(ProjectDir)reference/jpglib/lib/x86_;$(ProjectDir)reference/assimp/lib/x86_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)reference/pnglib/lib/x86_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/assimp/lib/x86_;$(ProjectDir)reference/jpglib/lib/x86_;$(ProjectDir)reference/pthread/lib/x86_;$(ProjectDir)reference/pthread/lib/x86_;$(ProjectDir)reference/jpglib/lib/x86_;$(ProjectDir)reference/assimp/lib/x86_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp-vc141-mt.lib;zlib.lib;pnglib.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -106,7 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)std/iWindows;$(ProjectDir);$(ProjectDir)game;$(ProjectDir)std;$(ProjectDir)std/iOpenGL;$(ProjectDir)reference;$(ProjectDir)reference/zlib/include;$(ProjectDir)std/iDataType;$(ProjectDir)std/iContainer;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/jpglib/include;$(ProjectDri)std/iNetwork;$(ProjectDir)reference/pthread/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -115,7 +115,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)reference/pnglib/lib/x86_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/assimp/lib/x86_;$(ProjectDir)reference/jpglib/lib/x86_;$(ProjectDir)reference/pthread/lib/x86_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>zlib.lib;pnglib.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -125,12 +125,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)std/iWindows;$(ProjectDir);$(ProjectDir)game;$(ProjectDir)std;$(ProjectDir)std/iOpenGL;$(ProjectDir)reference;$(ProjectDir)reference/zlib/include;$(ProjectDir)std/iDataType;$(ProjectDir)std/iContainer;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/jpglib/include;$(ProjectDri)std/iNetwork;$(ProjectDir)reference/pthread/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)reference/assimp/lib/x86_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)reference/pnglib/lib/x86_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/assimp/lib/x86_;$(ProjectDir)reference/jpglib/lib/x86_;$(ProjectDir)reference/pthread/lib/x86_;$(ProjectDir)reference/assimp/lib/x86_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>zlib.lib;pnglib.lib;libassimpd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -142,7 +142,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)std/iWindows;$(ProjectDir);$(ProjectDir)game;$(ProjectDir)std;$(ProjectDir)std/iOpenGL;$(ProjectDir)reference;$(ProjectDir)reference/zlib/include;$(ProjectDir)std/iDataType;$(ProjectDir)std/iContainer;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/assimp/include;$(ProjectDir)reference/jpglib/include;$(ProjectDri)std/iNetwork;$(ProjectDir)reference/pthread/include;$(ProjectDir)reference/pnglib/include;$(ProjectDir)reference/zlib/include;$(ProjectDir)reference;$(ProjectDir)std;$(ProjectDir)game;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -150,13 +150,14 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)reference/pnglib/lib/x86_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/assimp/lib/x86_;$(ProjectDir)reference/jpglib/lib/x86_;$(ProjectDir)reference/pthread/lib/x86_;$(ProjectDir)reference/zlib/lib/x86_;$(ProjectDir)reference/pnglib/lib/x86_;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>zlib.lib;pnglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="gameEngine.h" />
     <ClInclude Include="game\Game.h" />
+    <ClInclude Include="game\KoreanAutomataScene.h" />
     <ClInclude Include="game\ServerScene.h" />
     <ClInclude Include="game\TestScene.h" />
     <ClInclude Include="reference\assimp\include\assimp\aabb.h" />
@@ -279,14 +280,25 @@
     <ClInclude Include="reference\zlib\include\zlib.h" />
     <ClInclude Include="reference\zlib\include\zutil.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="std\iArray.h" />
     <ClInclude Include="std\iAssetReader.h" />
     <ClInclude Include="std\iCamera.h" />
-    <ClInclude Include="std\iHashTable.h" />
+    <ClInclude Include="std\iContainer\iArray.h" />
+    <ClInclude Include="std\iContainer\iHashTable.h" />
+    <ClInclude Include="std\iContainer\iList.h" />
+    <ClInclude Include="std\iContainer\iQueue.h" />
+    <ClInclude Include="std\iContainer\iStack.h" />
+    <ClInclude Include="std\iContainer\iTree.h" />
+    <ClInclude Include="std\iDataType\iMatrix.h" />
+    <ClInclude Include="std\iDataType\iQuaternion.h" />
+    <ClInclude Include="std\iDataType\iSharedPtr.h" />
+    <ClInclude Include="std\iDataType\iString.h" />
+    <ClInclude Include="std\iDataType\iTransform.h" />
+    <ClInclude Include="std\iDataType\iVector.h" />
     <ClInclude Include="std\iInputManager.h" />
-    <ClInclude Include="std\iList.h" />
-    <ClInclude Include="std\iMatrix.h" />
     <ClInclude Include="std\iImageReader.h" />
+    <ClInclude Include="std\iNetwork\iConnectionManager.h" />
+    <ClInclude Include="std\iNetwork\iNetwork.h" />
+    <ClInclude Include="std\iNetwork\iServer.h" />
     <ClInclude Include="std\iOpenGL\iGLFbo.h" />
     <ClInclude Include="std\iOpenGL\iGLLighting.h" />
     <ClInclude Include="std\iOpenGL\iGLModel.h" />
@@ -294,36 +306,38 @@
     <ClInclude Include="std\iOpenGL\iGLShadow.h" />
     <ClInclude Include="std\iOpenGL\iGLTexture.h" />
     <ClInclude Include="std\iOpenGL\iOpenGL.h" />
-    <ClInclude Include="std\iQuaternion.h" />
-    <ClInclude Include="std\iQueue.h" />
     <ClInclude Include="std\iSceneManager.h" />
-    <ClInclude Include="std\iServer.h" />
-    <ClInclude Include="std\iStack.h" />
     <ClInclude Include="std\iStd.h" />
-    <ClInclude Include="std\iSharedPtr.h" />
-    <ClInclude Include="std\iString.h" />
     <ClInclude Include="std\iThreadPool.h" />
     <ClInclude Include="std\iTime.h" />
-    <ClInclude Include="std\iTransform.h" />
-    <ClInclude Include="std\iTree.h" />
     <ClInclude Include="std\iType.h" />
-    <ClInclude Include="std\iVector.h" />
-    <ClInclude Include="std\iWindows.h" />
+    <ClInclude Include="std\iWindows\iWindows.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gameEngine.cpp" />
     <ClCompile Include="game\Game.cpp" />
+    <ClCompile Include="game\KoreanAutomataScene.cpp" />
     <ClCompile Include="game\ServerScene.cpp" />
     <ClCompile Include="game\TestScene.cpp" />
     <ClCompile Include="std\glew.c" />
-    <ClCompile Include="std\iArray.cpp" />
     <ClCompile Include="std\iAssetReader.cpp" />
     <ClCompile Include="std\iCamera.cpp" />
-    <ClCompile Include="std\iHashTable.cpp" />
+    <ClCompile Include="std\iContainer\iArray.cpp" />
+    <ClCompile Include="std\iContainer\iHashTable.cpp" />
+    <ClCompile Include="std\iContainer\iList.cpp" />
+    <ClCompile Include="std\iContainer\iQueue.cpp" />
+    <ClCompile Include="std\iContainer\iStack.cpp" />
+    <ClCompile Include="std\iContainer\iTree.cpp" />
+    <ClCompile Include="std\iDataType\iMatrix.cpp" />
+    <ClCompile Include="std\iDataType\iQuaternion.cpp" />
+    <ClCompile Include="std\iDataType\iString.cpp" />
+    <ClCompile Include="std\iDataType\iTransform.cpp" />
+    <ClCompile Include="std\iDataType\iVector.cpp" />
     <ClCompile Include="std\iInputManager.cpp" />
-    <ClCompile Include="std\iList.cpp" />
-    <ClCompile Include="std\iMatrix.cpp" />
     <ClCompile Include="std\iImageReader.cpp" />
+    <ClCompile Include="std\iNetwork\iConnectionManager.cpp" />
+    <ClCompile Include="std\iNetwork\iNetwork.cpp" />
+    <ClCompile Include="std\iNetwork\iServer.cpp" />
     <ClCompile Include="std\iOpenGL\iGLFbo.cpp" />
     <ClCompile Include="std\iOpenGL\iGLLighting.cpp" />
     <ClCompile Include="std\iOpenGL\iGLModel.cpp" />
@@ -331,19 +345,11 @@
     <ClCompile Include="std\iOpenGL\iGLShadow.cpp" />
     <ClCompile Include="std\iOpenGL\iGLTexture.cpp" />
     <ClCompile Include="std\iOpenGL\iOpenGL.cpp" />
-    <ClCompile Include="std\iQuaternion.cpp" />
-    <ClCompile Include="std\iQueue.cpp" />
     <ClCompile Include="std\iSceneManager.cpp" />
-    <ClCompile Include="std\iServer.cpp" />
-    <ClCompile Include="std\iStack.cpp" />
     <ClCompile Include="std\iStd.cpp" />
-    <ClCompile Include="std\iString.cpp" />
     <ClCompile Include="std\iThreadPool.cpp" />
     <ClCompile Include="std\iTime.cpp" />
-    <ClCompile Include="std\iTransform.cpp" />
-    <ClCompile Include="std\iTree.cpp" />
-    <ClCompile Include="std\iVector.cpp" />
-    <ClCompile Include="std\iWindows.cpp" />
+    <ClCompile Include="std\iWindows\iWindows.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="gameEngine.rc" />
