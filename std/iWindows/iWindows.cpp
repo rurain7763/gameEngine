@@ -148,33 +148,18 @@ wchar_t* multiByteToWideChar(const char* str, ...)
     return r;
 }
 
-Font* getFont(const char* fontName)
+char* wideCharToMultiByte(const wchar_t* str)
 {
-    Font* r;
-
-    wchar_t* path = multiByteToWideChar(fontName);
-
-    FontFamily fontF(path);
+    int wStrLen = lstrlenW(str);
+    int len = WideCharToMultiByte(CP_UTF8, 0, str, wStrLen, NULL, 0, NULL, NULL);
     
-    if (fontF.IsAvailable())
-    {
-        r = new Font(&fontF, 16);
-    }
-    else
-    {
-        PrivateFontCollection collection;
-        collection.AddFontFile(path);
-
-        FontFamily families[1];
-        int found = 0;
-        int numFamilies = collection.GetFamilyCount();
-        collection.GetFamilies(numFamilies, families, &found);
-        
-        if (found) r = new Font(families, 16);
-        else r = NULL;
-    }
-
-    delete path;
+    char* r = new char[len + 1];
+    WideCharToMultiByte(CP_UTF8, 0, str, wStrLen, r, len, NULL, NULL);
+    r[len] = 0;
 
     return r;
 }
+
+
+
+

@@ -1,34 +1,15 @@
 #pragma once
 
-#ifndef _USE_MATH_DEFINES
-#define _USE_MATH_DEFINES
-#endif
-
 #ifndef _WINSOCKAPI_
 #define _WINSOCKAPI_
 #endif
 
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <malloc.h>
-#include <memory.h>
-#include <tchar.h>
-#include <stdio.h>
-#include <math.h>
-#include <time.h>
+#include "iGraphics.h"
 
 #include <windows.h>
 #include <Windowsx.h>
-#include <objidl.h>
-#include <gdiplus.h>
 
 #include "iType.h"
-#include <assimp/types.h>
-
-#pragma comment (lib,"Gdiplus.lib")
-
-using namespace Gdiplus;
 
 void loadGdi();
 void endGdi();
@@ -52,5 +33,6 @@ bool isContinueApp();
 void shutDownApp();
 
 wchar_t* multiByteToWideChar(const char* str, ...);
+char* wideCharToMultiByte(const wchar_t* str);
 
-Font* getFont(const char* fontName);
+

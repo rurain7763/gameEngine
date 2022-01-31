@@ -192,18 +192,18 @@ void _asyncLoadGLAssetCallBack(void* model)
 			iPng* png = (iPng*)img;
 
 			if (png->colorType == 0)
-				tex->load(GL_TEXTURE_2D, GL_RED, png->rgba, png->width, png->height, info->type);
+				tex->load(GL_TEXTURE_2D, GL_RED, png->pixelData, png->width, png->height, info->type);
 			else if (png->colorType == 2)
-				tex->load(GL_TEXTURE_2D, GL_RGB, png->rgba, png->width, png->height, info->type);
+				tex->load(GL_TEXTURE_2D, GL_RGB, png->pixelData, png->width, png->height, info->type);
 			else if (png->colorType == 6)
-				tex->load(GL_TEXTURE_2D, GL_RGBA, png->rgba, png->width, png->height, info->type);		
+				tex->load(GL_TEXTURE_2D, GL_RGBA, png->pixelData, png->width, png->height, info->type);
 		}
 		else if (img->type == iImageTypeJpg ||
 				 img->type == iImageTypeJfif ||
 				 img->type == iImageTypeJpeg)
 		{
 			iJpg* jpg = (iJpg*)img;
-			tex->load(GL_TEXTURE_2D, GL_RGB, jpg->rgb, jpg->width, jpg->height, info->type);
+			tex->load(GL_TEXTURE_2D, GL_RGB, jpg->pixelData, jpg->width, jpg->height, info->type);
 		}
 
 		tex->path = info->path;

@@ -35,3 +35,9 @@ struct iRect
 	float x, y;
 	float width, height;
 };
+
+struct iColor
+{
+	float r, g, b, a;
+};
+

@@ -22,6 +22,8 @@ public:
 
 public:
 	iImageType type;
+
+	uint8* pixelData;
 	uint32 width, height;
 	uint32 stride;
 };
@@ -33,7 +35,6 @@ public:
 	virtual ~iPng();
 
 public:
-	uint8* rgba;
 	uint8 colorType;
 	uint8 channels;
 	uint8 bitDepth;
@@ -48,7 +49,6 @@ public:
 	virtual ~iJpg();
 
 public:
-	uint8* rgb;
 	uint8 pixelSize;
 };
 

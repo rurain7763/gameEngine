@@ -117,7 +117,7 @@ char* getFileNameInPath(const char* path)
 	while (startPos > 0)
 	{
 		startPos--;
-		if (path[startPos] == '\\' || path[startPos] == '/') break;
+		if (path[startPos - 1] == '\\' || path[startPos - 1] == '/') break;
 	}
 
 	int rLen = len - startPos;

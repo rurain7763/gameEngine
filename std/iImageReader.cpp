@@ -3,12 +3,13 @@
 
 iImage::~iImage()
 {
+	if (pixelData) delete[] pixelData;
 }
 
 iPng::iPng()
 {
 	type = iImageTypePng;
-	rgba = NULL;
+	pixelData = NULL;
 	stride = 0;
 	width = 0, height = 0;
 	colorType = 0xff;
@@ -18,7 +19,6 @@ iPng::iPng()
 
 iPng::~iPng()
 {
-	if (rgba) delete[] rgba;
 }
 
 iPng* readPng(const char* path)
@@ -116,11 +116,11 @@ iPng* readPng(const char* path)
 		row[i] = new uint8[png_get_rowbytes(png, info)];
 
 	png_read_image(png, row);
-	r->rgba = new uint8[r->width * r->height * r->bitDepth * r->channels / 8];
+	r->pixelData = new uint8[r->width * r->height * r->bitDepth * r->channels / 8];
 
 	for (int i = 0; i < r->height; i++)
 	{
-		memcpy(&r->rgba[r->stride * i], row[i], sizeof(uint8) * r->stride);
+		memcpy(&r->pixelData[r->stride * i], row[i], sizeof(uint8) * r->stride);
 		delete[] row[i];
 	}
 
@@ -134,7 +134,7 @@ iPng* readPng(const char* path)
 iJpg::iJpg()
 {
 	type = iImageTypeUnknown;
-	rgb = NULL;
+	pixelData = NULL;
 	stride = 0;
 	width = 0;
 	height = 0;
@@ -143,7 +143,6 @@ iJpg::iJpg()
 
 iJpg::~iJpg()
 {
-	if (rgb) delete[] rgb;
 }
 
 iJpg* readJpg(const char* path)
@@ -205,12 +204,12 @@ iJpg* readJpg(const char* path)
 	r->pixelSize = jpg.output_components;
 
 	r->stride = r->width * r->pixelSize;
-	r->rgb = new uint8[r->stride * r->height];
+	r->pixelData = new uint8[r->stride * r->height];
 
 	int off = 0;
 	while (jpg.output_scanline < jpg.output_height)
 	{
-		uint8* row = &r->rgb[r->stride * off];
+		uint8* row = &r->pixelData[r->stride * off];
 		jpeg_read_scanlines(&jpg, &row, 1);
 		off++;
 	}

@@ -23,6 +23,6 @@ void main()
 { 
 	vec4 color = texture2D(tex, uvV).rgba * colorV;
 
-	throwColor = color;//color * vec4(dirLight.color, 1.0) * dirLight.intensity;
+	throwColor = color;
 }
 

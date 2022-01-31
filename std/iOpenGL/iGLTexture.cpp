@@ -63,13 +63,13 @@ void iGLTexture::load(GLenum tt, const char* p, iGLTexMapType mt)
 
 		if (png->colorType == 0)
 			glTexImage2D(texType, 0, GL_RED, png->width, png->height, 0, GL_RED,
-						 GL_UNSIGNED_BYTE, png->rgba);
+						 GL_UNSIGNED_BYTE, png->pixelData);
 		else if (png->colorType == 2)
 			glTexImage2D(texType, 0, GL_RGB, png->width, png->height, 0, GL_RGB,
-						 GL_UNSIGNED_BYTE, png->rgba);
+						 GL_UNSIGNED_BYTE, png->pixelData);
 		else if (png->colorType == 6)
 			glTexImage2D(texType, 0, GL_RGBA, png->width, png->height, 0, GL_RGBA,
-						 GL_UNSIGNED_BYTE, png->rgba);
+						 GL_UNSIGNED_BYTE, png->pixelData);
 		else
 		{
 			bool exception_occured = 0;
@@ -103,7 +103,7 @@ void iGLTexture::load(GLenum tt, const char* p, iGLTexMapType mt)
 		glBindTexture(texType, texID);
 
 		glTexImage2D(texType, 0, GL_RGB, jpg->width, jpg->height, 0, GL_RGB,
-					 GL_UNSIGNED_BYTE, jpg->rgb);
+					 GL_UNSIGNED_BYTE, jpg->pixelData);
 
 		glTexParameteri(texType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(texType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -139,7 +139,7 @@ void iGLTexture::load(GLenum tt, GLint format,
 	pow2Width = nextPow2(width);
 	pow2Height = nextPow2(height);
 
-	glTexImage2D(texType, 0, format, pow2Width, pow2Height, 0, format,
+	glTexImage2D(texType, 0, format, width, height, 0, format,
 				 GL_UNSIGNED_BYTE, pixels);
 
 	glTexParameteri(texType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

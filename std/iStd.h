@@ -1,8 +1,22 @@
 #pragma once
 
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
+
+#include <string.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <malloc.h>
+#include <memory.h>
+#include <tchar.h>
+#include <stdio.h>
+#include <math.h>
+#include <time.h>
 
 #include "iType.h"
 #include "iVector.h"
@@ -33,6 +47,7 @@
 #include "iWindows.h"
 #elif __unix__
 #endif
+
 
 #define ToRadian(degree) degree * M_PI / 180
 #define ToDegree(radian) radian * 180 / M_PI

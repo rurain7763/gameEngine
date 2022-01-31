@@ -48,9 +48,9 @@ void loadGame()
 	sceneMg = iSceneManager::share();
 	connMg = iConnectionManager::share();
 
+	sceneMg->addScene(&scene3);
 	sceneMg->addScene(&scene1);
 	sceneMg->addScene(&scene2);
-	sceneMg->addScene(&scene3);
 }
 
 void drawGame()

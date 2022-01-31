@@ -26,11 +26,11 @@ void iTransform::translate(float x, float y, float z)
 	positionV.z = z;
 }
 
-void iTransform::rotate(float xAxis, float yAxis, float zAxis)
+void iTransform::rotate(float x, float y, float z)
 {
-	rotationV.x = xAxis;
-	rotationV.y = yAxis;
-	rotationV.z = zAxis;
+	rotationV.x = x;
+	rotationV.y = y;
+	rotationV.z = z;
 }
 
 void iTransform::scale(float x, float y, float z)
