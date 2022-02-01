@@ -31,6 +31,12 @@ private:
 	iHashTable mid;
 	iHashTable last;
 
+#if 1
+	iHashTable initConsonantCost;
+	iHashTable medivalVowelCost;
+	iHashTable finConsonantCost;
+#endif
+
 	int* cost;
 };
 
@@ -79,3 +85,30 @@ uint16 getUnicode(const char* korChar);
 uint16 getUnicode(uint8 fisrtCost, uint8 midCost, uint8 lastCost);
 
 //TODO ascii
+
+#if 1
+enum iKoreanLetterStat
+{
+	iKoreanLetterStatConsonantOnly,
+	iKoreanLetterStatVowelOnly,
+	iKoreanLetterStatNoFinal,
+	iKoreanLetterStatIncludeFinal,
+};
+
+struct iKoreanJamo
+{
+	const char* jamo;
+	const char* elements[2];
+	uint8 elementsNum;
+};
+
+class iKoreanLetter
+{
+public:
+	iKoreanLetterStat stat;
+
+	iKoreanJamo* initial;
+	iKoreanJamo* medial;
+	iKoreanJamo* fin;
+};
+#endif
