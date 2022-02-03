@@ -196,13 +196,47 @@ char* iKoreanAutoMata::join(const char* s)
 			{
 				if (curr->stat == iKoreanLetterStatVowelOnly)
 				{
-					uint8 ic = getInitCost(prev->letter);
-					uint8 mc = getMediCost(curr->letter);
+					if (prev->initial->elementsNum == 1)
+					{
+						uint8 ic = getInitCost(prev->letter);
+						uint8 mc = getMediCost(curr->letter);
 
-					prev->change(getUnicode(ic, mc, 0));
-					stk.push(prev);
+						prev->change(getUnicode(ic, mc, 0));
+						stk.push(prev);
 
-					delete curr;
+						delete curr;
+					}
+					else if (prev->initial->elementsNum == 2)
+					{
+						if (prev->initial->elements[0])
+						{
+							iKoreanJamo* firConsonant = (iKoreanJamo*)jamo[prev->initial->elements[0]];
+							iKoreanJamo* secConsonant = (iKoreanJamo*)jamo[prev->initial->elements[1]];
+
+							if (secConsonant->finCost != IKOREANJAMO_INVALID_COST)
+							{
+								uint16 prevUc = getUnicode(firConsonant->jamo);
+								uint16 currUc = getUnicode(secConsonant->initCost, getMediCost(curr->letter), 0);
+
+								prev->change(prevUc);
+								curr->change(currUc);
+							}
+
+							stk.push(prev);
+							stk.push(curr);
+							rLen += 3;
+						}
+						else
+						{
+							uint8 ic = getInitCost(prev->letter);
+							uint8 mc = getMediCost(curr->letter);
+
+							prev->change(getUnicode(ic, mc, 0));
+							stk.push(prev);
+
+							delete curr;
+						}
+					}
 				}
 				else if (curr->stat == iKoreanLetterStatConsonantOnly)
 				{
@@ -464,17 +498,20 @@ uint8 iKoreanAutoMata::getFinCost(const char* letter)
 	}
 }
 
-bool iKoreanAutoMata::canConbine(const char* left, const char* right, uint16& newUnicode)
+bool iKoreanAutoMata::canConbine(const char* l, const char* r, uint16& newUnicode)
 {
-	iKoreanJamo* kj = (iKoreanJamo*)jamo[left];
+	iKoreanJamo* left = (iKoreanJamo*)jamo[l];
+	iKoreanJamo* right = (iKoreanJamo*)jamo[r];
 
-	if (kj)
+	if (left->elementsNum == 2 || right->elementsNum == 2) return false;
+
+	if (left)
 	{
-		uint8 idx = kj->order + 1;
+		uint8 idx = left->order + 1;
 
 		while (_jamo[idx].elementsNum == 2)
 		{
-			if (!strcmp(_jamo[idx].elements[1], right))
+			if (!strcmp(_jamo[idx].elements[1], r))
 			{
 				newUnicode = getUnicode(_jamo[idx].jamo);
 				return true;
@@ -487,17 +524,20 @@ bool iKoreanAutoMata::canConbine(const char* left, const char* right, uint16& ne
 	return false;
 }
 
-bool iKoreanAutoMata::canConbine(const char* left, const char* right, iKoreanJamo*& letter)
+bool iKoreanAutoMata::canConbine(const char* l, const char* r, iKoreanJamo*& letter)
 {
-	iKoreanJamo* kj = (iKoreanJamo*)jamo[left];
+	iKoreanJamo* left = (iKoreanJamo*)jamo[l];
+	iKoreanJamo* right = (iKoreanJamo*)jamo[r];
 
-	if (kj && kj->elementsNum != 2)
+	if (left->elementsNum == 2 || right->elementsNum == 2) return false;
+	
+	if (left)
 	{
-		uint8 idx = kj->order + 1;
+		uint8 idx = left->order + 1;
 
 		while (_jamo[idx].elementsNum == 2)
 		{
-			if (!strcmp(_jamo[idx].elements[1], right))
+			if (!strcmp(_jamo[idx].elements[1], r))
 			{
 				letter = &_jamo[idx];
 				return true;

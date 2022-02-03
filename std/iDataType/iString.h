@@ -40,6 +40,7 @@ public:
 	iString& insert(uint32 pos, char c, uint32 num = 1);
 
 	iString& erase(uint32 pos = 0, uint32 len = 0);
+	void pop_back();
 
 	iString& replace(uint32 pos, uint32 len, const iString& istr, uint32 subPos = 0, uint32 subLen = 0);
 	iString& replace(uint32 pos, uint32 len, const char* str, uint32 strLen = 0);

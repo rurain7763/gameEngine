@@ -202,6 +202,7 @@ iInputBox::iInputBox()
 {
 	im = iInputManager::share();
 	kam = iKoreanAutoMata::share();
+	cursor = 0;
 }
 
 iInputBox::~iInputBox()
@@ -376,9 +377,13 @@ void iInputBox::updateBuff()
 		else buff += 'P';
 	}
 
-	if (im->keyOnce & KEY_space)
+	if (im->keyOnce & KEY_SPACE)
 	{
 		buff += ' ';
+	}
+	if (im->keyOnce & KEY_BACK)
+	{
+
 	}
 }
 

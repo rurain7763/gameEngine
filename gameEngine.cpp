@@ -170,7 +170,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         if (key == VK_ESCAPE) inputMg->setKeyDown(KEY_ESCAPE);
         if (key == VK_PRIOR) inputMg->setKeyDown(KEY_PAGEUP);
         if (key == VK_NEXT) inputMg->setKeyDown(KEY_PAGEDOWN);
-        if (key == VK_SPACE) inputMg->setKeyDown(KEY_space);
+        if (key == VK_SPACE) inputMg->setKeyDown(KEY_SPACE);
+        if (key == VK_BACK) inputMg->setKeyDown(KEY_BACK);
 
         return 0;
     }
@@ -225,7 +226,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         if (key == VK_ESCAPE) inputMg->setKeyUp(KEY_ESCAPE);
         if (key == VK_PRIOR) inputMg->setKeyUp(KEY_PAGEUP);
         if (key == VK_NEXT) inputMg->setKeyUp(KEY_PAGEDOWN);
-        if (key == VK_SPACE) inputMg->setKeyUp(KEY_space);
+        if (key == VK_SPACE) inputMg->setKeyUp(KEY_SPACE);
+        if (key == VK_BACK) inputMg->setKeyUp(KEY_BACK);
 
         if (key == '1') inputMg->setKeyUp(KEY_1);
         if (key == '2') inputMg->setKeyUp(KEY_2);

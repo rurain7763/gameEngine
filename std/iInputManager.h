@@ -41,7 +41,7 @@
 #define KEY_b				0x40000000 
 #define KEY_n				0x80000000 
 #define KEY_m				0x100000000
-#define KEY_space			0x200000000
+#define KEY_SPACE			0x200000000
 #define KEY_Q				0x400000000
 #define KEY_W				0x800000000
 #define KEY_E				0x1000000000
@@ -49,6 +49,7 @@
 #define KEY_T				0x4000000000
 #define KEY_O				0x8000000000
 #define KEY_P				0x10000000000
+#define KEY_BACK			0x20000000000
 
 typedef uint64 iKey;
 

@@ -43,11 +43,12 @@ public:
 private:
 	void updateBuff();
 
-public:
 	iInputManager* im;
 	iKoreanAutoMata* kam;
-
 	iString buff;
+public:
+
+	uint64 cursor;
 	char* result;
 };
 

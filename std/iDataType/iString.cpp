@@ -414,7 +414,7 @@ iString& iString::insert(uint32 pos, char c, uint32 num)
 
 iString& iString::erase(uint32 pos, uint32 l)
 {
-	l = l ? l : len;
+	l = (l ? l : len);
 
 	if (pos >= len || pos + l > len) return *this;
 
@@ -425,6 +425,15 @@ iString& iString::erase(uint32 pos, uint32 l)
 	len = newLen;
 
 	return *this;
+}
+
+void iString::pop_back()
+{
+	if (len != 0)
+	{
+		len--;
+		str[len] = 0;
+	}
 }
 
 iString& iString::replace(uint32 pos, uint32 l, const iString& istr, uint32 subPos, uint32 subLen)
