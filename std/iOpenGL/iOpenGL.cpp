@@ -65,6 +65,8 @@ void loadGL(HWND& hwnd)
 	glEnable(GL_DEPTH_TEST);
 
 	viewPort = new iRect;
+
+	ReleaseDC(hwnd, hDc);
 }
 
 void endGL()

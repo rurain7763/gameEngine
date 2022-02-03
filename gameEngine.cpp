@@ -112,10 +112,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
-    case WM_SHOWWINDOW:
-    {
-        return 0;
-    }
     case WM_SIZE:
     {
         RECT rt;
@@ -169,37 +165,126 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         char key = (char)wParam;
 
+        if (key == CHANGE_LANG_BUTTON) inputMg->changeLanguageMode();
+
+        if (key == VK_ESCAPE) inputMg->setKeyDown(KEY_ESCAPE);
+        if (key == VK_PRIOR) inputMg->setKeyDown(KEY_PAGEUP);
+        if (key == VK_NEXT) inputMg->setKeyDown(KEY_PAGEDOWN);
+        if (key == VK_SPACE) inputMg->setKeyDown(KEY_space);
+
+        return 0;
+    }
+    case WM_CHAR:
+    {
+        char key = (char)wParam;
+
         if (key == '1') inputMg->setKeyDown(KEY_1);
         if (key == '2') inputMg->setKeyDown(KEY_2);
         if (key == '3') inputMg->setKeyDown(KEY_3);
         if (key == '4') inputMg->setKeyDown(KEY_4);
+        if (key == 'w') inputMg->setKeyDown(KEY_w);
+        if (key == 's') inputMg->setKeyDown(KEY_s);
+        if (key == 'a') inputMg->setKeyDown(KEY_a);
+        if (key == 'd') inputMg->setKeyDown(KEY_d);
+        if (key == 'p') inputMg->setKeyDown(KEY_p);
+        if (key == 'q') inputMg->setKeyDown(KEY_q);
+        if (key == 'e') inputMg->setKeyDown(KEY_e);
+        if (key == 'r') inputMg->setKeyDown(KEY_r);
+        if (key == 't') inputMg->setKeyDown(KEY_t);
+        if (key == 'y') inputMg->setKeyDown(KEY_y);
+        if (key == 'u') inputMg->setKeyDown(KEY_u);
+        if (key == 'i') inputMg->setKeyDown(KEY_i);
+        if (key == 'o') inputMg->setKeyDown(KEY_o);
+        if (key == 'f') inputMg->setKeyDown(KEY_f);
+        if (key == 'g') inputMg->setKeyDown(KEY_g);
+        if (key == 'h') inputMg->setKeyDown(KEY_h);
+        if (key == 'j') inputMg->setKeyDown(KEY_j);
+        if (key == 'k') inputMg->setKeyDown(KEY_k);
+        if (key == 'l') inputMg->setKeyDown(KEY_l);
+        if (key == 'z') inputMg->setKeyDown(KEY_z);
+        if (key == 'x') inputMg->setKeyDown(KEY_x);
+        if (key == 'c') inputMg->setKeyDown(KEY_c);
+        if (key == 'v') inputMg->setKeyDown(KEY_v);
+        if (key == 'b') inputMg->setKeyDown(KEY_b);
+        if (key == 'n') inputMg->setKeyDown(KEY_n);
+        if (key == 'm') inputMg->setKeyDown(KEY_m);
+        if (key == 'Q') inputMg->setKeyDown(KEY_Q);
         if (key == 'W') inputMg->setKeyDown(KEY_W);
-        if (key == 'S') inputMg->setKeyDown(KEY_S);
-        if (key == 'A') inputMg->setKeyDown(KEY_A);
-        if (key == 'D') inputMg->setKeyDown(KEY_D);
+        if (key == 'E') inputMg->setKeyDown(KEY_E);
+        if (key == 'R') inputMg->setKeyDown(KEY_R);
+        if (key == 'T') inputMg->setKeyDown(KEY_T);
+        if (key == 'O') inputMg->setKeyDown(KEY_O);
         if (key == 'P') inputMg->setKeyDown(KEY_P);
-        if (key == VK_ESCAPE) inputMg->setKeyDown(KEY_ESCAPE);
-        if (key == VK_PRIOR) inputMg->setKeyDown(KEY_PAGEUP);
-        if (key == VK_NEXT) inputMg->setKeyDown(KEY_PAGEDOWN);
-
+    
         return 0;
     }
     case WM_KEYUP:
     {
         char key = (char)wParam;
 
+        if (key == VK_ESCAPE) inputMg->setKeyUp(KEY_ESCAPE);
+        if (key == VK_PRIOR) inputMg->setKeyUp(KEY_PAGEUP);
+        if (key == VK_NEXT) inputMg->setKeyUp(KEY_PAGEDOWN);
+        if (key == VK_SPACE) inputMg->setKeyUp(KEY_space);
+
         if (key == '1') inputMg->setKeyUp(KEY_1);
         if (key == '2') inputMg->setKeyUp(KEY_2);
         if (key == '3') inputMg->setKeyUp(KEY_3);
         if (key == '4') inputMg->setKeyUp(KEY_4);
-        if (key == 'W') inputMg->setKeyUp(KEY_W);
-        if (key == 'S') inputMg->setKeyUp(KEY_S);
-        if (key == 'A') inputMg->setKeyUp(KEY_A);
-        if (key == 'D') inputMg->setKeyUp(KEY_D);
-        if (key == 'P') inputMg->setKeyUp(KEY_P);
-        if (key == VK_ESCAPE) inputMg->setKeyUp(KEY_ESCAPE);
-        if (key == VK_PRIOR) inputMg->setKeyUp(KEY_PAGEUP);
-        if (key == VK_NEXT) inputMg->setKeyUp(KEY_PAGEDOWN);
+        if (key == 'W')
+        {
+            inputMg->setKeyUp(KEY_w);
+            inputMg->setKeyUp(KEY_W);
+        }
+        if (key == 'S') inputMg->setKeyUp(KEY_s);
+        if (key == 'A') inputMg->setKeyUp(KEY_a);
+        if (key == 'D') inputMg->setKeyUp(KEY_d);
+        if (key == 'P')
+        {
+            inputMg->setKeyUp(KEY_p);
+            inputMg->setKeyUp(KEY_P);
+        }
+        if (key == 'Q')
+        {
+            inputMg->setKeyUp(KEY_q);
+            inputMg->setKeyUp(KEY_Q);
+        }
+        if (key == 'E')
+        {
+            inputMg->setKeyUp(KEY_e);
+            inputMg->setKeyUp(KEY_E);
+        }
+        if (key == 'R')
+        {
+            inputMg->setKeyUp(KEY_r);
+            inputMg->setKeyUp(KEY_R);
+        }
+        if (key == 'T')
+        {
+            inputMg->setKeyUp(KEY_t);
+            inputMg->setKeyUp(KEY_T);
+        }
+        if (key == 'Y') inputMg->setKeyUp(KEY_y);
+        if (key == 'U') inputMg->setKeyUp(KEY_u);
+        if (key == 'I') inputMg->setKeyUp(KEY_i);
+        if (key == 'O')
+        {
+            inputMg->setKeyUp(KEY_o);
+            inputMg->setKeyUp(KEY_O);
+        }
+        if (key == 'F') inputMg->setKeyUp(KEY_f);
+        if (key == 'G') inputMg->setKeyUp(KEY_g);
+        if (key == 'H') inputMg->setKeyUp(KEY_h);
+        if (key == 'J') inputMg->setKeyUp(KEY_j);
+        if (key == 'K') inputMg->setKeyUp(KEY_k);
+        if (key == 'L') inputMg->setKeyUp(KEY_l);
+        if (key == 'Z') inputMg->setKeyUp(KEY_z);
+        if (key == 'X') inputMg->setKeyUp(KEY_x);
+        if (key == 'C') inputMg->setKeyUp(KEY_c);
+        if (key == 'V') inputMg->setKeyUp(KEY_v);
+        if (key == 'B') inputMg->setKeyUp(KEY_b);
+        if (key == 'N') inputMg->setKeyUp(KEY_n);
+        if (key == 'M') inputMg->setKeyUp(KEY_m);
 
         return 0;
     }

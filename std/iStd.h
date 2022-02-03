@@ -40,6 +40,7 @@
 #include "iCamera.h"
 #include "iThreadPool.h"
 #include "iNetwork.h"
+#include "iKoreanAutoMata.h"
 
 #include "iOpenGL.h"
 

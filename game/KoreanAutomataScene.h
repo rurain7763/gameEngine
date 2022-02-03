@@ -4,9 +4,11 @@
 
 #include "iSceneManager.h"
 #include "iMatrix.h"
+#include "iString.h"
 
 class iGraphics;
 class iGLTexture;
+class iInputBox;
 
 class KoreanAutomataScene : public iScene
 {
@@ -20,10 +22,33 @@ public:
 
 	iMatrix ortho;
 	iGLTexture* tex;
+	iInputBox* ib;
 
 	uint32 vao;
 	uint32 vbo;
 	uint32 ebo;
+};
+
+class iKoreanAutoMata;
+class iInputManager;
+
+class iInputBox
+{
+public:
+	iInputBox();
+	virtual ~iInputBox();
+
+	void draw(float dt);
+
+private:
+	void updateBuff();
+
+public:
+	iInputManager* im;
+	iKoreanAutoMata* kam;
+
+	iString buff;
+	char* result;
 };
 
 

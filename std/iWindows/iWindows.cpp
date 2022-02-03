@@ -3,6 +3,7 @@
 
 static ULONG_PTR gdiplusToken;
 static iRect wndRtInfo;
+
 static bool wrapping = false;
 static bool run = true;
 
@@ -159,6 +160,7 @@ char* wideCharToMultiByte(const wchar_t* str)
 
     return r;
 }
+
 
 
 

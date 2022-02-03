@@ -11,6 +11,8 @@
 
 #include "iType.h"
 
+#pragma comment(lib, "imm32.lib")
+
 void loadGdi();
 void endGdi();
 

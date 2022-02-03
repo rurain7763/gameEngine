@@ -4,6 +4,9 @@
 
 void KoreanAutomataScene::load(iArray* recvInfo)
 {
+	char* r = iKoreanAutoMata::share()->join("ㅂㅜㅔㄹㄱㅂ");
+	delete[] r;
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -20,21 +23,18 @@ void KoreanAutomataScene::load(iArray* recvInfo)
 
 	g->font = "assets/test/ASMAN.TTF";
 	g->color = { 1, 0, 0, 1 };
-	g->size = 32;
 	g->drawString("123456789", { 0, 0 });
 
 	g->pushStat();
 
 	g->font = "assets/test/BMEULJIROTTF.ttf";
 	g->color = { 0, 1, 0, 1 };
-	g->size = 44;
 	g->drawString("123456789", { 300, 0 });
 
 	g->pushStat();
 
 	g->font = "assets/test/BMJUA_ttf.ttf";
 	g->color = { 0, 0, 1, 1 };
-	g->size = 56;
 	g->drawString("안녕하세요 저는 ... 입니다", { 800, 800 });
 
 	g->popStat();
@@ -63,6 +63,10 @@ void KoreanAutomataScene::load(iArray* recvInfo)
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+#if 1
+	ib = new iInputBox();
+#endif
 }
 
 void KoreanAutomataScene::update(float dt)
@@ -128,6 +132,30 @@ void KoreanAutomataScene::update(float dt)
 
 	GLuint sampler0 = glGetUniformLocation(program, "tex");
 
+
+	g->pushStat();
+	g->color = { 1, 1, 1, 1 };
+	g->clear();
+	
+	g->pushStat();
+	g->color = { 0, 0, 0, 1 };
+	g->font = "arial";//"assets/test/BMEULJIROTTF.ttf";
+
+	ib->draw(dt);
+	g->drawString(ib->result, {0, 0});
+	delete[] ib->result;
+
+	g->popStat();
+	g->popStat();
+
+	iImage* img = g->getiImage();
+
+	if (tex) delete tex;
+	tex = new iGLTexture();
+	tex->load(GL_TEXTURE_2D, GL_RGBA, img->pixelData, img->width, img->height);
+
+	delete img;
+
 	tex->bind(GL_TEXTURE0);
 	glUniform1i(sampler0, 0);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, NULL);
@@ -156,13 +184,209 @@ void KoreanAutomataScene::update(float dt)
 
 void KoreanAutomataScene::free()
 {
+#if 1
+	delete ib;
+#endif
+
 	glDisable(GL_BLEND);
 
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
 	glDeleteVertexArrays(1, &vao);
 
-	delete tex;
+	if(tex) delete tex;
 	delete g;
 }
 
+iInputBox::iInputBox()
+{
+	im = iInputManager::share();
+	kam = iKoreanAutoMata::share();
+}
+
+iInputBox::~iInputBox()
+{
+}
+
+void iInputBox::updateBuff()
+{
+	if (im->keyOnce & KEY_w)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅈ";
+		else buff += 'w';
+	}
+	if (im->keyOnce & KEY_a)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅁ";
+		else buff += 'a';
+	}
+	if (im->keyOnce & KEY_s)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㄴ";
+		else buff += 's';
+	}
+	if (im->keyOnce & KEY_d)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅇ";
+		else buff += 'd';
+	}
+	if (im->keyOnce & KEY_q)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅂ";
+		else buff += 'q';
+	}
+	if (im->keyOnce & KEY_e)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㄷ";
+		else buff += 'e';
+	}
+	if (im->keyOnce & KEY_r)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㄱ";
+		else buff += 'r';
+	}
+	if (im->keyOnce & KEY_t)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅅ";
+		else buff += 't';
+	}
+	if (im->keyOnce & KEY_y)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅛ";
+		else buff += 'y';
+	}
+	if (im->keyOnce & KEY_u)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅕ";
+		else buff += 'u';
+	}
+	if (im->keyOnce & KEY_i)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅑ";
+		else buff += 'i';
+	}
+	if (im->keyOnce & KEY_o)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅐ";
+		else buff += 'o';
+	}
+	if (im->keyOnce & KEY_p)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅔ";
+		else buff += 'p';
+	}
+	if (im->keyOnce & KEY_f)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㄹ";
+		else buff += 'f';
+	}
+	if (im->keyOnce & KEY_g)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅎ";
+		else buff += 'g';
+	}
+	if (im->keyOnce & KEY_h)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅗ";
+		else buff += 'h';
+	}
+	if (im->keyOnce & KEY_j)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅓ";
+		else buff += 'j';
+	}
+	if (im->keyOnce & KEY_k)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅏ";
+		else buff += 'k';
+	}
+	if (im->keyOnce & KEY_l)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅣ";
+		else buff += 'l';
+	}
+	if (im->keyOnce & KEY_z)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅋ";
+		else buff += 'z';
+	}
+	if (im->keyOnce & KEY_x)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅌ";
+		else buff += 'x';
+	}
+	if (im->keyOnce & KEY_c)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅊ";
+		else buff += 'c';
+	}
+	if (im->keyOnce & KEY_v)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅍ";
+		else buff += 'v';
+	}
+	if (im->keyOnce & KEY_b)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅠ";
+		else buff += 'b';
+	}
+	if (im->keyOnce & KEY_n)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅜ";
+		else buff += 'n';
+	}
+	if (im->keyOnce & KEY_m)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅡ";
+		else buff += 'm';
+	}
+	if (im->keyOnce & KEY_Q)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅃ";
+		else buff += 'Q';
+	}
+	if (im->keyOnce & KEY_W)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅉ";
+		else buff += 'W';
+	}
+	if (im->keyOnce & KEY_E)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㄸ";
+		else buff += 'E';
+	}
+	if (im->keyOnce & KEY_R)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㄲ";
+		else buff += 'R';
+	}
+	if (im->keyOnce & KEY_T)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅆ";
+		else buff += 'T';
+	}
+	if (im->keyOnce & KEY_O)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅒ";
+		else buff += 'O';
+	}
+	if (im->keyOnce & KEY_P)
+	{
+		if (im->langMode == LANG_MODE_LOCALE) buff += "ㅖ";
+		else buff += 'P';
+	}
+
+	if (im->keyOnce & KEY_space)
+	{
+		buff += ' ';
+	}
+}
+
+void iInputBox::draw(float dt)
+{
+	updateBuff();
+
+	result = kam->join(buff.str);
+
+	//delete[] result;
+}

@@ -24,6 +24,8 @@
 							255.f * color.g, \
 							255.f * color.b
 
+#define DEFAULT_FONT_SIZE    16
+
 class iImage;
 
 using namespace Gdiplus;
@@ -58,8 +60,6 @@ private:
 
 public:
 	iString font;
-
-	uint8 size;
 	iColor color;
 };
 

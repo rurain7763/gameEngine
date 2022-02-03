@@ -10,7 +10,7 @@
 #include "iQueue.h"
 #include "iArray.h"
 
-#define MAX_THREAD_NUM 10 //_POSIX_THREAD_THREADS_MAX
+#define MAX_THREAD_NUM 5 //_POSIX_THREAD_THREADS_MAX
 #define JOB_QUEUE_SIZE 50
 
 #define WORKER_STATUS_CREATING -1

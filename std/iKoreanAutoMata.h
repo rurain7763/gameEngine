@@ -16,77 +16,78 @@
 
 #define THREE_BYTES_UNICODE_BASE	0xe08080
 
-class iKoreanByte;
+#define IKOREANJAMO_INVALID_COST		0xff
+
+struct iKoreanJamo
+{
+	const char* jamo;
+	const char* elements[2];
+	uint8 elementsNum;
+	uint8 initCost = IKOREANJAMO_INVALID_COST;
+	uint8 mediCost = IKOREANJAMO_INVALID_COST;
+	uint8 finCost = IKOREANJAMO_INVALID_COST;
+	uint16 order;
+};
 
 class iKoreanAutoMata
 {
-public:
+private:
+	static iKoreanAutoMata* S;
 	iKoreanAutoMata();
+
+public:
 	virtual ~iKoreanAutoMata();
+	static iKoreanAutoMata* share();
 
 	char* join(const char* str);
 
 private:
-	iHashTable first;
-	iHashTable mid;
-	iHashTable last;
+	uint8 getInitCost(const char* letter);
+	uint8 getMediCost(const char* letter);
+	uint8 getFinCost(const char* letter);
 
-#if 1
-	iHashTable initConsonantCost;
-	iHashTable medivalVowelCost;
-	iHashTable finConsonantCost;
-#endif
+	bool canConbine(const char* left, const char* right, uint16& newUnicode);
+	bool canConbine(const char* left, const char* right, iKoreanJamo*& letter);
 
-	int* cost;
-};
-
-enum iKoreanWordStat
-{
-	iKoreanWordStatConsonantOnly,
-	iKoreanWordStatVowelOnly,
-	iKoreanWordStatWordNoLast,
-	iKoreanWordStatWordWithLast,
-};
-
-struct iKoreanWord
-{
-	const char* word;
-	const char* elements[2];
-	int elementsNum;
-};
-
-class iKoreanByte
-{
-public:
-	iKoreanByte(const uint8* v);
-
-	void changeCharacter(uint32 uniCode);
+	uint16 getUnicode(const char* korStr);
+	uint16 getUnicode(uint8 initCost, uint8 mediCost, uint8 finCost);
 
 private:
-	void updateWord(uint16 uniCode);
+	iKoreanJamo* _jamo;
 
 public:
-	char character[4];
+	iHashTable jamo;
 
-	iKoreanWordStat stat;
-	iKoreanWord* first;
-	iKoreanWord* mid;
-	iKoreanWord* last;
-
-	uint32 bytes;
-	uint16 uniCode;
+	iKoreanJamo** initConsonant;
+	iKoreanJamo** mediVowel;
+	iKoreanJamo** finConsonant;
 };
 
-bool isConsonant(uint16 uniCode);
-bool isVowel(uint16 uniCode);
-bool isKorean(uint16 uniCode);
+#define iLETTER_ASCII	0
+#define iLETTER_KOREAN	1
 
-uint16 getUnicode(const char* korChar);
-uint16 getUnicode(uint8 fisrtCost, uint8 midCost, uint8 lastCost);
+class iLetter
+{
+public:
+	iLetter(uint8 kind);
 
-//TODO ascii
+	virtual ~iLetter();
 
-#if 1
+public:
+	uint8 kind;
+
+	char* letter;
+	int letterSize;
+};
+
+class iASCIILetter : public iLetter
+{
+public:
+	iASCIILetter(const char* str);
+
+	virtual ~iASCIILetter();
+};
+
 enum iKoreanLetterStat
 {
 	iKoreanLetterStatConsonantOnly,
@@ -95,20 +96,29 @@ enum iKoreanLetterStat
 	iKoreanLetterStatIncludeFinal,
 };
 
-struct iKoreanJamo
+class iKoreanLetter : public iLetter
 {
-	const char* jamo;
-	const char* elements[2];
-	uint8 elementsNum;
-};
+public:
+	iKoreanLetter(const char* str);
+	virtual ~iKoreanLetter();
 
-class iKoreanLetter
-{
+	void change(uint16 uniCode);
+
+private:
+	void update();	
+
 public:
 	iKoreanLetterStat stat;
 
 	iKoreanJamo* initial;
 	iKoreanJamo* medial;
 	iKoreanJamo* fin;
+
+	uint16 uniCode;
 };
-#endif
+
+bool isKorean(uint16 uniCode);
+bool isKorConsonant(uint16 uniCode);
+bool isKorVowel(uint16 uniCode);
+
+

@@ -14,6 +14,7 @@ iGLShader* shader;
 iThreadPool* threadPool;
 iSceneManager* sceneMg;
 iConnectionManager* connMg;
+iKoreanAutoMata* korAm;
 
 ServerScene scene1;
 TestScene scene2;
@@ -47,6 +48,7 @@ void loadGame()
 	threadPool = iThreadPool::share();
 	sceneMg = iSceneManager::share();
 	connMg = iConnectionManager::share();
+	korAm = iKoreanAutoMata::share();
 
 	sceneMg->addScene(&scene3);
 	sceneMg->addScene(&scene1);
@@ -57,7 +59,8 @@ void drawGame()
 {
 	sceneMg->update(timeMg->deltaTime);
 
-	if (inputMg->keyOnce & KEY_P)
+#if 0
+	if (inputMg->keyOnce & KEY_p)
 	{
 		if (!cameraMode)
 		{
@@ -78,6 +81,7 @@ void drawGame()
 		camera->onKey(inputMg->keyDown, timeMg->deltaTime);
 		camera->onMouse(inputMg->mousePos, timeMg->deltaTime);
 	}
+#endif
 
 	timeMg->update();
 	inputMg->update();
@@ -94,6 +98,7 @@ void endGame()
 	delete assetReader;
 	delete shader;
 	delete connMg;
+	delete korAm;
 	delete threadPool;
 
 #ifdef INCLUDE_INETWORK_HEADER

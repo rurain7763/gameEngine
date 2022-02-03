@@ -46,24 +46,24 @@ bool iCamera::onKey(int key, float dt)
 	bool in = false;
 	iVector3f dir = {0,0,0};
 
-	if (key & KEY_W)
+	if (key & KEY_w)
 	{
 		dir += lookAt;
 		in = true;
 	}
-	else if (key & KEY_S)
+	else if (key & KEY_s)
 	{
 		dir -= lookAt;
 		in = true;
 	}
 
-	if (key & KEY_A)
+	if (key & KEY_a)
 	{
 		iVector3f right = up.cross(lookAt);
 		dir -= right;
 		in = true;
 	}
-	else if (key & KEY_D)
+	else if (key & KEY_d)
 	{
 		iVector3f right = up.cross(lookAt);
 		dir += right;

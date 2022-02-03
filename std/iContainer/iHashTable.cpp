@@ -226,7 +226,7 @@ uint64 iHashTable::hashFunc1(const char* key)
 	int len = strlen(key);
 
 	for (int i = 0; i < len; i++)
-		h = ((h << 5) - h) + (uint8)key[i];
+		h = (h << 3) + key[i];
 	
 	return h;
 }

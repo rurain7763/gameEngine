@@ -1,34 +1,9 @@
 #include "iGraphics.h"
 #include "iStd.h"
 
-#include "iKoreanAutoMata.h"
-
 iGraphics::iGraphics(iSize& devSize)
     :stat(IGRAPHICS_STACK_SIZE)
 {
-    iKoreanAutoMata am;
-
-    const char* test[] = 
-    {
-        "ㅃㅏㄹㄹㅣㅃㅏㄹㄹㅣㅎㅏㅅㅔㅇㅛ",
-        "ㄱㄱㄱㄱㄱㄱㄴㄴㄴㄴㄴㄷㄷㄷ",
-        "ㅁㅏㄴㄷㅡㄹㄱㅣ",
-        "ㄱㅏㅇㅇㅏㅈㅣ",
-        "ㅊㅣㄹㅎㅋㅣㄴㅎㅁㅓㄱㅅㅉㅏㄲ",
-        "ㅁㅏㅅㅇㅣㅆㄴㅡㄴㅎㅏㄴㄱㅡㄹㅇㅗㅌㅗㅁㅏㅌㅏㅁㅏㄴㄷㅡㄹㄱㅣ",
-        "ㅇㅏㄴㄴㅕㅇㅎㅏㅅㅔㅇㅛㄱㅏㅁㅅㅏㅎㅐㅇㅛㅈㅏㄹㅇㅣㅆㅇㅓㅇㅛㄷㅏㅅㅣㅁㅏㄴㄴㅏㅇㅛ",
-    };
-
-    for (int i = 0; i < 7; i++)
-    {
-        char* r = am.join(test[i]);
-
-        wchar_t* test = multiByteToWideChar(r);
-        delete[] test;
-
-        delete[] r;
-    }
-
     collection = new PrivateFontCollection;
     
     bmp = new Bitmap(devSize.width, devSize.height, PixelFormat32bppARGB);
@@ -98,26 +73,21 @@ void iGraphics::clear()
 void iGraphics::pushStat()
 {
     iString* str = new iString(font);
-    uint8* s = new uint8(size);
     iColor* c = new iColor(color);
 
     stat.push(str);
-    stat.push(s);
     stat.push(c);
 }
 
 void iGraphics::popStat()
 {
     iColor* c = (iColor*)stat.pop();
-    uint8* s = (uint8*)stat.pop();
     iString* str = (iString*)stat.pop();
 
     font = str->str;
-    size = *s;
     color = *c;
 
     delete str;
-    delete s;
     delete c;
 }
 
@@ -177,7 +147,7 @@ void iGraphics::drawString(const char* s, iVector2f pos)
     
     if (!f)
     {
-        f = getFont(font.str, size);
+        f = getFont(font.str, DEFAULT_FONT_SIZE);
     }
 
     if (f)

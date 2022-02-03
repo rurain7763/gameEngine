@@ -1,559 +1,629 @@
 #include "iKoreanAutoMata.h"
 #include "iStd.h"
 
-#if 1
-iKoreanJamo korJamo[] =
-{
-	{"ㄱ", { "ㄱ", 0 }, 1}, {"ㄲ", { "ㄲ", "ㄲ" }, 2}, {"ㄳ", { "ㄱ", "ㅅ" }, 2},																																			 // 0, 1, 2
-	{"ㄴ", { "ㄴ", 0 }, 1}, {"ㄵ", { "ㄴ", "ㅈ" }, 2}, {"ㄶ", { "ㄴ", "ㅎ" }, 2},																																			 // 3, 4, 5
-	{"ㄷ", { "ㄷ", 0 }, 1}, {"ㄸ", { "ㄸ", "ㄸ" }, 2},																																									 // 6, 7
-	{"ㄹ", { "ㄹ", 0 }, 1}, {"ㄺ", { "ㄹ", "ㄱ" }, 2}, {"ㄻ", { "ㄹ", "ㅁ" }, 2}, {"ㄼ", { "ㄹ", "ㅂ" }, 2}, {"ㄽ", { "ㄹ", "ㅅ" }, 2}, {"ㄾ", { "ㄹ", "ㅌ" }, 2}, {"ㄿ", { "ㄹ", "ㅍ" }, 2}, {"ㅀ", { "ㄹ", "ㅎ" }, 2},		 // 8, 9, 10, 11, 12, 13, 14, 15
-	{"ㅁ", { "ㅁ", 0 }, 1},																																																 // 16
-	{"ㅂ", { "ㅂ", 0 }, 1}, {"ㅃ", { "ㅃ", "ㅃ" }, 2}, {"ㅄ", {"ㅂ", "ㅅ"}, 2},																																			 // 17, 18, 19
-	{"ㅅ", { "ㅅ", 0 }, 1}, {"ㅆ", { "ㅆ", "ㅆ" }, 2},  																																									 // 20, 21
-	{"ㅇ", { "ㅇ", 0 }, 1}, 																																																 // 22
-	{"ㅈ", { "ㅈ", 0 }, 1}, {"ㅉ", { "ㅉ", "ㅉ" }, 2}, 																																									 // 23, 24
-	{"ㅊ", { "ㅊ", 0 }, 1},  																																															 // 25
-	{"ㅋ", { "ㅋ", 0 }, 1},  																																															 // 26
-	{"ㅌ", { "ㅌ", 0 }, 1},  																																															 // 27
-	{"ㅍ", { "ㅍ", 0 }, 1},  																																															 // 28
-	{"ㅎ", { "ㅎ", 0 }, 1},  																																															 // 29
-//==================================================================================================================================================================================================================================================================
-	{"ㅏ", { "ㅏ", 0 }, 1},																																																 // 30
-	{"ㅐ", { "ㅐ", 0 }, 1},																																																 // 31
-	{"ㅑ", { "ㅑ", 0 }, 1},																																																 // 32
-	{"ㅒ", { "ㅒ", 0 }, 1},																																																 // 33
-	{"ㅓ", { "ㅓ", 0 }, 1},																																																 // 34
-	{"ㅔ", { "ㅔ", 0 }, 1},																																																 // 35
-	{"ㅕ", { "ㅕ", 0 }, 1},																																																 // 36
-	{"ㅖ", { "ㅖ", 0 }, 1},																																																 // 37
-	{"ㅗ", { "ㅗ", 0 }, 1}, {"ㅘ", { "ㅗ", "ㅏ" }, 2}, {"ㅙ", { "ㅗ", "ㅐ" }, 2}, {"ㅚ", { "ㅗ", "ㅣ" }, 2},																												 // 38, 39, 40, 41
-	{"ㅛ", { "ㅛ", 0 }, 1},																																																 // 42
-	{"ㅜ", { "ㅜ", 0 }, 1}, {"ㅝ", { "ㅜ", "ㅓ" }, 2}, {"ㅞ", { "ㅜ", "ㅔ" }, 2}, {"ㅟ", { "ㅜ", "ㅣ" }, 2},																												 // 43, 44, 45, 46
-	{"ㅠ", { "ㅠ", 0 }, 1},																																																 // 47 
-	{"ㅡ", { "ㅡ", 0 }, 1}, {"ㅢ", { "ㅡ", "ㅣ" }, 2},																																									 // 48, 49
-	{"ㅣ", { "ㅣ", 0 }, 1}																																																 // 50
-};
-#endif
-
-
-iKoreanWord firstWord[] =
-{
-	{"ㄱ", {"ㄱ"}, 1}, 
-	{"ㄲ", {"ㄲ"}, 1}, 
-	{"ㄴ", {"ㄴ"}, 1}, 
-	{"ㄷ", {"ㄷ"}, 1}, 
-	{"ㄸ", {"ㄸ"}, 1}, 
-	{"ㄹ", {"ㄹ"}, 1}, 
-	{"ㅁ", {"ㅁ"}, 1}, 
-	{"ㅂ", {"ㅂ"}, 1},
-	{"ㅃ", {"ㅃ"}, 1}, 
-	{"ㅅ", {"ㅅ"}, 1}, 
-	{"ㅆ", {"ㅆ"}, 1}, 
-	{"ㅇ", {"ㅇ"}, 1}, 
-	{"ㅈ", {"ㅈ"}, 1}, 
-	{"ㅉ", {"ㅉ"}, 1}, 
-	{"ㅊ", {"ㅊ"}, 1}, 
-	{"ㅋ", {"ㅋ"}, 1},
-	{"ㅌ", {"ㅌ"}, 1}, 
-	{"ㅍ", {"ㅍ"}, 1}, 
-	{"ㅎ", {"ㅎ"}, 1}
-};
-
-iKoreanWord midWord[] =
-{
-	{"ㅏ", {"ㅏ"}, 1},
-	{"ㅐ", {"ㅐ"}, 1},
-	{"ㅑ", {"ㅑ"}, 1},
-	{"ㅒ", {"ㅒ"}, 1},
-	{"ㅓ", {"ㅓ"}, 1},
-	{"ㅔ", {"ㅔ"}, 1},
-	{"ㅕ", {"ㅕ"}, 1},
-	{"ㅖ", {"ㅖ"}, 1},
-	{"ㅗ", {"ㅗ"}, 1},
-	{"ㅘ", {"ㅗ", "ㅏ"}, 2},
-	{"ㅙ", {"ㅗ", "ㅐ"}, 2},
-	{"ㅚ", {"ㅗ", "ㅣ"}, 2},
-	{"ㅛ", {"ㅛ"}, 1},
-	{"ㅜ", {"ㅜ"}, 1},
-	{"ㅝ", {"ㅜ", "ㅓ"}, 2},
-	{"ㅞ", {"ㅜ", "ㅔ"}, 2},
-	{"ㅟ", {"ㅜ", "ㅣ"}, 2},
-	{"ㅠ", {"ㅠ"}, 1},
-	{"ㅡ", {"ㅡ"}, 1},
-	{"ㅢ", {"ㅡ", "ㅣ"}, 2},
-	{"ㅣ", {"ㅣ"}, 1}
-};
-
-iKoreanWord lastWord[] =
-{
-	{"N", {"N", "N"}, 0},
-	{"ㄱ", {"ㄱ"}, 1},
-	{"ㄲ", {"ㄲ", "ㄲ"}, 2},
-	{"ㄳ", {"ㄱ", "ㅅ"}, 2},
-	{"ㄴ", {"ㄴ"}, 1},
-	{"ㄵ", {"ㄴ", "ㅈ"}, 2},
-	{"ㄶ", {"ㄴ", "ㅎ"}, 2},
-	{"ㄷ", {"ㄷ"}, 1},
-	{"ㄹ", {"ㄹ"}, 1},
-	{"ㄺ", {"ㄹ", "ㄱ"}, 2},
-	{"ㄻ", {"ㄹ", "ㅁ"}, 2},
-	{"ㄼ", {"ㄹ", "ㅂ"}, 2},
-	{"ㄽ", {"ㄹ", "ㅅ"}, 2},
-	{"ㄾ", {"ㄹ", "ㅌ"}, 2},
-	{"ㄿ", {"ㄹ", "ㅍ"}, 2},
-	{"ㅀ", {"ㄹ", "ㅎ"}, 2},
-	{"ㅁ", {"ㅁ"}, 1},
-	{"ㅂ", {"ㅂ"}, 1},
-	{"ㅄ", {"ㅂ", "ㅅ"}, 2},
-	{"ㅅ", {"ㅅ"}, 1},
-	{"ㅆ", {"ㅆ", "ㅆ"}, 2},
-	{"ㅇ", {"ㅇ"}, 1},
-	{"ㅈ", {"ㅈ"}, 1},
-	{"ㅊ", {"ㅊ"}, 1},
-	{"ㅋ", {"ㅋ"}, 1},
-	{"ㅌ", {"ㅌ"}, 1},
-	{"ㅍ", {"ㅍ"}, 1},
-	{"ㅎ", {"ㅎ"}, 1}
-};
-
-iKoreanWord* korConsonant[] =
-{
-	&firstWord[0], &firstWord[1], &lastWord[3], &firstWord[2],
-	&lastWord[5], &lastWord[6], &firstWord[3], &firstWord[4],
-	&firstWord[5], &lastWord[9], &lastWord[10], &lastWord[11],
-	&lastWord[12], &lastWord[13], &lastWord[14], &lastWord[15],
-	&firstWord[6], &firstWord[7], &firstWord[8], &lastWord[18],
-	&firstWord[9], &firstWord[10], &firstWord[11], &firstWord[12],
-	&firstWord[13], &firstWord[14], &firstWord[15], &firstWord[16],
-	&firstWord[17], &firstWord[18]
-};
+iKoreanAutoMata* iKoreanAutoMata::S = NULL;
 
 iKoreanAutoMata::iKoreanAutoMata()
 {
-
-	cost = new int[28];
-	for (int i = 0; i < 28; i++) cost[i] = i;
-
-#if 1
-
-
-#endif
-
-	//first
-	for (int i = 0; i < 19; i++)
+	_jamo = new iKoreanJamo[]
 	{
-		first.insert(firstWord[i].word, &cost[i]);
+		{"ㄱ", { "ㄱ", 0 }, 1}, {"ㄲ", { 0, "ㄲ" }, 2}, {"ㄳ", { "ㄱ", "ㅅ" }, 2},																																			 // 0, 1, 2
+		{"ㄴ", { "ㄴ", 0 }, 1}, {"ㄵ", { "ㄴ", "ㅈ" }, 2}, {"ㄶ", { "ㄴ", "ㅎ" }, 2},																																			 // 3, 4, 5
+		{"ㄷ", { "ㄷ", 0 }, 1}, {"ㄸ", { 0, "ㄸ" }, 2},																																									 // 6, 7
+		{"ㄹ", { "ㄹ", 0 }, 1}, {"ㄺ", { "ㄹ", "ㄱ" }, 2}, {"ㄻ", { "ㄹ", "ㅁ" }, 2}, {"ㄼ", { "ㄹ", "ㅂ" }, 2}, {"ㄽ", { "ㄹ", "ㅅ" }, 2}, {"ㄾ", { "ㄹ", "ㅌ" }, 2}, {"ㄿ", { "ㄹ", "ㅍ" }, 2}, {"ㅀ", { "ㄹ", "ㅎ" }, 2},		 // 8, 9, 10, 11, 12, 13, 14, 15
+		{"ㅁ", { "ㅁ", 0 }, 1},																																																 // 16
+		{"ㅂ", { "ㅂ", 0 }, 1}, {"ㅃ", { 0, "ㅃ" }, 2}, {"ㅄ", {"ㅂ", "ㅅ"}, 2},																																			 // 17, 18, 19
+		{"ㅅ", { "ㅅ", 0 }, 1}, {"ㅆ", { 0, "ㅆ" }, 2},  																																									 // 20, 21
+		{"ㅇ", { "ㅇ", 0 }, 1}, 																																																 // 22
+		{"ㅈ", { "ㅈ", 0 }, 1}, {"ㅉ", { 0, "ㅉ"}, 2}, 																																									 // 23, 24
+		{"ㅊ", { "ㅊ", 0 }, 1},  																																															 // 25
+		{"ㅋ", { "ㅋ", 0 }, 1},  																																															 // 26
+		{"ㅌ", { "ㅌ", 0 }, 1},  																																															 // 27
+		{"ㅍ", { "ㅍ", 0 }, 1},  																																															 // 28
+		{"ㅎ", { "ㅎ", 0 }, 1},  																																															 // 29
+//==================================================================================================================================================================================================================================================================
+		{"ㅏ", { "ㅏ", 0 }, 1},																																																 // 30
+		{"ㅐ", { "ㅐ", 0 }, 1},																																																 // 31
+		{"ㅑ", { "ㅑ", 0 }, 1},																																																 // 32
+		{"ㅒ", { "ㅒ", 0 }, 1},																																																 // 33
+		{"ㅓ", { "ㅓ", 0 }, 1},																																																 // 34
+		{"ㅔ", { "ㅔ", 0 }, 1},																																																 // 35
+		{"ㅕ", { "ㅕ", 0 }, 1},																																																 // 36
+		{"ㅖ", { "ㅖ", 0 }, 1},																																																 // 37
+		{"ㅗ", { "ㅗ", 0 }, 1}, {"ㅘ", { "ㅗ", "ㅏ" }, 2}, {"ㅙ", { "ㅗ", "ㅐ" }, 2}, {"ㅚ", { "ㅗ", "ㅣ" }, 2},																												 // 38, 39, 40, 41
+		{"ㅛ", { "ㅛ", 0 }, 1},																																																 // 42
+		{"ㅜ", { "ㅜ", 0 }, 1}, {"ㅝ", { "ㅜ", "ㅓ" }, 2}, {"ㅞ", { "ㅜ", "ㅔ" }, 2}, {"ㅟ", { "ㅜ", "ㅣ" }, 2},																												 // 43, 44, 45, 46
+		{"ㅠ", { "ㅠ", 0 }, 1},																																																 // 47 
+		{"ㅡ", { "ㅡ", 0 }, 1}, {"ㅢ", { "ㅡ", "ㅣ" }, 2},																																									 // 48, 49
+		{"ㅣ", { "ㅣ", 0 }, 1}																																																 // 50
+	};
+
+	initConsonant = new iKoreanJamo * []
+	{
+		&_jamo[0],  // ㄱ
+		&_jamo[1],  // ㄲ
+		&_jamo[3],  // ㄴ
+		&_jamo[6],  // ㄷ
+		&_jamo[7],  // ㄸ
+		&_jamo[8],  // ㄹ
+		&_jamo[16], // ㅁ
+		&_jamo[17], // ㅂ
+		&_jamo[18], // ㅃ
+		&_jamo[20], // ㅅ
+		&_jamo[21], // ㅆ
+		&_jamo[22], // ㅇ
+		&_jamo[23], // ㅈ
+		&_jamo[24], // ㅉ
+		&_jamo[25], // ㅊ
+		&_jamo[26], // ㅋ
+		&_jamo[27], // ㅌ
+		&_jamo[28], // ㅍ
+		&_jamo[29], // ㅎ
+	};
+
+	for (uint8 i = 0; i < 19; i++)
+	{
+		initConsonant[i]->initCost = i;
 	}
 
-	//mid
-	for (int i = 0; i < 21; i++)
+	mediVowel = new iKoreanJamo * []
 	{
-		mid.insert(midWord[i].word, &cost[i]);
+		&_jamo[30 + 0],  // ㅏ
+		&_jamo[30 + 1],  // ㅐ
+		&_jamo[30 + 2],  // ㅑ
+		&_jamo[30 + 3],  // ㅒ
+		&_jamo[30 + 4],  // ㅓ
+		&_jamo[30 + 5],  // ㅔ
+		&_jamo[30 + 6],  // ㅕ
+		&_jamo[30 + 7],  // ㅖ
+		&_jamo[30 + 8],  // ㅗ
+		&_jamo[30 + 9],  // ㅘ
+		&_jamo[30 + 10], // ㅙ
+		&_jamo[30 + 11], // ㅚ
+		&_jamo[30 + 12], // ㅛ
+		&_jamo[30 + 13], // ㅜ
+		&_jamo[30 + 14], // ㅝ
+		&_jamo[30 + 15], // ㅞ
+		&_jamo[30 + 16], // ㅟ
+		&_jamo[30 + 17], // ㅠ
+		&_jamo[30 + 18], // ㅡ
+		&_jamo[30 + 19], // ㅢ
+		&_jamo[30 + 20], // ㅣ
+	};
+
+	for (uint8 i = 0; i < 21; i++)
+	{
+		mediVowel[i]->mediCost = i;
 	}
 
-	//last
-	for (int i = 0; i < 28; i++)
+	finConsonant = new iKoreanJamo * []
 	{
-		last.insert(lastWord[i].word, &cost[i]);
+		NULL,	    // None
+		&_jamo[0],  // ㄱ
+		&_jamo[1],  // ㄲ
+		&_jamo[2],  // ㄳ
+		&_jamo[3],  // ㄴ
+		&_jamo[4],  // ㄵ
+		&_jamo[5],  // ㄶ
+		&_jamo[6],  // ㄷ
+		&_jamo[8],  // ㄹ
+		&_jamo[9],  // ㄺ
+		&_jamo[10], // ㄻ
+		&_jamo[11], // ㄼ
+		&_jamo[12], // ㄽ
+		&_jamo[13], // ㄾ
+		&_jamo[14], // ㄿ
+		&_jamo[15], // ㅀ
+		&_jamo[16], // ㅁ
+		&_jamo[17], // ㅂ
+		&_jamo[19], // ㅄ
+		&_jamo[20], // ㅅ
+		&_jamo[21], // ㅆ
+		&_jamo[22], // ㅇ
+		&_jamo[23], // ㅈ
+		&_jamo[25], // ㅊ
+		&_jamo[26], // ㅋ
+		&_jamo[27], // ㅌ
+		&_jamo[28], // ㅍ
+		&_jamo[29], // ㅎ
+	};
+
+	for (int i = 1; i < 28; i++)
+	{
+		finConsonant[i]->finCost = i;
+	}
+
+	for (int i = 0; i < 51; i++)
+	{
+		_jamo[i].order = i;
+		jamo.insert(_jamo[i].jamo, &_jamo[i]);
 	}
 }
 
 iKoreanAutoMata::~iKoreanAutoMata()
 {
-	delete[] cost;
+	delete[] initConsonant;
+	delete[] mediVowel;
+	delete[] finConsonant;
+	delete[] _jamo;
+}
+
+iKoreanAutoMata* iKoreanAutoMata::share()
+{
+	if (!S) S = new iKoreanAutoMata();
+	return S;
 }
 
 char* iKoreanAutoMata::join(const char* s)
 {
 	int len = strlen(s);
 
-	uint8* str = (uint8*)s;
-	iStack kor(len);
-	int rLen = 0;
+	iStack stk(len);
+	uint32 rLen = 0;
 
 	for (int i = 0; i < len; i++)
 	{
-		uint8 byte = str[i];
+		uint8 byte = (uint8)s[i];
 
 		if ((byte & KOREAN_BIT_MASK) == KOREAN_BIT_MASK)
 		{
-			iKoreanByte* curr = new iKoreanByte(&str[i]);
+			iKoreanLetter* curr = new iKoreanLetter(&s[i]);
 
-			if (kor.empty())
+			if (stk.empty())
 			{
-				kor.push(curr);
-				rLen++;
+				stk.push(curr);
+				rLen+=3;
 				i += 2;
 				continue;
 			}
 
-			iKoreanByte* prev = (iKoreanByte*)kor.pop();
+			iLetter* lett = (iLetter*)stk.pop();
+
+			if (lett->kind == iLETTER_ASCII)
+			{
+				stk.push(lett);
+				stk.push(curr);
+				rLen += 3;
+				i += 2;
+				continue;
+			}
+
+			iKoreanLetter* prev = (iKoreanLetter*)lett;
 
 			switch (prev->stat)
 			{
-			case iKoreanWordStatConsonantOnly:
+			case iKoreanLetterStatConsonantOnly:
 			{
-				if (curr->stat == iKoreanWordStatVowelOnly)
+				if (curr->stat == iKoreanLetterStatVowelOnly)
 				{
-					uint8 fc = *(int*)first[prev->character];
-					uint8 mc = *(int*)mid[curr->character];
+					uint8 ic = getInitCost(prev->letter);
+					uint8 mc = getMediCost(curr->letter);
 
-					uint16 newUnicode = getUnicode(fc, mc, 0);
-
-					prev->changeCharacter(newUnicode);
-					kor.push(prev);
+					prev->change(getUnicode(ic, mc, 0));
+					stk.push(prev);
 
 					delete curr;
 				}
-				else if (curr->stat == iKoreanWordStatConsonantOnly)
+				else if (curr->stat == iKoreanLetterStatConsonantOnly)
 				{
 					uint16 newUnicode = 0;
 
-					int* lw = (int*)last[prev->character];
-
-					if (lw)
+					if (canConbine(prev->letter, curr->letter, newUnicode))
 					{
-						int cost = *lw;
-
-						iKoreanWord* kw = &lastWord[++cost];
-
-						while (kw->elementsNum == 2)
-						{
-							if (!strcmp(kw->elements[1], curr->character))
-							{
-								newUnicode = getUnicode(kw->word);
-								break;
-							}
-
-							kw = &lastWord[++cost];
-						}
-					}
-
-					if (newUnicode)
-					{
-						prev->changeCharacter(newUnicode);
-						kor.push(prev);
+						prev->change(newUnicode);
+						stk.push(prev);
 						delete curr;
 					}
 					else
 					{
-						kor.push(prev);
-						kor.push(curr);
-						rLen++;
+						stk.push(prev);
+						stk.push(curr);
+						rLen+=3;
 					}
 				}
 
 				break;
 			}
-
-			case iKoreanWordStatVowelOnly:
+			case iKoreanLetterStatVowelOnly:
 			{
-				if (curr->stat == iKoreanWordStatVowelOnly)
+				if (curr->stat == iKoreanLetterStatVowelOnly)
 				{
 					uint16 newUnicode = 0;
 
-					int* mw = (int*)mid[prev->character];
-
-					if (mw)
+					if (canConbine(prev->letter, curr->letter, newUnicode))
 					{
-						int cost = *mw;
+						prev->change(newUnicode);
+						stk.push(prev);
+						delete curr;
+					}
+					else
+					{
+						stk.push(prev);
+						stk.push(curr);
+						rLen+=3;
+					}
+				}
+				else if (curr->stat == iKoreanLetterStatConsonantOnly)
+				{
+					stk.push(prev);
+					stk.push(curr);
+					rLen+=3;
+				}
 
-						iKoreanWord* kw = &midWord[++cost];
+				break;
+			}
+			case iKoreanLetterStatNoFinal:
+			{
+				if (curr->stat == iKoreanLetterStatConsonantOnly)
+				{
+					uint8 finCost = getFinCost(curr->letter);
 
-						while (kw->elementsNum == 2)
+					if (finCost != IKOREANJAMO_INVALID_COST)
+					{
+						prev->change(prev->uniCode + finCost);
+						stk.push(prev);
+						delete curr;
+					}
+					else
+					{
+						stk.push(prev);
+						stk.push(curr);
+						rLen+=3;
+					}
+				}
+				else if (curr->stat == iKoreanLetterStatVowelOnly)
+				{
+					iKoreanJamo* newJamo = NULL;
+
+					if (canConbine(prev->medial->jamo, curr->letter, newJamo))
+					{
+						uint16 prevUc = getUnicode(prev->initial->initCost, newJamo->mediCost, 0);
+						prev->change(prevUc);
+
+						stk.push(prev);
+						delete curr;
+					}
+					else
+					{
+						stk.push(prev);
+						stk.push(curr);
+						rLen += 3;
+					}
+				}
+
+				break;
+			}
+			case iKoreanLetterStatIncludeFinal:
+			{
+				if (curr->stat == iKoreanLetterStatVowelOnly)
+				{
+					if (prev->fin->elementsNum == 1)
+					{
+						if (getInitCost(prev->fin->jamo) != IKOREANJAMO_INVALID_COST)
 						{
-							if (!strcmp(kw->elements[1], curr->character))
+							uint16 prevUc = prev->uniCode - prev->fin->finCost;
+							uint16 currUc = getUnicode(prev->fin->initCost, curr->medial->mediCost, 0);
+
+							prev->change(prevUc);
+							curr->change(currUc);
+						}
+
+						stk.push(prev);
+						stk.push(curr);
+						rLen+=3;
+					}
+					else if (prev->fin->elementsNum == 2)
+					{
+						if (prev->fin->elements[0])
+						{
+							iKoreanJamo* firConsonant = (iKoreanJamo*)jamo[prev->fin->elements[0]];
+							iKoreanJamo* secConsonant = (iKoreanJamo*)jamo[prev->fin->elements[1]];
+
+							if (secConsonant->finCost != IKOREANJAMO_INVALID_COST)
 							{
-								newUnicode = getUnicode(kw->word);
-								break;
+								uint16 prevUc = prev->uniCode - prev->fin->finCost + firConsonant->finCost;
+								uint16 currUc = getUnicode(secConsonant->initCost, getMediCost(curr->letter), 0);
+
+								prev->change(prevUc);
+								curr->change(currUc);
 							}
 
-							kw = &midWord[++cost];
+							stk.push(prev);
+							stk.push(curr);
+							rLen += 3;
+						}
+						else
+						{
+							iKoreanJamo* secConsonant = (iKoreanJamo*)jamo[prev->fin->elements[1]];
+
+							uint16 prevUc = prev->uniCode - prev->fin->finCost;
+							uint16 currUc = getUnicode(secConsonant->initCost, getMediCost(curr->letter), 0);
+
+							prev->change(prevUc);
+							curr->change(currUc);
+
+							stk.push(prev);
+							stk.push(curr);
+							rLen += 3;
 						}
 					}
+				}
+				else if (curr->stat == iKoreanLetterStatConsonantOnly)
+				{
+					iKoreanJamo* newJamo = NULL;
 
-					if (newUnicode)
+					if (canConbine(prev->fin->jamo, curr->letter, newJamo))
 					{
-						prev->changeCharacter(newUnicode);
-						kor.push(prev);
+						uint16 prevUc = prev->uniCode - prev->fin->finCost + newJamo->finCost;
+
+						prev->change(prevUc);
+
+						stk.push(prev);
 						delete curr;
 					}
 					else
 					{
-						kor.push(prev);
-						kor.push(curr);
-						rLen++;
-					}
-				}
-				else if (curr->stat == iKoreanWordStatConsonantOnly)
-				{
-					kor.push(prev);
-					kor.push(curr);
-					rLen++;
-				}
-
-				break;
-			}
-			case iKoreanWordStatWordNoLast:
-			{
-				if (curr->stat == iKoreanWordStatConsonantOnly)
-				{
-					int* lw = (int*)last[curr->character];
-
-					if (lw)
-					{
-						int cost = *lw;
-
-						uint16 newUnicode = prev->uniCode + cost;
-						prev->changeCharacter(newUnicode);
-						kor.push(prev);
-						delete curr;
-					}
-					else
-					{
-						kor.push(prev);
-						kor.push(curr);
-						rLen++;
-					}
-				}
-				else if (curr->stat == iKoreanWordStatVowelOnly)
-				{
-					kor.push(prev);
-					kor.push(curr);
-					rLen++;
-				}
-
-				break;
-			}
-			case iKoreanWordStatWordWithLast:
-			{
-				if (curr->stat == iKoreanWordStatVowelOnly)
-				{
-					const char* lastWord = 0;
-
-					if (prev->last->elementsNum == 1)
-					{
-						lastWord = prev->last->elements[0];
-
-						int* fw = (int*)first[lastWord];
-
-						if (fw)
-						{
-							int cost = *fw;
-
-							uint16 prevUc = prev->uniCode - *(int*)last[lastWord];
-							uint16 currUc = getUnicode(cost,
-								*(int*)mid[curr->character],
-								0);
-
-							prev->changeCharacter(prevUc);
-							curr->changeCharacter(currUc);
-						}
-
-						kor.push(prev);
-						kor.push(curr);
-						rLen++;
-					}
-					else if (prev->last->elementsNum == 2)
-					{
-						lastWord = prev->last->elements[1];
-
-						int* fw = (int*)first[lastWord];
-
-						if (fw)
-						{
-							int cost = *fw;
-
-							uint16 prevUc = prev->uniCode -
-								*(int*)last[prev->last->word] +
-								*(int*)last[prev->last->elements[0]];
-
-							uint16 currUc = getUnicode(cost,
-								*(int*)mid[curr->character],
-								0);
-
-							prev->changeCharacter(prevUc);
-							curr->changeCharacter(currUc);
-						}
-
-						kor.push(prev);
-						kor.push(curr);
-						rLen++;
-					}
-				}
-				else if (curr->stat == iKoreanWordStatConsonantOnly)
-				{
-					int newCost = -1;
-
-					int* fw = (int*)last[prev->last->word];
-
-					if (fw)
-					{
-						int cost = *fw;
-
-						iKoreanWord* kw = &lastWord[++cost];
-
-						while (kw->elementsNum == 2)
-						{
-							if (!strcmp(kw->elements[1], curr->character))
-							{
-								newCost = cost;
-								break;
-							}
-
-							kw = &lastWord[++cost];
-						}
-					}
-
-					if (newCost != -1)
-					{
-						uint16 prevUc = prev->uniCode -
-							*(int*)last[prev->last->word] +
-							newCost;
-
-						prev->changeCharacter(prevUc);
-
-						kor.push(prev);
-						delete curr;
-					}
-					else
-					{
-						kor.push(prev);
-						kor.push(curr);
-						rLen++;
+						stk.push(prev);
+						stk.push(curr);
+						rLen+=3;
 					}
 				}
 
-				break;
-			}
-			default:
-			{
-				//...
 				break;
 			}
 			}
 
 			i += 2;
 		}
-		else if((byte & ASCII_BIT_MASK) == 0)
+		else if ((byte & ASCII_BIT_MASK) == 0)
 		{
+			iASCIILetter* curr = new iASCIILetter(&s[i]);
+
+			stk.push(curr);
+			rLen++;
 		}
 		else
 		{
-			//?
+			while (!stk.empty())
+			{
+				iLetter* letter = (iLetter*)stk.pop();
+				delete letter;
+			}
+
+			return NULL;
 		}
 	}
 
-	char* r = new char[rLen * 3 + 1];
-	int i = rLen - 1;
+	char* r = new char[rLen + 1];
+	int i = rLen;
 
-	while (!kor.empty())
+	while (!stk.empty())
 	{
-		iKoreanByte* kb = (iKoreanByte*)kor.pop();
+		iLetter* lett = (iLetter*)stk.pop();
 
-		memcpy(&r[3 * i], kb->character, sizeof(char) * 3);
-		i--;
+		if (lett->kind == iLETTER_ASCII)
+		{
+			iASCIILetter* al = (iASCIILetter*)lett;
+			i -= 1;
+			memcpy(&r[i], al->letter, sizeof(char) * al->letterSize);
 
-		delete kb;
+		}
+		else if(lett->kind == iLETTER_KOREAN)
+		{
+			iKoreanLetter* kl = (iKoreanLetter*)lett;
+			i -= 3;
+			memcpy(&r[i], kl->letter, sizeof(char) * kl->letterSize);
+		}
+		
+		delete lett;
 	}
-	r[rLen * 3] = 0;
+	r[rLen] = 0;
 
 	return r;
 }
 
-iKoreanByte::iKoreanByte(const uint8* v)
+uint8 iKoreanAutoMata::getInitCost(const char* letter)
 {
-	memcpy(character, v, sizeof(char) * 3);
-	character[3] = 0;
+	iKoreanJamo* kj = (iKoreanJamo*)jamo[letter];
 
-	bytes = ((uint32)v[0] << 16) +
-		    ((uint32)v[1] << 8) + 
-		    (uint32)v[2];
-
-	uniCode = (bytes & 0x3f) +
-			  ((bytes & 0x3f00) >> 2) +
-			  ((bytes & 0x0f0000) >> 4);
-
-	updateWord(uniCode);
+	if (kj)
+	{
+		return kj->initCost;
+	}
+	else
+	{
+		return IKOREANJAMO_INVALID_COST;
+	}
 }
 
-void iKoreanByte::changeCharacter(uint32 uc)
+uint8 iKoreanAutoMata::getMediCost(const char* letter)
 {
-	bytes = THREE_BYTES_UNICODE_BASE +
-		    (uc & 0x3f) + 
-			((uc & 0xfc0) << 2)  + 
-			((uc & 0xf000) << 4);
+	iKoreanJamo* kj = (iKoreanJamo*)jamo[letter];
 
-	uint8* b = (uint8*)&bytes;
+	if (kj)
+	{
+		return kj->mediCost;
+	}
+	else
+	{
+		return IKOREANJAMO_INVALID_COST;
+	}
+}
+
+uint8 iKoreanAutoMata::getFinCost(const char* letter)
+{
+	iKoreanJamo* kj = (iKoreanJamo*)jamo[letter];
+
+	if (kj)
+	{
+		return kj->finCost;
+	}
+	else
+	{
+		return IKOREANJAMO_INVALID_COST;
+	}
+}
+
+bool iKoreanAutoMata::canConbine(const char* left, const char* right, uint16& newUnicode)
+{
+	iKoreanJamo* kj = (iKoreanJamo*)jamo[left];
+
+	if (kj)
+	{
+		uint8 idx = kj->order + 1;
+
+		while (_jamo[idx].elementsNum == 2)
+		{
+			if (!strcmp(_jamo[idx].elements[1], right))
+			{
+				newUnicode = getUnicode(_jamo[idx].jamo);
+				return true;
+			}
+
+			idx++;
+		}
+	}
+
+	return false;
+}
+
+bool iKoreanAutoMata::canConbine(const char* left, const char* right, iKoreanJamo*& letter)
+{
+	iKoreanJamo* kj = (iKoreanJamo*)jamo[left];
+
+	if (kj && kj->elementsNum != 2)
+	{
+		uint8 idx = kj->order + 1;
+
+		while (_jamo[idx].elementsNum == 2)
+		{
+			if (!strcmp(_jamo[idx].elements[1], right))
+			{
+				letter = &_jamo[idx];
+				return true;
+			}
+
+			idx++;
+		}
+	}
+
+	return false;
+}
+
+uint16 iKoreanAutoMata::getUnicode(const char* ks)
+{
+	return ((uint8)ks[2] & 0x3f) +
+		   (((uint8)ks[1] & 0x3f) << 6) +
+		   (((uint8)ks[0] & 0xf) << 12);
+}
+
+uint16 iKoreanAutoMata::getUnicode(uint8 ic, uint8 mc, uint8 fc)
+{
+	return ic * KOREAN_FIRST_ORDER + 
+		   mc * KOREAN_MIDDLE_ORDER + 
+		   fc + KOREAN_CODE_MIN;
+}
+
+iLetter::iLetter(uint8 kind)
+{
+	this->kind = kind;
+}
+
+iLetter::~iLetter()
+{
+}
+
+iASCIILetter::iASCIILetter(const char* str)
+	:iLetter(iLETTER_ASCII)
+{
+	letterSize = 1;
+	letter = new char[letterSize + 1];
+	memcpy(letter, str, sizeof(char) * letterSize);
+	letter[1] = 0;
+}
+
+iASCIILetter::~iASCIILetter()
+{
+	delete[] letter;
+}
+
+iKoreanLetter::iKoreanLetter(const char* str)
+	:iLetter(iLETTER_KOREAN)
+{
+	letterSize = 3;
+	letter = new char[letterSize + 1];
+
+	memcpy(letter, str, sizeof(char) * letterSize);
+	letter[3] = 0;
+
+	uniCode = 0;
+	uniCode = ((uint8)letter[2] & 0x3f) +
+			  (((uint8)letter[1] & 0x3f) << 6) +
+			  (((uint8)letter[0] & 0xf) << 12);
+
+	update();
+}
+
+iKoreanLetter::~iKoreanLetter()
+{
+	delete[] letter;
+}
+
+void iKoreanLetter::change(uint16 uc)
+{
+	uint32 bytes = THREE_BYTES_UNICODE_BASE +
+				   (uc & 0x3f) +
+				   ((uc & 0xfc0) << 2) +
+				   ((uc & 0xf000) << 4);
 
 	for (int i = 0; i < 3; i++)
 	{
-		character[2 - i] = b[i];
+		letter[2 - i] = ((uint8*)&bytes)[i];
 	}
-	character[3] = 0;
+	letter[3] = 0;
 
 	uniCode = uc;
 
-	updateWord(uniCode);
+	update();
 }
 
-void iKoreanByte::updateWord(uint16 uniCode)
+void iKoreanLetter::update()
 {
-	first = NULL;
-	mid = NULL;
-	last = NULL;
+	iKoreanAutoMata* kam = iKoreanAutoMata::share();
 
-	if (isConsonant(uniCode))
+	initial = NULL;
+	medial = NULL;
+	fin = NULL;
+
+	if (isKorConsonant(uniCode))
 	{
-		stat = iKoreanWordStatConsonantOnly;
-		int idx = uniCode - 0x3131;
-
-		first = korConsonant[idx];
+		stat = iKoreanLetterStatConsonantOnly;
+		initial = (iKoreanJamo*)kam->jamo[letter];
 	}
-	else if (isVowel(uniCode))
+	else if (isKorVowel(uniCode))
 	{
-		stat = iKoreanWordStatVowelOnly;
-		int idx = uniCode - 0x314f;
-
-		mid = &midWord[idx];
+		stat = iKoreanLetterStatVowelOnly;
+		medial = (iKoreanJamo*)kam->jamo[letter];
 	}
 	else
 	{
 		uint16 uc = uniCode - KOREAN_CODE_MIN;
-		int idx;
 
-		idx = uc / KOREAN_FIRST_ORDER;
-		first = &firstWord[idx];
+		uint32 cost = uc / KOREAN_FIRST_ORDER;
+		initial = kam->initConsonant[cost];
 		uc %= KOREAN_FIRST_ORDER;
 
-		idx = uc / KOREAN_MIDDLE_ORDER;
-		mid = &midWord[idx];
+		cost = uc / KOREAN_MIDDLE_ORDER;
+		medial = kam->mediVowel[cost];
 		uc %= KOREAN_MIDDLE_ORDER;
 
-		idx = uc;
+		cost = uc;
 
-		if (idx != 0)
-		{
-			stat = iKoreanWordStatWordWithLast;
-			last = &lastWord[idx];
-		}
-		else
-		{
-			stat = iKoreanWordStatWordNoLast;
-			last = &lastWord[0];
-		}
+		if (cost) stat = iKoreanLetterStatIncludeFinal;
+		else stat = iKoreanLetterStatNoFinal;
+
+		fin = kam->finConsonant[cost];
 	}
-}
-
-bool isConsonant(uint16 uc)
-{
-	return uc >= 0x3131 && uc <= 0x314e;
-}
-
-bool isVowel(uint16 uc)
-{
-	return uc >= 0x314f && uc <= 0x3163;
 }
 
 bool isKorean(uint16 uc)
@@ -561,16 +631,12 @@ bool isKorean(uint16 uc)
 	return uc >= KOREAN_CODE_MIN && uc <= KOREAN_CODE_MAX;
 }
 
-uint16 getUnicode(const char* kc)
+bool isKorConsonant(uint16 uc)
 {
-	return ((uint8)kc[2] & 0x3f) +
-		   (((uint8)kc[1] & 0x3f) << 6) +
-		   (((uint8)kc[0] & 0xf) << 12);
+	return uc >= 0x3131 && uc <= 0x314e;
 }
 
-uint16 getUnicode(uint8 fc, uint8 mc, uint8 lc)
+bool isKorVowel(uint16 uc)
 {
-	return fc * KOREAN_FIRST_ORDER + 
-		   mc * KOREAN_MIDDLE_ORDER + 
-		   lc + KOREAN_CODE_MIN;
+	return uc >= 0x314f && uc <= 0x3163;
 }
